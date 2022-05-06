@@ -1,1 +1,1 @@
-git rm --cached R Project\R Project.Rproj
+git reset R Project.Rproj
