@@ -13,3 +13,20 @@ tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
 tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
 genesets = readRDS("../data/hallmarks_genesets.rds")
 ```
+
+```{r}
+#check for NAs
+sum(is.na(tcga_exp))
+#as the sum equals zero, there are no missing values in this data frame
+```
+
+
+```{r}
+#if there is no difference between min and max of expression counts --> genes will be removed
+min.count.gene = apply(tcga_exp, 1, min)
+max.count.gene = apply(tcga_exp, 1, max)
+sum(which(min.count.gene == max.count.gene)) #to see how many genes show no difference in expression
+tcga_exp = tcga_exp[-which(min.count.gene == max.count.gene)] #to remove these genes from the data set
+# how to find genes with low variance?? which threshold?? 
+```
+
