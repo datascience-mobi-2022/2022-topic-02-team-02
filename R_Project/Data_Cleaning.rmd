@@ -4,7 +4,9 @@ author: "Anna von Bachmann"
 date: '2022-05-06'
 output: html_document
 ---
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ```{r}
 #data upload
@@ -55,9 +57,17 @@ length(tcga_exp_genes_upper_whisker)
 
 # We decided for 50% threshold -> p50-quantile
 quantile(tcga_exp_var,0.5) # 2.29988
-tcga_exp_var_50 = tcga_exp_var[which(tcga_exp_var >= quantile(tcga_exp_var,0.5))]
+tcga_exp_var_50 = which(tcga_exp_var <= quantile(tcga_exp_var,0.5))
 length(tcga_exp_var_50) #30249 genes left
 
-
+#remove genes with variance < 2.29988 from tcga_exp
+tcga_exp_clean = tcga_exp[-tcga_exp_var_50,] # clean dataframe for future use
+# plot new variance density for tcga_exp_clean
+tcga_exp_clean_var = apply(tcga_exp_clean, 1, var)
+plot(density(tcga_exp_clean_var)); abline(v = 2.29988)
+#check whether right genes were removed from tcga_exp
+min(tcga_exp_clean_var) #2.300057 yesssirrrr
 ```
+
+
 
