@@ -14,45 +14,49 @@ tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
 genesets = readRDS("../data/hallmarks_genesets.rds")
 ```
 
-```{r}
+```{r, include = FALSE}
 #check for N/As
 sum(is.na(tcga_exp))
 #as the sum equals zero, there are no missing values in this data frame 
 ```
 
-```{r}
+```{r, include =  FALSE}
 #if there is no difference between min and max of expression counts --> genes will be removed
 min.count.gene = apply(tcga_exp, 1, min)
-message("Hi")
 max.count.gene = apply(tcga_exp, 1, max)
-message("Hi1")
 sum(which(min.count.gene == max.count.gene)) 
-message("Hi2")  #to see how many genes show no difference in expression
+#to see how many genes show no difference in expression
 tcga_exp_variable_only = tcga_exp[-which(min.count.gene == max.count.gene)]#to remove the genes from these genes from the data set
 
 #how to find genes with low variance? Which threshold?
 ```
 
 ```{r}
-var = apply(tcga_exp, 1, var)
-mean_var = mean(var)
-IQR = quantile(var,0.75) - quantile(var,0.25)
-q_75 = quantile(var,0.75)
-upper_whisker= 1.5*IQR + quantile(var,0.75)
-upper_whisker
-IQR
-#Cut 75% Quantile?
-max(var)
-(boxplot(var))
-plot(var)
-mean(var)
-plot(density(var)); abline(v = q_75); abline(v= upper_whisker)
-vioplot::vioplot(var)
-quantile(var,0.82)
-var_75 = var[which(var >= quantile(var,0.75))]
-length(var_75)
-var_upper_whisker = var[which(var >= upper_whisker)]
-length(var_upper_whisker)
+#Compute variance for all genes
+tcga_exp_var = apply(tcga_exp, 1, var)
+#mean variance for all genes
+tcga_exp_mean_var = mean(tcga_exp_var)
+#Boxplot values
+tcga_exp_var_iqr = quantile(tcga_exp_var,0.75) - quantile(tcga_exp_var,0.25)
+tcga_exp_var_q75 = quantile(tcga_exp_var,0.75)
+tcga_exp_upper_whisker= 1.5*tcga_exp_var_iqr + quantile(tcga_exp_var,0.75)
+tcga_exp_var_max = max(tcga_exp_var)
+#Boxplot variance
+(boxplot(tcga_exp_var))
+#Density plot variance
+plot(density(tcga_exp_var)); abline(v = tcga_exp_var_q75); abline(v= tcga_exp_upper_whisker); abline(v= quantile(tcga_exp_var,0.5))
+#Genes with variance > 75%-quantile (tcga_exp_var_q75)
+tcga_exp_var_75 = tcga_exp_var[which(tcga_exp_var >= quantile(tcga_exp_var,0.75))]
+#How many genes with variance > 75%-quantile (tcga_exp_var_q75)
+length(tcga_exp_var_75)
+#Same with upper whisker quantile
+tcga_exp_genes_upper_whisker = tcga_exp_var[which(tcga_exp_var >= tcga_exp_upper_whisker)]
+length(tcga_exp_genes_upper_whisker)
+
+# We decided for 50% threshold -> p50-quantile
+quantile(tcga_exp_var,0.5) # 2.29988
+tcga_exp_var_50 = tcga_exp_var[which(tcga_exp_var >= quantile(tcga_exp_var,0.5))]
+length(tcga_exp_var_50) #30249 genes left
 
 
 ```
