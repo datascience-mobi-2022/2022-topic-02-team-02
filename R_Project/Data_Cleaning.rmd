@@ -15,7 +15,6 @@ genesets = readRDS("../data/hallmarks_genesets.rds")
 ```
 
 ```{r}
-<<<<<<< HEAD
 #check for NAs
 sum(is.na(tcga_exp))
 #as the sum equals zero, there are no missing values in this data frame
@@ -31,23 +30,4 @@ tcga_exp = tcga_exp[-which(min.count.gene == max.count.gene)] #to remove these g
 # how to find genes with low variance?? which threshold?? 
 ```
 
-=======
-#check for N/As
-sum(is.na(tcga_exp))
-#as the sum equals zero, there are no missing values in this data frame 
-```
-```{r}
-#if there is no difference between min and max of expression counts --> genes will be removed
-min.count.gene = apply(tcga_exp, 1, min)
-message("Hi")
-max.count.gene = apply(tcga_exp, 1, max)
-message("Hi1")
-sum(which(min.count.gene == max.count.gene)) 
-message("Hi2")  #to see how many genes show no difference in expression
-tcga_exp_variable_only = tcga_exp[-which(min.count.gene == max.count.gene)]#to remove the genes from these genes from the data set
 
-#how to find genes with low variance? Which threshold?
-```
-
-
->>>>>>> c9c710522fb2910d1b91958bc1ef0d5e0f595ebd
