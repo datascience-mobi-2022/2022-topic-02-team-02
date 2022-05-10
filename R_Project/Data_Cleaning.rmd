@@ -15,27 +15,11 @@ genesets = readRDS("../data/hallmarks_genesets.rds")
 ```
 
 ```{r}
-<<<<<<< HEAD
-#check for NAs
-sum(is.na(tcga_exp))
-#as the sum equals zero, there are no missing values in this data frame
-```
-
-
-```{r}
-#if there is no difference between min and max of expression counts --> genes will be removed
-min.count.gene = apply(tcga_exp, 1, min)
-max.count.gene = apply(tcga_exp, 1, max)
-sum(which(min.count.gene == max.count.gene)) #to see how many genes show no difference in expression
-tcga_exp = tcga_exp[-which(min.count.gene == max.count.gene)] #to remove these genes from the data set
-# how to find genes with low variance?? which threshold?? 
-```
-
-=======
 #check for N/As
 sum(is.na(tcga_exp))
 #as the sum equals zero, there are no missing values in this data frame 
 ```
+
 ```{r}
 #if there is no difference between min and max of expression counts --> genes will be removed
 min.count.gene = apply(tcga_exp, 1, min)
@@ -49,5 +33,26 @@ tcga_exp_variable_only = tcga_exp[-which(min.count.gene == max.count.gene)]#to r
 #how to find genes with low variance? Which threshold?
 ```
 
+```{r}
+var = apply(tcga_exp, 1, var)
+mean_var = mean(var)
+IQR = quantile(var,0.75) - quantile(var,0.25)
+q_75 = quantile(var,0.75)
+upper_whisker= 1.5*IQR + quantile(var,0.75)
+upper_whisker
+IQR
+#Cut 75% Quantile?
+max(var)
+(boxplot(var))
+plot(var)
+mean(var)
+plot(density(var)); abline(v = q_75); abline(v= upper_whisker)
+vioplot::vioplot(var)
+quantile(var,0.82)
+var_75 = var[which(var >= quantile(var,0.75))]
+length(var_75)
+var_upper_whisker = var[which(var >= upper_whisker)]
+length(var_upper_whisker)
 
->>>>>>> c9c710522fb2910d1b91958bc1ef0d5e0f595ebd
+
+```
