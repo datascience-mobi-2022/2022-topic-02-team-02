@@ -1,0 +1,133 @@
+---
+title: "Descriptive_Analysis_Anna"
+author: "Anna von Bachmann"
+date: '2022-05-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#dividig tcga_annot according to cancer types, saving each in a new data frame
+tcga_annot_ACC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ACC"),]
+tcga_annot_BLCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BLCA"),]
+tcga_annot_BRCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BRCA"),]
+tcga_annot_CESC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CESC"),]
+tcga_annot_CHOL = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CHOL"),]
+tcga_annot_COAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="COAD"),]
+tcga_annot_DLDC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="DLDC"),]
+tcga_annot_ESCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ESCA"),]
+tcga_annot_GBM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="GBM"),]
+tcga_annot_HNSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="HNSC"),]
+tcga_annot_KICH = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KICH"),]
+tcga_annot_KIRC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRC"),]
+tcga_annot_KIRP = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRP"),]
+tcga_annot_LAML = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LAML"),]
+tcga_annot_LGG = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LGG"),]
+tcga_annot_LIHC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LIHC"),]
+tcga_annot_LUAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUAD"),]
+tcga_annot_LUSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUSC"),]
+tcga_annot_MESO = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="MESO"),]
+tcga_annot_OV = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="OV"),]
+tcga_annot_PAAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PAAD"),]
+tcga_annot_PCPG= tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PCPG"),]
+tcga_annot_PRAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PRAD"),]
+tcga_annot_READ = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="READ"),]
+tcga_annot_SARC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SARC"),]
+tcga_annot_SKCM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SKCM"),]
+tcga_annot_STAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="STAD"),]
+tcga_annot_TGCT = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="TGCT"),]
+tcga_annot_THCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THCA"),]
+tcga_annot_THYM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THYM"),]
+tcga_annot_UCEC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCEC"),]
+tcga_annot_UCS = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCS"),]
+tcga_annot_UVM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UVM"),]
+```
+
+
+
+```{r}
+#create new dataframe for each cancer type containing gene expression values specificly for this cancer type
+tcga_exp_clean_ACC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_ACC$PATIENT]
+
+tcga_exp_c_BLCA =  tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_BLCA$PATIENT]
+  
+tcga_exp_c_BRCA  = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_BRCA$PATIENT]
+
+tcga_exp_c_CESC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_CESC$PATIENT]
+
+tcga_exp_c_CHOL = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_CHOL$PATIENT]
+
+tcga_exp_c_COAD  = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_COAD$PATIENT]
+
+tcga_exp_c_DLDC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_DLDC$PATIENT]
+
+tcga_exp_c_ESCA = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_ESCA$PATIENT]
+
+tcga_exp_c_GBM = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_GBM$PATIENT]
+
+tcga_exp_c_HNSC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_HNSC$PATIENT]
+
+tcga_exp_c_KICH = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_KICH$PATIENT]
+
+tcga_exp_c_KIRC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_KIRC$PATIENT]
+
+tcga_exp_c_KIRP = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_KIRP$PATIENT]
+
+tcga_exp_c_LAML = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_LAML$PATIENT]
+
+tcga_exp_c_LGG = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_LGG$PATIENT]
+
+tcga_exp_c_LIHC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_LIHC$PATIENT]
+
+tcga_exp_c_LUAD = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_LUAD$PATIENT]
+
+tcga_exp_c_LUSC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_LUSC$PATIENT]
+
+tcga_exp_c_MESO = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_MESO$PATIENT]
+
+tcga_exp_c_OV = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_OV$PATIENT]
+
+tcga_exp_c_PAAD = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_PAAD$PATIENT]
+
+tcga_exp_c_PCPG = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_PCPG$PATIENT]
+
+tcga_exp_c_PRAD = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_PRAD$PATIENT]
+
+tcga_exp_c_READ = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_READ$PATIENT]
+
+tcga_exp_c_SARC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_SARC$PATIENT]
+
+tcga_exp_c_SKCM = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_SKCM$PATIENT]
+
+tcga_exp_c_STAD = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_STAD$PATIENT]
+
+tcga_exp_c_TGCT = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_TGCT$PATIENT]
+
+tcga_exp_c_THCA = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_THCA$PATIENT]
+
+tcga_exp_c_THYM = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_THYM$PATIENT]
+
+tcga_exp_c_UCEC = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_UCEC$PATIENT]
+
+tcga_exp_c_UCS = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_UCS$PATIENT]
+
+tcga_exp_c_UVM = tcga_exp_clean[, names(tcga_exp_clean) %in% tcga_annot_ACC$PATIENT]
+
+```
+
+
+```{r}
+#plotting mean values for breast cancer types
+boxplot(apply(tcga_exp_c_BLCA,1, mean),apply(tcga_exp_c_BRCA,1, mean), xlab="cancer type", ylab = "Average gene expression", names=c("BLCA","BRCA"), main = "General Gene Expression" )
+
+```
+```{r}
+#Mean/variance plot for each gene of BLCA
+plot(rowMeans(tcga_exp_c_BLCA), apply(tcga_exp_c_BLCA, 1, var),xlab="Average Expression", ylab="Variance", pch=20, main="Mean/Variance plot BLCA")
+
+```
+
+
