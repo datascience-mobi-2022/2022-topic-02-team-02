@@ -126,8 +126,16 @@ boxplot(apply(tcga_exp_c_BLCA,1, mean),apply(tcga_exp_c_BRCA,1, mean), xlab="can
 ```
 ```{r}
 #Mean/variance plot for each gene of BLCA
-plot(rowMeans(tcga_exp_c_BLCA), apply(tcga_exp_c_BLCA, 1, var),xlab="Average Expression", ylab="Variance", pch=20, main="Mean/Variance plot BLCA")
+plot(rowMeans(tcga_exp_c_BLCA), apply(tcga_exp_c_BLCA, 1, var),xlab="Average Expression", ylab="Variance", pch=20, cex= .3, main="Mean/Variance plot BLCA")
 
 ```
 
+```{r}
+tcga_exp_BLCA =  tcga_exp[, names(tcga_exp) %in% tcga_annot_BLCA$PATIENT]
+```
+
+```{r}
+#Mean/variance plot for each gene of KIRC
+plot(rowMeans(tcga_exp_c_KIRC), apply(tcga_exp_c_KIRC, 1, var),xlab="Average Expression", ylab="Variance", pch=20, cex= .4, main="Mean/Variance plot KIRC")
+```
 
