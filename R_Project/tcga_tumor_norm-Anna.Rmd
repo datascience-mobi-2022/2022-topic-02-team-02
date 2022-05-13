@@ -1,0 +1,83 @@
+---
+title: "tcga_tumor_norm_Anna"
+author: "Anna von Bachmann"
+date: '2022-05-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Load data
+tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
+```
+
+```{r}
+#extract expression data of KIRK cancer type, divided into tumor normal and annotation data, one data frame each
+tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
+tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
+tcga_KIRC_annot = data.matrix(tcga_tumor_norm[["KIRC"]][["clinical"]])
+```
+
+
+
+```{r}
+#rename colnames of norm and tumor KIRC data frame
+#ONLY RUN CHUNK ONCE!!!!!!!!
+#tcga_KIRC_norm_colnames = c(substr(colnames(tcga_KIRC_norm),1, nchar(colnames(tcga_KIRC_norm))-3))
+colnames(tcga_KIRC_norm) = tcga_KIRC_norm_colnames #first tcga_KIRC_norm
+colnames(tcga_KIRC_tumor) = tcga_KIRC_norm_colnames #same for tcga_KIRC_tumor
+
+```
+```{r}
+#aim: calculate Foldchange(condition 1/condition 2)
+#first: calculation of mean values for each gene (gene = condition)
+tcga_KIRC_norm_Meanexpr = data.matrix(apply(tcga_KIRC_norm, 1, mean))
+colnames(tcga_KIRC_norm_Meanexpr) = "Norm_Average_expr" #for  normal cell data
+tcga_KIRC_tumor_Meanexpr = data.matrix(apply(tcga_KIRC_tumor, 1, mean))
+colnames(tcga_KIRC_tumor_Meanexpr) = "tumor_Average_expr" #for tumor cell data
+#calculation of foldchange (mean  cond 1/mean cond 2)
+tcga_KIRC_foldchange = data.matrix(tcga_KIRC_norm_Meanexpr/tcga_KIRC_tumor_Meanexpr)
+colnames(tcga_KIRC_foldchange) = "KIRC_foldchange"
+```
+
+
+```{r}
+#paired ttest for each gene, to see if expression differs significant
+tcga_KIRC_Expr_tt_pv  = data.matrix(sapply ( 1:nrow(tcga_KIRC_tumor),function (x) {
+  t.test(tcga_KIRC_norm[x,],tcga_KIRC_tumor[x,],paired=TRUE)
+}$p.value))
+rownames(tcga_KIRC_Expr_tt_pv)=rownames(tcga_KIRC_norm)
+colnames(tcga_KIRC_Expr_tt_pv)="paired_tt_pvalue"
+#Bonferroni-Korrektur
+alpha=0.05/(nrow(tcga_KIRC_Expr_tt_pv))
+```
+
+
+```{r}
+length(which(tcga_KIRC_Expr_tt_pv<alpha))
+
+```
+```{r}
+length((which(tcga_KIRC_Expr_tt_pv_Bonf<0.05)))
+```
+
+```{r}
+#check Normality of each gene
+norm.all = data.matrix(sapply ( 1:50, function (x) {
+  shapiro.test(tcga_KIRC_norm[x,])
+}$p.value))
+```
+
+
+```{r}
+shapiro.test(tcga_KIRC_tumor[1,])
+```
+```{r}
+str(matrix(tcga_KIRC_norm[1,]))
+str(tcga_KIRC_norm[1,])
+```
+
