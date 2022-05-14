@@ -22,62 +22,93 @@ tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
 tcga_KIRC_annot = data.matrix(tcga_tumor_norm[["KIRC"]][["clinical"]])
 ```
 
+```{r}
+#filtering genes with constant expression (problematic for shapiro test (no normality of the data of constant values) and hence ttest (only usable for normal distributed data))
+tcga_KIRC_norm_min = apply(tcga_KIRC_norm, 1, min)
+tcga_KIRC_norm_max= apply(tcga_KIRC_norm, 1, max) #for normal cell data set
+tcga_KIRC_tumor_min = apply(tcga_KIRC_tumor, 1, min)
+tcga_KIRC_tumor_max= apply(tcga_KIRC_tumor, 1, max)#fpr tumor cell data set
+#determine genes with constant expression
+tcga_KIRC_norm_constant = c(names(which(tcga_KIRC_norm_min==tcga_KIRC_norm_max)))
+length(tcga_KIRC_norm_constant)#for normal cell data set
+tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_tumor_max==tcga_KIRC_tumor_min)))
+length(tcga_KIRC_tumor_constant)#for normal cell data set
+tcga_KIRC_both_constant = c(tcga_KIRC_norm_constant,tcga_KIRC_tumor_constant)
+length(tcga_KIRC_both_constant)#combine constant expressed gene names form normal and tumor data set as these genes have to be removed from both data sets
+#remove the constant expressed genes from both data sets (cl for clean)
+tcga_KIRC_norm_cl = tcga_KIRC_norm[!rownames(tcga_KIRC_norm) %in% tcga_KIRC_both_constant,]
+dim(tcga_KIRC_norm_cl)#18941 genes left
+tcga_KIRC_tumor_cl = tcga_KIRC_tumor[!rownames(tcga_KIRC_tumor) %in% tcga_KIRC_both_constant,]
+dim(tcga_KIRC_tumor_cl)
+
+```
+
 
 
 ```{r}
 #rename colnames of norm and tumor KIRC data frame
-#ONLY RUN CHUNK ONCE!!!!!!!!
+#ONLY RUN first line ONCE!!!!!!!!
 #tcga_KIRC_norm_colnames = c(substr(colnames(tcga_KIRC_norm),1, nchar(colnames(tcga_KIRC_norm))-3))
-colnames(tcga_KIRC_norm) = tcga_KIRC_norm_colnames #first tcga_KIRC_norm
-colnames(tcga_KIRC_tumor) = tcga_KIRC_norm_colnames #same for tcga_KIRC_tumor
+colnames(tcga_KIRC_norm_cl) = tcga_KIRC_norm_colnames #first tcga_KIRC_norm
+colnames(tcga_KIRC_tumor_cl) = tcga_KIRC_norm_colnames #same for tcga_KIRC_tumor
 
 ```
 ```{r}
 #aim: calculate Foldchange(condition 1/condition 2)
 #first: calculation of mean values for each gene (gene = condition)
-tcga_KIRC_norm_Meanexpr = data.matrix(apply(tcga_KIRC_norm, 1, mean))
-colnames(tcga_KIRC_norm_Meanexpr) = "Norm_Average_expr" #for  normal cell data
-tcga_KIRC_tumor_Meanexpr = data.matrix(apply(tcga_KIRC_tumor, 1, mean))
-colnames(tcga_KIRC_tumor_Meanexpr) = "tumor_Average_expr" #for tumor cell data
+tcga_KIRC_norm_cl_Meanexpr = data.matrix(apply(tcga_KIRC_norm_cl, 1, mean))
+colnames(tcga_KIRC_norm_cl_Meanexpr) = "Norm_Average_expr" #for  normal cell data
+tcga_KIRC_tumor_cl_Meanexpr = data.matrix(apply(tcga_KIRC_tumor_cl, 1, mean))
+colnames(tcga_KIRC_tumor_cl_Meanexpr) = "tumor_Average_expr" #for tumor cell data
 #calculation of foldchange (mean  cond 1/mean cond 2)
-tcga_KIRC_foldchange = data.matrix(tcga_KIRC_norm_Meanexpr/tcga_KIRC_tumor_Meanexpr)
-colnames(tcga_KIRC_foldchange) = "KIRC_foldchange"
+tcga_KIRC_cl_foldchange = data.matrix(tcga_KIRC_norm_cl_Meanexpr/tcga_KIRC_tumor_cl_Meanexpr)
+colnames(tcga_KIRC_cl_foldchange) = "KIRC_foldchange"
 ```
 
+```{r}
+#check Normality of each gene by shapiro test
+tcga_KIRC_norm_cl_shapiro = data.matrix(sapply ( 1:nrow(tcga_KIRC_norm_cl), function (x) {
+  shapiro.test(tcga_KIRC_norm_cl[x,])
+}$p.value)) #normal cell data
+rownames(tcga_KIRC_norm_cl_shapiro)=rownames(tcga_KIRC_norm_cl)
+colnames(tcga_KIRC_norm_cl_shapiro)="shapiro_pv"
+
+tcga_KIRC_tumor_cl_shapiro = data.matrix(sapply ( 1:nrow(tcga_KIRC_tumor_cl), function (x) {
+  shapiro.test(tcga_KIRC_tumor_cl[x,])
+}$p.value)) # tumor cell data 
+rownames(tcga_KIRC_tumor_cl_shapiro)=rownames(tcga_KIRC_tumor_cl)
+colnames(tcga_KIRC_tumor_cl_shapiro)="shapiro_pv"
+
+#how many genes are not normal distributed?--> reminder: iuf pvalue>0.05, then not normal distributed
+length(which(tcga_KIRC_norm_cl_shapiro>0.05))#9135 (of 18941)
+
+#extract the gene names that are not normal distributed (=notnd)
+tcga_KIRC_norm_cl_notnd = c(names(which(tcga_KIRC_norm_cl_shapiro>0.05)))#?????????????????????????????????
+```
 
 ```{r}
-#paired ttest for each gene, to see if expression differs significant
-tcga_KIRC_Expr_tt_pv  = data.matrix(sapply ( 1:nrow(tcga_KIRC_tumor),function (x) {
-  t.test(tcga_KIRC_norm[x,],tcga_KIRC_tumor[x,],paired=TRUE)
+#paired wilcoxon test for each gene, to see if expression differs significant (wilcox because of non normality of half of the genes)
+tcga_KIRC_cl_Expr_tt_pv  = data.matrix(sapply ( 1:nrow(tcga_KIRC_tumor_cl),function (x) {
+  wilcox.test(tcga_KIRC_norm_cl[x,],tcga_KIRC_tumor_cl[x,],paired=TRUE)
 }$p.value))
-rownames(tcga_KIRC_Expr_tt_pv)=rownames(tcga_KIRC_norm)
-colnames(tcga_KIRC_Expr_tt_pv)="paired_tt_pvalue"
+rownames(tcga_KIRC_cl_Expr_tt_pv)=rownames(tcga_KIRC_norm_cl)
+colnames(tcga_KIRC_cl_Expr_tt_pv)="paired_tt_pvalue"
 #Bonferroni-Korrektur
-alpha=0.05/(nrow(tcga_KIRC_Expr_tt_pv))
+alpha=0.05/(nrow(tcga_KIRC_cl_Expr_tt_pv))
 ```
 
 
 ```{r}
-length(which(tcga_KIRC_Expr_tt_pv<alpha))
+length(which(tcga_KIRC_cl_Expr_tt_pv<alpha)) #approx 200 less than when calculating ttest for all genes
 
 ```
-```{r}
-length((which(tcga_KIRC_Expr_tt_pv_Bonf<0.05)))
-```
 
-```{r}
-#check Normality of each gene
-norm.all = data.matrix(sapply ( 1:50, function (x) {
-  shapiro.test(tcga_KIRC_norm[x,])
-}$p.value))
-```
+
+
 
 
 ```{r}
 shapiro.test(tcga_KIRC_tumor[1,])
 ```
-```{r}
-str(matrix(tcga_KIRC_norm[1,]))
-str(tcga_KIRC_norm[1,])
-```
+
 
