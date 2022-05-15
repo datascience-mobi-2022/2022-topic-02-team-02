@@ -71,3 +71,13 @@ min(tcga_exp_clean_var) #2.300057 yesssirrrr
 
 
 
+
+```{r}
+#rename tcga_exp columns according to patient names in tcga_annot 
+# ONLY RUN CHUNK ONCE!!!!!!!!
+
+tcga_exp_colnames_new = c(substr(colnames(tcga_exp_clean),1, nchar(colnames(tcga_exp_clean))-3))
+colnames(tcga_exp_clean) = tcga_exp_colnames_new
+
+```
+
