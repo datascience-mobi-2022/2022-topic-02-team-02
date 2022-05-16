@@ -47,35 +47,39 @@ vioplot(tcga_exp_clean_var, main = "Variance distribution", ylab = "variance"); 
 vioplot(tcga_exp_var, tcga_exp_clean_var, main = "Variance distribution", names = c("tcga_exp","tcga_exp_clean"), ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.5,68, "p50-quantile = threshold", col = "blue")
 ```
 
+
 ```{r}
-# compute mean expression fpr all genes
-tcga_exp_mean = apply(tcga_exp, 1, mean)
-# create data frame out of mean and variance vector since ggplot only takes this as input
-tcga_exp_meanvar = data.frame(tcga_exp_mean, tcga_exp_var)
-# mean/variance plot across all genes
-ggplot(tcga_exp_meanvar, aes(tcga_exp_mean, tcga_exp_var)) + geom_point(shape = ".",alpha=0.35)
+#create 3 dataframes for ggplot layering
+#variance and mean with ONLY protein coding genes
+tcga_exp_pc_var = apply(tcga_exp_protein_coding, 1, var)
+tcga_exp_pc_mean = apply(tcga_exp_protein_coding, 1, mean)
+#first layer(black): data frame with all mean/var
+tcga_exp_pc_meanvar = data.frame(tcga_exp_pc_mean, tcga_exp_pc_var)
+#second layer(blue): low variance genes 
+tcga_exp_pc_var_50 = which(tcga_exp_pc_var <= quantile(tcga_exp_pc_var,0.5))
+tcga_exp_pc_low_var = tcga_exp_pc_var[tcga_exp_pc_var_50]
+mean_for_low_var_pc = tcga_exp_pc_mean[tcga_exp_pc_var_50]
+tcga_exp_pc_low_meanvar = data.frame(mean_for_low_var_pc, tcga_exp_pc_low_var)
+#third layer(orange): high variance genes
+tcga_exp_pc_high_var = tcga_exp_pc_var[tcga_exp_pc_var > quantile(tcga_exp_pc_var, 0.99)]
+mean_for_high_var_pc = tcga_exp_pc_mean[names(tcga_exp_pc_high_var)]
+tcga_exp_pc_high_meanvar = data.frame(mean_for_high_var_pc, tcga_exp_pc_high_var)
 ```
 
 ```{r}
-#try mean/variance plot with 3 layers of data: 
-# 1) the removed low variance genes in grey
-tcga_exp_low_mean = tcga_exp_mean[tcga_exp_var_50]
-tcga_exp_low_var = tcga_exp_var[tcga_exp_var_50]
-tcga_exp_low_meanvar = data.frame(tcga_exp_low_mean, tcga_exp_low_var)
-# 2) "normal" mean/variance in black
-# 3) special outliers in orange
-tcga_exp_high_var = tcga_exp_var[tcga_exp_var > quantile(tcga_exp_var, 0.99)]
-mean_for_high_var = tcga_exp_mean[names(tcga_exp_high_var)]
-tcga_exp_high_meanvar = data.frame(mean_for_high_var, tcga_exp_high_var)
-#plot
-ggplot(tcga_exp_meanvar, aes(tcga_exp_mean, tcga_exp_var, color = 'Average-high variance genes')) + geom_point(shape = ".",alpha=0.35) + geom_point(data = tcga_exp_low_meanvar, aes(tcga_exp_low_mean, tcga_exp_low_var), color = "blue", shape = ".", alpha=0.4, color = 'Low variance genes')  + geom_point(data = tcga_exp_high_meanvar, aes(mean_for_high_var, tcga_exp_high_var), color = "orange", color = 'Very high variance genes', shape = ".") + geom_text_repel(data = tcga_exp_high_meanvar, aes(mean_for_high_var, tcga_exp_high_var), label = row.names(tcga_exp_high_meanvar), size = 2, show.legend = FALSE) + ggtitle("mean/variance plot before data cleaning") + theme(plot.title = element_text(hjust = 0.5)) + xlab("average gene expression") + ylab("variance") + scale_color_manual(name='Regression Model',
+#ggplot mean/var for proteincoding genes
+ggplot(tcga_exp_pc_meanvar, aes(tcga_exp_pc_mean, tcga_exp_pc_var, color = 'Average-high variance genes')) + #first layer black points
+  geom_point(shape = ".",alpha=0.35) + #parameters first layer
+  geom_point(data = tcga_exp_pc_low_meanvar, aes(mean_for_low_var_pc, tcga_exp_pc_low_var, color = 'Low variance genes'), color = "blue", shape = ".", alpha=0.4)  + #low variance layer
+  geom_point(data = tcga_exp_pc_high_meanvar, aes(mean_for_high_var_pc, tcga_exp_pc_high_var, color = 'Very high variance genes'), color = "orange", shape = ".") + #high variance layer
+  geom_text_repel(data = tcga_exp_pc_high_meanvar, aes(mean_for_high_var_pc, tcga_exp_pc_high_var), label = row.names(tcga_exp_pc_high_meanvar), size = 2, show.legend = FALSE) + #label outliers without overlapping
+  ggtitle("mean/variance plot for protein coding genes") + #plot title
+  theme(plot.title = element_text(hjust = 0.5)) + #parameters plot title
+  xlab("average gene expression") + 
+  ylab("variance") + 
+  scale_color_manual(name=' ',
                      breaks=c('Low variance genes', 'Average-high variance genes', 'Very high variance genes'),
-                     values=c('Low variance genes'='blue', 'Average-high variance genes'='black', 'Very high variance genes'='orange')) + guides(color = guide_legend(override.aes = list(size = 5)))
-#Legenden punkte werden nicht größer???
-```
-
-```{r}
-#new plot with lower high variance threshold?
-
+                     values=c('Low variance genes'='blue', 'Average-high variance genes'='black', 'Very high variance genes'='orange')) + #legend
+  guides(color = guide_legend(override.aes = list(size = 5))) #try to get bigger legend points
 ```
 
