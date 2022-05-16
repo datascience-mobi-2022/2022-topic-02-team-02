@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 #loag vioplot package
 library(vioplot)
+library(ggplot2)
+library(dplyr)
+library(ggrepel)
 ```
 
 
@@ -44,5 +47,35 @@ vioplot(tcga_exp_clean_var, main = "Variance distribution", ylab = "variance"); 
 vioplot(tcga_exp_var, tcga_exp_clean_var, main = "Variance distribution", names = c("tcga_exp","tcga_exp_clean"), ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.5,68, "p50-quantile = threshold", col = "blue")
 ```
 
+```{r}
+# compute mean expression fpr all genes
+tcga_exp_mean = apply(tcga_exp, 1, mean)
+# create data frame out of mean and variance vector since ggplot only takes this as input
+tcga_exp_meanvar = data.frame(tcga_exp_mean, tcga_exp_var)
+# mean/variance plot across all genes
+ggplot(tcga_exp_meanvar, aes(tcga_exp_mean, tcga_exp_var)) + geom_point(shape = ".",alpha=0.35)
+```
 
+```{r}
+#try mean/variance plot with 3 layers of data: 
+# 1) the removed low variance genes in grey
+tcga_exp_low_mean = tcga_exp_mean[tcga_exp_var_50]
+tcga_exp_low_var = tcga_exp_var[tcga_exp_var_50]
+tcga_exp_low_meanvar = data.frame(tcga_exp_low_mean, tcga_exp_low_var)
+# 2) "normal" mean/variance in black
+# 3) special outliers in orange
+tcga_exp_high_var = tcga_exp_var[tcga_exp_var > 45]
+mean_for_high_var = tcga_exp_mean[names(tcga_exp_high_var)]
+tcga_exp_high_meanvar = data.frame(mean_for_high_var, tcga_exp_high_var)
+#plot
+ggplot(tcga_exp_meanvar, aes(tcga_exp_mean, tcga_exp_var, color = 'Average-high variance genes')) + geom_point(shape = ".",alpha=0.35) + geom_point(data = tcga_exp_low_meanvar, aes(tcga_exp_low_mean, tcga_exp_low_var), color = "blue", shape = ".", alpha=0.4, color = 'Low variance genes')  + geom_point(data = tcga_exp_high_meanvar, aes(mean_for_high_var, tcga_exp_high_var), color = "orange", size = 0.3, color = 'Very high variance genes') + geom_text_repel(data = tcga_exp_high_meanvar, aes(mean_for_high_var, tcga_exp_high_var), label = row.names(tcga_exp_high_meanvar), size = 2, show.legend = FALSE) + ggtitle("mean/variance plot before data cleaning") + theme(plot.title = element_text(hjust = 0.5)) + xlab("average gene expression") + ylab("variance") + scale_color_manual(name='Regression Model',
+                     breaks=c('Low variance genes', 'Average-high variance genes', 'Very high variance genes'),
+                     values=c('Low variance genes'='blue', 'Average-high variance genes'='black', 'Very high variance genes'='orange')) + guides(color = guide_legend(override.aes = list(size = 5)))
+#Legenden punkte werden nicht größer???
+```
+
+```{r}
+#new plot with lower high variance threshold?
+
+```
 

@@ -1,0 +1,128 @@
+---
+title: "Biomart"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#data upload
+tcga_exp = readRDS("../data/tcga_tumor_log2TPM.RDS")
+tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
+library(biomaRt)
+install.packages("dplyr")
+library(dplyr)
+```
+
+
+```{r}
+##biotypes of the tcga_exp dataset
+gene_identifier = strsplit(rownames(tcga_exp), split = "|", fixed = TRUE)
+
+genes_ens<- sapply(gene_identifier, FUN = function(gene_identifier){
+  ens = gene_identifier[1]
+  return(ens)
+})
+
+genes_symbol<- sapply(gene_identifier, FUN = function(gene_identifier){
+  ens = gene_identifier[2]
+  return(ens)
+})
+
+genes_ens_vn <- strsplit(genes_ens, split = ".", fixed = TRUE)
+genes_ensembl <- sapply(genes_ens_vn, FUN = function(genes_ens_vn){
+  ens = genes_ens_vn[1]
+  return(ens)
+})
+
+mart = useEnsembl(dataset = "hsapiens_gene_ensembl", biomart='ensembl')
+
+list_biotype = getBM(attributes = c("ensembl_gene_id", "gene_biotype"), filters = "ensembl_gene_id", 
+                                    values = genes_ensembl, mart = mart, useCache = FALSE)
+
+View(list_biotype)
+# dim = 56520 x 2 --> für manche gene kein biotype
+```
+
+
+```{r}
+#extract expression data of KIRK cancer type, divided into tumor normal and annotation data, one data frame each
+tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
+tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
+tcga_KIRC_annot = data.matrix(tcga_tumor_norm[["KIRC"]][["clinical"]])
+
+```
+
+
+```{r}
+tcga_exp = readRDS("../data/tcga_tumor_log2TPM.RDS")
+tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
+library(biomaRt)
+```
+
+
+```{r}
+##biotypes of the tcga_KIRC_tumor dataset
+gene_identifier_tumor = strsplit(rownames(tcga_KIRC_tumor), split = "|", fixed = TRUE)
+
+genes_ens_tumor<- sapply(gene_identifier_tumor, FUN = function(gene_identifier_tumor){
+  ens = gene_identifier_tumor[1]
+  return(ens)
+})
+
+genes_symbol_tumor<- sapply(gene_identifier_tumor, FUN = function(gene_identifier_tumor){
+  ens = gene_identifier_tumor[2]
+  return(ens)
+})
+
+genes_ens_vn_tumor <- strsplit(genes_ens_tumor, split = ".", fixed = TRUE)
+genes_ensembl_tumor <- sapply(genes_ens_vn_tumor, FUN = function(genes_ens_vn_tumor){
+  ens = genes_ens_vn_tumor[1]
+  return(ens)
+})
+
+mart = useEnsembl(dataset = "hsapiens_gene_ensembl", biomart='ensembl')
+
+list_biotype_tumor = getBM(attributes = c("ensembl_gene_id", "gene_biotype"), filters = "ensembl_gene_id", 
+                                    values = genes_ensembl_tumor, mart = mart, useCache = FALSE)
+
+#View(list_biotype_tumor)
+#dim(list_biotype_tumor) = 19349 x 2 --> für manche gene kein biotype in der datenbank, Lösung überlegen?
+
+```
+```{r}
+#filter for protein coding genes in tcga_exp
+tcga_biotype_filter = as.matrix(list_biotype[which(list_biotype$gene_biotype=="protein_coding"),])
+dim(tcga_protein_coding)
+rownames(tcga_exp) = genes_ensembl
+tcga_exp_protein_coding = tcga_exp[tcga_biotype_filter[,1],]
+dim(tcga_exp_protein_coding)
+
+#filter for protein coding genes in tcga_KIRC_tumor and norm
+tcga_biotype_filter_tumor = as.matrix(list_biotype_tumor[which(list_biotype_tumor$gene_biotype=="protein_coding"),])
+dim(tcga_biotype_filter_tumor) #19186
+rownames(tcga_KIRC_tumor) = genes_ensembl_tumor
+tcga_KIRC_tumor_protein_coding = tcga_KIRC_tumor[tcga_biotype_filter_tumor[,1],]
+dim(tcga_KIRC_tumor_protein_coding)
+
+rownames(tcga_KIRC_norm) = genes_ensembl_tumor
+tcga_KIRC_norm_protein_coding = tcga_KIRC_norm[tcga_biotype_filter_tumor[,1],]
+dim(tcga_KIRC_norm_protein_coding)
+
+#nicht proteinkodierende gene tcga_exp
+tcga_exp_non_protein_coding = tcga_exp[!rownames(tcga_exp)%in%rownames(tcga_exp_protein_coding),]
+dim(tcga_exp_non_protein_coding)
+
+
+#nicht proteinkodierende gene tumor
+tcga_KIRC_tumor_non_protein_coding = tcga_KIRC_tumor[!rownames(tcga_KIRC_tumor)%in%rownames(tcga_KIRC_norm_protein_coding),]
+dim(tcga_KIRC_tumor_non_protein_coding)
+
+#nicht proteinkodierende gene normal
+tcga_KIRC_norm_non_protein_coding = tcga_KIRC_norm[!rownames(tcga_KIRC_norm)%in%rownames(tcga_KIRC_norm_protein_coding),]
+dim(tcga_KIRC_norm_non_protein_coding)
+
+```
+
