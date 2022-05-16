@@ -193,13 +193,21 @@ colnames(mean_all) = tumornames
 
 tumornames = data.frame("ACC","BLCA","BRCA","CESC","CHOL","COAD","DLBC","ESCA","GBM","HNSC","KICH","KIRC","KIRP","LAML","LGG","LIHC","LUAD","LUSC","MESO","OV","PAAD","PCPG","PRAD","READ","SARC","SKCM","STAD","TGCT","THCA","THYM","UCEC","UCS","UVM")
 
-boxplot_mean = 
-ggplot(data = melt(mean_all), aes(x = variable, y =value))+
-         geom_boxplot()
+boxplot_mean =
+ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y =value, colour = variable))+
+  geom_boxplot()+
+  stat_summary(fun = mean, geom="point", colour = "blue", size=0.7)+
+  ggtitle("mean expression of all tumortypes")+
+  ylab ("mean expression values")+
+  xlab("tumor types")+
+  theme(plot.title = element_text(size = 12))+
+  theme(axis.title.x = element_text(size = 12))+
+  theme(axis.title.y = element_text(size = 12))
 
-boxplot_mean + coord_flip()
+  boxplot_mean + coord_flip()
                 
-
+#fill = variable instead of colour
+  
 #ACC,BLCA,BRCA,CESC,CHOL,COAD,DLBC,ESCA,GBM,HNSC,KICH,KIRC,KIRP,LAML,LGG,LIHC,LUAD,LUSC,MESO,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC,UCS,UVM
 ```
 
