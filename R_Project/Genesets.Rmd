@@ -12,9 +12,38 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(msigdbr)
 library(biomaRt)
+library(vissE)
+library(GeneOverlap)
 ```
+
 ```{r}
 #load data
 genesets = readRDS("../data/hallmarks_genesets.rds")
+```
+
+
+```{r}
+first_23 = genesets[[1]][1:23]
+last_23 = genesets[[1]][24:46]
+```
+
+```{r}
+computeMsigOverlap(first_23,last_23,measure = "jaccard")
+
+go.matrix = newGOM(first_23, last_23, genome.size = NULL)
+par(mar = c(1, 1, 1, 1)) 
+drawHeatmap(go.matrix, what="Jaccard",ncolused=5)
+```
+
+
+```{r}
+#teste geneOverlap mit ersten beiden genesets aus den jeweiligen listen
+go = newGeneOverlap(first_23[[1]][1:337], last_23[[1]][1:1086], genome.size = NULL)
+go.test = testGeneOverlap(go)
+getJaccard(go.test) #print jaccard value
+#teste nun mit geneOverlapMatrix funktion für alle genesets
+go.matrix = newGOM(first_23, last_23, genome.size = NULL)
+par(mar = c(1, 1, 1, 1)) 
+drawHeatmap(go.matrix, what="Jaccard",ncolused=5) #problem: "igure margins too large"
 ```
 
