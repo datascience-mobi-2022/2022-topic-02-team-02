@@ -42,8 +42,14 @@ go = newGeneOverlap(first_23[[1]][1:337], last_23[[1]][1:1086], genome.size = NU
 go.test = testGeneOverlap(go)
 getJaccard(go.test) #print jaccard value
 #teste nun mit geneOverlapMatrix funktion für alle genesets
-go.matrix = newGOM(first_23, last_23, genome.size = NULL)
-par(mar = c(1, 1, 1, 1)) 
-drawHeatmap(go.matrix, what="Jaccard",ncolused=5) #problem: "igure margins too large"
+go.matrix = newGOM(first_23, last_23)
+drawHeatmap(go.matrix, what="Jaccard",ncolused=5) #problem: "figure margins too large"
+```
+
+```{r}
+# try with all 46 on self
+all.genesets = as.list(genesets[[1]])
+overlap.matrix = newGOM(all.genesets)
+drawHeatmap(overlap.matrix, what = "Jaccard", ncolused=3)
 ```
 
