@@ -49,10 +49,16 @@ violin_clean = ggplot(tcga_exp_prc_clean_var_df, aes(tcga_exp_prc_clean_var,y=1)
   geom_vline(xintercept = tcga_prc_var_p50, color = "blue") +
   annotate("text", x = 10, y=1.4, label = "p50-quantile", color = "blue")
 violin_clean
+```
 
+
+```{r}
 #plot data before and after cleaning (only var<q50) next to each other
 library(reshape2)
 melting = cbind(tcga_prc_var_df, tcga_exp_prc_clean_var_df)
+#rename columns to get the right annotation
+colnames(melting) = c("Gene expression", "Gene expression after cleaning")
+
 melting2 =melt(melting)
 
 update_geom_defaults("point",list(size=0.00003))
@@ -69,6 +75,9 @@ violin_combined = ggplot(melting2, aes(x = variable,y=value))+
   
 violin_combined
 ```
+
+
+
 
 
 
