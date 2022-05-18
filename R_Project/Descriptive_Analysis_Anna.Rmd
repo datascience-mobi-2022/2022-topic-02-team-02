@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
-#tcga_exp_colnames_new = c(substr(colnames(tcga_exp_protein_coding),1, nchar(colnames(tcga_exp_protein_coding))-3))
+tcga_exp_colnames_new = c(substr(colnames(tcga_exp_protein_coding),1, nchar(colnames(tcga_exp_protein_coding))-3))
 colnames(tcga_exp_protein_coding) = tcga_exp_colnames_new
 ```
 
@@ -188,13 +188,18 @@ View(UVM_mean)
 
 ```{r}
 mean_all =as.data.frame(cbind(ACC_mean,BLCA_mean,BRCA_mean,CESC_mean,CHOL_mean,COAD_mean,DLBC_mean,ESCA_mean,GBM_mean,HNSC_mean,KICH_mean,KIRC_mean,KIRP_mean,LAML_mean,LGG_mean,LIHC_mean,LUAD_mean,LUSC_mean,MESO_mean,OV_mean,PAAD_mean,PCPG_mean,PRAD_mean,READ_mean,SARC_mean,SKCM_mean,STAD_mean,TGCT_mean,THCA_mean,THYM_mean,UCEC_mean,UCS_mean,UVM_mean))
-colnames(mean_all) = tumornames
+
 #View(mean_all)
 
 tumornames = data.frame("ACC","BLCA","BRCA","CESC","CHOL","COAD","DLBC","ESCA","GBM","HNSC","KICH","KIRC","KIRP","LAML","LGG","LIHC","LUAD","LUSC","MESO","OV","PAAD","PCPG","PRAD","READ","SARC","SKCM","STAD","TGCT","THCA","THYM","UCEC","UCS","UVM")
 
+colnames(mean_all) = tumornames
+
+library(reshape2)
+
+  
 boxplot_mean =
-ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y =value, colour = variable))+
+ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y =value, fill = variable))+
   geom_boxplot()+
   stat_summary(fun = mean, geom="point", colour = "blue", size=0.7)+
   ggtitle("mean expression of all tumortypes")+
@@ -203,8 +208,10 @@ ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y
   theme(plot.title = element_text(size = 12))+
   theme(axis.title.x = element_text(size = 12))+
   theme(axis.title.y = element_text(size = 12))
+  
 
   boxplot_mean + coord_flip()
+  
                 
 #fill = variable instead of colour
   
