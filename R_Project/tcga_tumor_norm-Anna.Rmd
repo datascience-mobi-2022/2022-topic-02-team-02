@@ -146,22 +146,23 @@ colnames(tcga_KIRC_tumor_cl_shapiro)="shapiro_pv"
 
 #how many genes are not normal distributed?--> reminder: if p-value>0.05, then not normal distributed
 length(which(tcga_KIRC_norm_cl_shapiro>0.05))#10407 (of 18941)
-
+norm_notnd=which(tcga_KIRC_norm_cl_shapiro>0.05)
 #extract the gene names that are not normal distributed (=notnd)/normal distrtibuted
-tcga_KIRC_norm_cl_notnd = as.matrix((tcga_KIRC_norm_cl_shapiro[(which(tcga_KIRC_norm_cl_shapiro>0.05)),]))
-tcga_KIRC_norm_cl_nd= as.matrix((tcga_KIRC_norm_cl_shapiro[-(which(tcga_KIRC_norm_cl_shapiro>0.05)),]))
-nrow(tcga_KIRC_norm_cl_shapiro)==nrow(tcga_KIRC_norm_cl_nd)+nrow(tcga_KIRC_norm_cl_notnd)#TRUE--> it worked
+tcga_KIRC_norm_cl_sh_notnd = as.matrix((tcga_KIRC_norm_cl_shapiro[norm_notnd,]))
+tcga_KIRC_norm_cl_sh_nd= as.matrix((tcga_KIRC_norm_cl_shapiro[-norm_notnd,]))
+nrow(tcga_KIRC_norm_cl_shapiro)==nrow(tcga_KIRC_norm_cl_sh_nd)+nrow(tcga_KIRC_norm_cl_sh_notnd)#TRUE--> it worked
 #same for tumor data
-
-tcga_KIRC_tumor_cl_notnd = as.matrix((tcga_KIRC_tumor_cl_shapiro[(which(tcga_KIRC_tumor_cl_shapiro>0.05)),]))
-tcga_KIRC_tumor_cl_nd= as.matrix((tcga_KIRC_tumor_cl_shapiro[-(which(tcga_KIRC_tumor_cl_shapiro>0.05)),]))
+tumor_notnd=which(tcga_KIRC_tumor_cl_shapiro>0.05)
+tcga_KIRC_tumor_cl_sh_notnd = as.matrix((tcga_KIRC_tumor_cl_shapiro[tumor_notnd,]))
+tcga_KIRC_tumor_cl_sh_nd= as.matrix((tcga_KIRC_tumor_cl_shapiro[-tumor_notnd,]))
+nrow(tcga_KIRC_tumor_cl_shapiro)==nrow(tcga_KIRC_tumor_cl_nd)+nrow(tcga_KIRC_tumor_cl_notnd)
 ```
 ```{r}
 #wilcoxon test if one of the data of gene expressionn is not normal distributed; if both are normal distributed--> ttest
 #extract ´gene names that are not normal distributed in normal tissue and/or tumor tissue
 
-tcga_KIRC_norm_cl_notnd_names = c(rownames(tcga_KIRC_norm_cl_notnd))#rownames of not normal distributed genes in normal tissue
-tcga_KIRC_tumor_cl_notnd_names = c(rownames(tcga_KIRC_tumor_cl_notnd))# in tumor tissue
+tcga_KIRC_norm_cl_notnd_names = c(rownames(tcga_KIRC_norm_cl_sh_notnd))#rownames of not normal distributed genes in normal tissue
+tcga_KIRC_tumor_cl_notnd_names = c(rownames(tcga_KIRC_tumor_cl_sh_notnd))# in tumor tissue
 tcga_KIRC_cl_notnd_names = c(tcga_KIRC_norm_cl_notnd_names,tcga_KIRC_tumor_cl_notnd_names)#tumor and normal tissue
 
 #extract gene expression data for genes that are nd in normal tissue
@@ -211,7 +212,7 @@ sum(tcga_KIRC_tumor_cl_nd[3791,]-tcga_KIRC_norm_cl_nd[3791,])
 #Combine both matrices of pvalues (wilcox and ttest) and FC
 tcga_KIRC_cl_pv = rbind(tcga_KIRC_cl_Expr_tt_pv, tcga_KIRC_cl_Expr_wilcox_pv)
 #order the matrix according to gene names because otherwise no matching with FC matrix(as the pv matrix is ordered by nd and not nd genes)
-tcga_KIRC_cl_pv_ord = data.matrix(tcga_KIRC_pv[ order(row.names(tcga_KIRC_pv)), ])
+tcga_KIRC_cl_pv_ord = data.matrix(tcga_KIRC_cl_pv[ order(row.names(tcga_KIRC_cl_pv)), ])
 #ordering the FC matrix as well to match the values according to ordered pv matrix
 tcga_KIRC_cl_abs_logFC_ord = data.matrix(tcga_KIRC_cl_abs_logFC[ order(row.names(tcga_KIRC_cl_abs_logFC)), ])
 colnames(tcga_KIRC_cl_abs_logFC_ord) = "log2_FC"
@@ -224,7 +225,7 @@ sum(is.na(tcga_KIRC_cl_Expr_tt_pv))
 ```
 ```{r}
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv = -log10(alpha)#=9.84, cut off later in plot 
+cutoffpv = -log10(alpha)#=5.06, cut off later in plot 
 tcga_KIRC_cl_pv_FC_sig = tcga_KIRC_cl_pv_FC[which(tcga_KIRC_cl_pv_FC$neg_log10_pv>cutoffpv),]
 min(tcga_KIRC_cl_pv_FC_sig$neg_log10_pv)
 #upregulated genes (FC >1) of the sig diff expressed genes (blue in nplot)
@@ -237,7 +238,7 @@ tcga_KIRC_cl_pv_FC_sigup = tcga_KIRC_cl_pv_FC_sig[which(tcga_KIRC_cl_pv_FC_sig$l
 library(ggplot2)
 #plotting
 ggplot(tcga_KIRC_cl_pv_FC, aes(log2_FC,neg_log10_pv, color = "non-significant genes"))+
-  geom_point(alpha=0.35, size =0.3)+
+  geom_point( size =0.3)+
   geom_point(data= tcga_KIRC_cl_pv_FC_sig, aes(log2_FC, neg_log10_pv, color = "downregulated genes"), size=0.3, color = "orange")+
   geom_point(data = tcga_KIRC_cl_pv_FC_sigup, aes(log2_FC,neg_log10_pv, color = "upregulated genes"), size=0.3, color = "blue")+
   ggtitle("gene expression normal vs tumor tissue ")+
@@ -250,4 +251,7 @@ ggplot(tcga_KIRC_cl_pv_FC, aes(log2_FC,neg_log10_pv, color = "non-significant ge
 
 ```
 
+```{r}
+hist(tcga_KIRC_cl_pv, breaks= 100); abline(v=alpha, col ="orange"); abline(v=0.05, col = "blue")
+```
 
