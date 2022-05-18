@@ -38,12 +38,13 @@ drawHeatmap(go.matrix, what="Jaccard",ncolused=5)
 
 ```{r}
 #teste geneOverlap mit ersten beiden genesets aus den jeweiligen listen
-go = newGeneOverlap(first_23[[1]][1:337], last_23[[1]][1:1086], genome.size = NULL)
-go.test = testGeneOverlap(go)
-getJaccard(go.test) #print jaccard value
+#print jaccard value getJaccard()
 #teste nun mit geneOverlapMatrix funktion für alle genesets
 go.matrix = newGOM(first_23, last_23)
 drawHeatmap(go.matrix, what="Jaccard",ncolused=5) #problem: "figure margins too large"
+j = as.data.frame(unlist(go.matrix@go.nested.list))
+go.matrix@go.nested.list@Jaccard
+
 ```
 
 ```{r}
@@ -51,5 +52,13 @@ drawHeatmap(go.matrix, what="Jaccard",ncolused=5) #problem: "figure margins too 
 all.genesets = as.list(genesets[[1]])
 overlap.matrix = newGOM(all.genesets)
 drawHeatmap(overlap.matrix, what = "Jaccard", ncolused=3)
+```
+
+
+
+```{r}
+geneset.matrix = as.matrix(genesets[["genesets"]])
+
+
 ```
 
