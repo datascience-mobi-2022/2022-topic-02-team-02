@@ -78,8 +78,8 @@ ggplot(tcga_exp_pc_meanvar, aes(tcga_exp_pc_mean, tcga_exp_pc_var, color = 'Aver
   xlab("average gene expression") + 
   ylab("variance") + 
   scale_color_manual(name=' ',
-                     breaks=c('Low variance genes', 'Average-high variance genes', 'Very high variance genes'),
-                     values=c('Low variance genes'='blue', 'Average-high variance genes'='black', 'Very high variance genes'='orange')) + guides(colour = guide_legend(override.aes = list(size = 5))) #try to get bigger legend points
+                     breaks=c('Very high variance genes', 'Average-high variance genes', 'Low variance genes'),
+                     values=c('Very high variance genes'='blue', 'Average-high variance genes'='black', 'Low variance genes'='orange')) + guides(colour = guide_legend(override.aes = list(size = 5))) #try to get bigger legend points
 ```
 
 
