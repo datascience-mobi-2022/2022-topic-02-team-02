@@ -17,7 +17,7 @@ tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
 #extract expression data of KIRK cancer type, divided into tumor normal and annotation data, one data frame each
 tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
 tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
-tcga_KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]])
+tcga_KIRC_annot = data.matrix(tcga_tumor_norm[["KIRC"]][["clinical"]])
 ```
 
 ```{r}
@@ -86,10 +86,10 @@ dim(tcga_KIRC_tumor_cl)
 ```
 
 
-```{r}#
+```{r}
 #rename colnames of norm and tumor KIRC data frame
 #ONLY RUN first line ONCE!!!!!!!!
-tcga_KIRC_norm_colnames = c(substr(colnames(tcga_KIRC_norm),1, nchar(colnames(tcga_KIRC_norm))-3))
+#tcga_KIRC_norm_colnames = c(substr(colnames(tcga_KIRC_norm),1, nchar(colnames(tcga_KIRC_norm))-3))
 colnames(tcga_KIRC_norm_cl) = tcga_KIRC_norm_colnames #first tcga_KIRC_norm
 colnames(tcga_KIRC_tumor_cl) = tcga_KIRC_norm_colnames #same for tcga_KIRC_tumor
 
@@ -184,8 +184,3 @@ ggplot(tcga_KIRC_cl_pv_FC, aes(KIRC_logfoldchange,neg_log10_pv, color = "non-sig
 
 
 ```
-
-```{r}
-plot(hist(tcga_KIRC_cl_Expr_wilcox_pv, breaks = 50));abline(v=alpha, col ="orange");abline(v = 0.05, col = "blue")
-```
-
