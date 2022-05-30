@@ -1,0 +1,35 @@
+---
+title: "Metabolic genesets"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(msigdbr)
+```
+
+```{r}
+#Extracting genesets for Carbohydrate, Amino acid and nucleotide metabolism as well as glycolysis
+Homo_sapiensCPR = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:REACTOME")
+Carbohydrates = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M16864",] #303 genes
+
+Homo_sapiensCGP = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CGP")
+Glycolysis = Homo_sapiensCGP[Homo_sapiensCGP$gs_id=="M16111",] #22 genes
+
+Homo_sapiensC2 = msigdbr(species = "Homo sapiens", category = "C2")
+Amino_Acid = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39570",] #102 genes
+dim(Amino_Acid)
+
+Nucleotide = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39663",] #19 genes
+```
+
+```{r}
+#next adapt format to hallmark genesets and extract the genes from our filtered matrix
+
+
+```
+
