@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(msigdbr)
+genesets = readRDS("../data/hallmarks_genesets.rds")
 ```
 
 ```{r}
@@ -29,7 +30,16 @@ Nucleotide = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39663",] #19 genes
 
 ```{r}
 #next adapt format to hallmark genesets and extract the genes from our filtered matrix
+carbohydrates_genesymbols = Carbohydrates$human_gene_symbol
+glycolysis_genesymbols = Glycolysis$human_gene_symbol
+amino_Acid_genesymbols = Amino_Acid$human_gene_symbol
+nucleotide_genesymbols = Nucleotide$human_gene_symbol
 
+metabolic_pathways = list(
+  carbohydrate = carbohydrates_genesymbols,
+  glycolysis = glycolysis_genesymbols,
+  amini_acid = amino_Acid_genesymbols,
+  nucleotide = nucleotide_genesymbols)
 
 ```
 
