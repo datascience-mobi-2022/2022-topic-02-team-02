@@ -29,12 +29,19 @@ KIRC_cl = tcga_KIRC_tumor_protein_coding[rownames(tcga_KIRC_tumor_protein_coding
 ```{r}
 KIRC_pca = prcomp(t(KIRC_cl))#, center = F, scale. = F???
 length(KIRC_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
+```
+
+
+```{r}
+#kommt später nochmal mit funktion deswegen unnötig aber mal da gelassen
 #plotting the variance that is explained by each PC
 KIRC_pca_variance = (KIRC_pca$sdev)^2
 KIRC_pca_prop.variance = KIRC_pca_variance/sum(KIRC_pca_variance) #calculating the proportion of variance taht is explained by PC ("In linear algebra, the rank of a matrix A is the dimension of the vector space generated (or spanned) by its columns. This corresponds to the maximal number of linearly independent columns of A")
 names(KIRC_pca_prop.variance) = 1:length(KIRC_pca_prop.variance)
 barplot(KIRC_pca_prop.variance[1:72],ylab='Proportion of variance', xlab = "Principal Components") # we only plot the first 20 PCs
 ```
+
+
 ```{r}
 KIRC_pca_x = data.frame(KIRC_pca[["x"]])
 #plot the data (patients) in the first principal components
@@ -45,13 +52,44 @@ ggplot(KIRC_pca_x, aes(PC1, PC2))+
   geom_point( size =2, color = KIRC_gender)+
    ggtitle("PCA with regard to gender ")
 
-KIRC_tumorstatus = ifelse(tcga_KIRC_annot$tumor_status == "TUMOR FREE", "red", "blue")
+ggplot(KIRC_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_gender)+
+   ggtitle("PCA with regard to gender ")
+
+KIRC_tumorstatus = ifelse(tcga_KIRC_annot$tumor_status == "TUMOR FREE", "red", "blue") #tumor free or with tumor
 sum(tcga_KIRC_annot$tumor_status=="TUMOR FREE")
 
 ggplot(KIRC_pca_x, aes(PC1, PC2))+
   geom_point( size =2, color = KIRC_tumorstatus)+
   ggtitle("PCA with regard to tumorstatus ")
 
+ggplot(KIRC_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_tumorstatus)+
+  ggtitle("PCA with regard to tumorstatus ")
+
+KIRC_tumorstage = ifelse(tcga_KIRC_annot$ajcc_pathologic_tumor_stage == "Stage IV", "red", "blue") #cancer stage I-III or IV
+sum(tcga_KIRC_annot$ajcc_pathologic_tumor_stage == "Stage IV")
+
+ggplot(KIRC_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_tumorstage)+
+  ggtitle("PCA with regard to tumorstage ")
+
+ggplot(KIRC_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_tumorstage)+
+  ggtitle("PCA with regard to tumorstage ")
+
+mean(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis)#62.51 as mean--> visualization of age with cut off at age 63 
+KIRC_age = ifelse(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis < 63, "red", "blue") #cancer stage I-III or IV
+sum(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis < 63)
+
+ggplot(KIRC_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_age)+
+  ggtitle("PCA with regard to age at initial pathologic diagnosis ")
+
+
+ggplot(KIRC_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_age)+
+  ggtitle("PCA with regard to age at initial pathologic diagnosis ")
 ```
 ```{r}
 #same as before but with package
@@ -60,18 +98,23 @@ library("factoextra")
 KIRC_pca_eigval = get_eigenvalue(KIRC_pca)
 rownames(KIRC_pca_eigval) = colnames (KIRC_pca_x)
 barplot(KIRC_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
-
 ```
+
+
 
 ```{r}
 fviz_pca_var(KIRC_pca, col.var = "black")
 fviz_contrib(KIRC_pca, choice = "var", axes = 1, top = 50)
-```
-```{r}
-KIRC_annot_matrix = data.matrix(KIRC_annot)
+
+KIRC_annot_matrix = data.matrix(tcga_KIRC_annot)
 KIRC_annot_matrix_na = data.matrix(t(sapply(1:ncol(KIRC_annot_matrix), function(x){
   sum(is.na(KIRC_annot_matrix[,x]))
   })))
+```
+
+
+```{r}
+#pca for annotations--> was a try but in the end pointless
 KIRC_annot_matrix= KIRC_annot_matrix[,-which(KIRC_annot_matrix_na>0)]
 KIRC_annot_pca = prcomp(KIRC_annot_matrix)
 
