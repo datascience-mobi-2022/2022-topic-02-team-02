@@ -1,0 +1,22 @@
+---
+title: "PCA_pan_cancer"
+author: "Linda Blaier"
+date: '2022-05-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# work with tcga_exp_prc_clean -> w/o low variable under p50
+dim (tcga_exp_prc_clean)
+tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
+pca_var = tcga_exp_pca$sdev^2
+proportion_pca_var = pca_var/sum(pca_var)
+names_prop_pca_var = 1:length(proportion_pca_var)
+barplot(proportion_pca_var[1:20])
+tcga_exp_pca$sdev
+```
+
