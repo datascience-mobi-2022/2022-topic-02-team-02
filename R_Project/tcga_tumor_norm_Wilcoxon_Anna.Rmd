@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
 ```{r}
 #Load data
 tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
