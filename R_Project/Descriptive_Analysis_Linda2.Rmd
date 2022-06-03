@@ -16,7 +16,7 @@ library(ggplot2)
 ```{r}
 #remove last 3 characters, run ONLY once!
 
-#tcga_exp_protein_coding_new = c(substr(colnames(tcga_exp_protein_coding),1, nchar(colnames(tcga_exp_protein_coding))-3))
+#tcga_exp_protein_coding_new = c(substr(colnames(tcga_exp_protein_coding),1, #nchar(colnames(tcga_exp_protein_coding))-3))
 #colnames(tcga_exp_protein_coding) = tcga_exp_protein_coding_new
 
 #dim(tcga_exp_protein_coding)
