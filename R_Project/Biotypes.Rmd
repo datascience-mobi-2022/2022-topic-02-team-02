@@ -117,3 +117,11 @@ tcga_KIRC_norm_non_protein_coding = tcga_KIRC_norm[!rownames(tcga_KIRC_norm)%in%
 
 ```
 
+
+```{r}
+#Remove low variance genes of only protein coding genes (p50 quantile)
+tcga_exp_pc_var = apply(tcga_exp_protein_coding, 1, var) #compute variance
+tcga_exp_pc_var_50 = which(tcga_exp_pc_var <= quantile(tcga_exp_pc_var,0.5)) #select lower p50 quantile
+tcga_exp_cleaned = tcga_exp_protein_coding[-tcga_exp_pc_var_50,] # remove low variance genes
+```
+
