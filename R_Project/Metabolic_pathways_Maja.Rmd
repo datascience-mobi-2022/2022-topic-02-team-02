@@ -11,7 +11,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(msigdbr)
+library(scrime)
+library(fgsea)
+library(biomaRt)
 ```
+
+```{r}
+load(file = "tcga_exp_cleaned.Rdata")
+```
+
 
 ```{r}
 # Obtaining gene sets from msigdb for Carbohydrate metabolism
@@ -62,5 +70,177 @@ Steroid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5872",]
 
 #Steroid hormones
 Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
+```
+
+
+```{r}
+#split annotation dataframe via tumor types
+tcga_annot_ACC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ACC"),]
+tcga_annot_BLCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BLCA"),]
+tcga_annot_BRCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BRCA"),]
+tcga_annot_CESC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CESC"),]
+tcga_annot_CHOL = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CHOL"),]
+tcga_annot_COAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="COAD"),]
+tcga_annot_DLBC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="DLBC"),]
+tcga_annot_ESCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ESCA"),]
+tcga_annot_GBM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="GBM"),]
+tcga_annot_HNSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="HNSC"),]
+tcga_annot_KICH = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KICH"),]
+tcga_annot_KIRC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRC"),]
+tcga_annot_KIRP = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRP"),]
+tcga_annot_LAML = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LAML"),]
+tcga_annot_LGG = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LGG"),]
+tcga_annot_LIHC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LIHC"),]
+tcga_annot_LUAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUAD"),]
+tcga_annot_LUSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUSC"),]
+tcga_annot_MESO = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="MESO"),]
+tcga_annot_OV = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="OV"),]
+tcga_annot_PAAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PAAD"),]
+tcga_annot_PCPG= tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PCPG"),]
+tcga_annot_PRAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PRAD"),]
+tcga_annot_READ = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="READ"),]
+tcga_annot_SARC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SARC"),]
+tcga_annot_SKCM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SKCM"),]
+tcga_annot_STAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="STAD"),]
+tcga_annot_TGCT = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="TGCT"),]
+tcga_annot_THCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THCA"),]
+tcga_annot_THYM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THYM"),]
+tcga_annot_UCEC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCEC"),]
+tcga_annot_UCS = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCS"),]
+tcga_annot_UVM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UVM"),]
+```
+
+```{r}
+#create single dataframes for each tumor type with FINAL CLEAN TCGA dataframe
+tcga_exp_ACC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_ACC$sample]
+tcga_exp_BLCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_BLCA$sample]
+tcga_exp_BRCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_BRCA$sample]
+tcga_exp_CESC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_CESC$sample]
+tcga_exp_CHOL = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_CHOL$sample]
+tcga_exp_COAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_COAD$sample]
+tcga_exp_DLBC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_DLBC$sample]
+tcga_exp_ESCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_ESCA$sample]
+tcga_exp_GBM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_GBM$sample]
+tcga_exp_HNSC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_HNSC$sample]
+tcga_exp_KICH = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KICH$sample]
+tcga_exp_KIRC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KIRC$sample]
+tcga_exp_KIRP = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KIRP$sample]
+tcga_exp_LAML = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LAML$sample]
+tcga_exp_LGG = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LGG$sample]
+tcga_exp_LIHC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LIHC$sample]
+tcga_exp_LUAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LUAD$sample]
+tcga_exp_LUSC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LUSC$sample]
+tcga_exp_MESO = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_MESO$sample]
+tcga_exp_OV = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_OV$sample]
+tcga_exp_PAAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PAAD$sample]
+tcga_exp_PCPG = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PCPG$sample]
+tcga_exp_PRAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PRAD$sample]
+tcga_exp_READ = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_READ$sample]
+tcga_exp_SARC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_SARC$sample]
+tcga_exp_SKCM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_SKCM$sample]
+tcga_exp_STAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_STAD$sample]
+tcga_exp_TGCT = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_TGCT$sample]
+tcga_exp_THCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_THCA$sample]
+tcga_exp_THYM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_THYM$sample]
+tcga_exp_UCEC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UCEC$sample]
+tcga_exp_UCS = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UCS$sample]
+tcga_exp_UVM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UVM$sample]
+
+```
+
+```{r}
+#Compute z transformation
+
+#tcga_exp_ACC_scale = apply(tcga_exp_ACC, 1, scale) #scaling
+#ACC_z = as.data.frame(t(tcga_exp_ACC_z)) #transposing
+#colnames(ACC_z) = colnames(tcga_exp_ACC) #retrieving colnames#
+
+ACC_z = as.data.frame(rowScales(tcga_exp_ACC))
+BLCA_z = as.data.frame(rowScales(tcga_exp_BLCA))
+BRCA_z = as.data.frame(rowScales(tcga_exp_BRCA))
+CESC_z = as.data.frame(rowScales(tcga_exp_CESC))
+CHOL_z = as.data.frame(rowScales(tcga_exp_CHOL))
+COAD_z = as.data.frame(rowScales(tcga_exp_COAD))
+DLBC_z = as.data.frame(rowScales(tcga_exp_DLBC))
+ESCA_z = as.data.frame(rowScales(tcga_exp_ESCA))
+GBM_z = as.data.frame(rowScales(tcga_exp_GBM))
+HNSC_z = as.data.frame(rowScales(tcga_exp_HNSC))
+KICH_z = as.data.frame(rowScales(tcga_exp_KICH))
+KIRC_z = as.data.frame(rowScales(tcga_exp_KIRC))
+KIRP_z = as.data.frame(rowScales(tcga_exp_KIRP))
+LAML_z = as.data.frame(rowScales(tcga_exp_LAML))
+LGG_z = as.data.frame(rowScales(tcga_exp_LGG))
+LIHC_z = as.data.frame(rowScales(tcga_exp_LIHC))
+LUAD_z = as.data.frame(rowScales(tcga_exp_LUAD))
+LUSC_z = as.data.frame(rowScales(tcga_exp_LUSC))
+MESO_z = as.data.frame(rowScales(tcga_exp_MESO))
+OV_z = as.data.frame(rowScales(tcga_exp_OV))
+PAAD_z = as.data.frame(rowScales(tcga_exp_PAAD))
+PCPG_z = as.data.frame(rowScales(tcga_exp_PCPG))
+PRAD_z = as.data.frame(rowScales(tcga_exp_PRAD))
+READ_z = as.data.frame(rowScales(tcga_exp_READ))
+SARC_z = as.data.frame(rowScales(tcga_exp_SARC))
+SKCM_z = as.data.frame(rowScales(tcga_exp_SKCM))
+STAD_z = as.data.frame(rowScales(tcga_exp_STAD))
+TGCT_z = as.data.frame(rowScales(tcga_exp_TGCT))
+THCA_z = as.data.frame(rowScales(tcga_exp_THCA))
+THYM_z = as.data.frame(rowScales(tcga_exp_THYM))
+UCEC_z = as.data.frame(rowScales(tcga_exp_UCEC))
+UCS_z = as.data.frame(rowScales(tcga_exp_UCS))
+UVM_z = as.data.frame(rowScales(tcga_exp_UVM))
+
+list_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM_z, HNSC_z, KICH_z, KIRC_z, KIRP_z,LAML_z, LGG_z, LIHC_z, LUAD_z, LUSC_z, MESO_z, OV_z, PAAD_z, PCPG_z, PRAD_z, READ_z, SARC_z, SKCM_z, STAD_z, TGCT_z, THCA_z, THYM_z, UCEC_z, UCS_z, UVM_z)
+
+#PROBLEM WITH Z-transformation: some genes equally expressed within one tumor type --> results in NaN, removed when ranking next
+#does this cause trouble in the GSEA because number of genes varies across tumor types?
+
+#create ranked gene lists
+ACC_ranked = as.data.frame(apply(ACC_z, 2, sort, decreasing = TRUE)) #9689 genes
+BLCA_ranked = as.data.frame(apply(BLCA_z, 2, sort, decreasing = TRUE)) # all
+BRCA_ranked = as.data.frame(apply(BRCA_z, 2, sort, decreasing = TRUE)) #9782
+CESC_ranked = as.data.frame(apply(CESC_z, 2, sort, decreasing = TRUE)) #9771
+CHOL_ranked = as.data.frame(apply(CHOL_z, 2, sort, decreasing = TRUE)) #9616
+COAD_ranked = as.data.frame(apply(COAD_z, 2, sort, decreasing = TRUE)) #9778
+DLBC_ranked = as.data.frame(apply(DLBC_z, 2, sort, decreasing = TRUE)) #9747
+ESCA_ranked = as.data.frame(apply(ESCA_z, 2, sort, decreasing = TRUE)) #9780
+GBM_ranked = as.data.frame(apply(GBM_z, 2, sort, decreasing = TRUE)) #9758
+HNSC_ranked = as.data.frame(apply(HNSC_z, 2, sort, decreasing = TRUE)) #9782
+KICH_ranked = as.data.frame(apply(KICH_z, 2, sort, decreasing = TRUE)) #9644
+KIRC_ranked = as.data.frame(apply(KIRC_z, 2, sort, decreasing = TRUE)) #9780
+KIRP_ranked = as.data.frame(apply(KIRP_z, 2, sort, decreasing = TRUE)) #9779
+LAML_ranked = as.data.frame(apply(LAML_z, 2, sort, decreasing = TRUE)) #9656
+LGG_ranked = as.data.frame(apply(LGG_z, 2, sort, decreasing = TRUE)) #9778
+LIHC_ranked = as.data.frame(apply(LIHC_z, 2, sort, decreasing = TRUE))#9777
+LUAD_ranked = as.data.frame(apply(LUAD_z, 2, sort, decreasing = TRUE)) #all
+LUSC_ranked = as.data.frame(apply(LUSC_z, 2, sort, decreasing = TRUE)) #9782
+MESO_ranked = as.data.frame(apply(MESO_z, 2, sort, decreasing = TRUE)) #9746
+OV_ranked = as.data.frame(apply(OV_z, 2, sort, decreasing = TRUE)) #9770
+PAAD_ranked = as.data.frame(apply(PAAD_z, 2, sort, decreasing = TRUE)) #9776
+PCPG_ranked = as.data.frame(apply(PCPG_z, 2, sort, decreasing = TRUE)) #9753
+PRAD_ranked = as.data.frame(apply(PRAD_z, 2, sort, decreasing = TRUE)) #9780
+READ_ranked = as.data.frame(apply(READ_z, 2, sort, decreasing = TRUE)) #9710
+SARC_ranked = as.data.frame(apply(SARC_z, 2, sort, decreasing = TRUE)) #all
+SKCM_ranked = as.data.frame(apply(SKCM_z, 2, sort, decreasing = TRUE)) #9781
+STAD_ranked = as.data.frame(apply(STAD_z, 2, sort, decreasing = TRUE)) #all
+TGCT_ranked = as.data.frame(apply(TGCT_z, 2, sort, decreasing = TRUE)) #9779
+THCA_ranked = as.data.frame(apply(THCA_z, 2, sort, decreasing = TRUE)) #9775
+THYM_ranked = as.data.frame(apply(THYM_z, 2, sort, decreasing = TRUE)) #9738
+UCEC_ranked = as.data.frame(apply(UCEC_z, 2, sort, decreasing = TRUE)) #9774
+UCS_ranked = as.data.frame(apply(UCS_z, 2, sort, decreasing = TRUE)) #9739
+UVM_ranked = as.data.frame(apply(UVM_z, 2, sort, decreasing = TRUE)) #9523
+
+```
+
+```{r}
+# try GSEA with first patient of BLCA
+#create new dataframe with first patient of BLCA
+first_BLCA = data.frame(BLCA_z$`TCGA-MV-A51V-01`)
+first = BLCA_z[,1, drop = FALSE]
+#order via z score
+first[order(-first),, drop = FALSE]
+#convert ensemble_id into gene symbol
+ensemble_id = rownames(first)
+gene_symbols <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id","hgnc_symbol"),values=ensemble_id,mart= mart)
+
 ```
 
