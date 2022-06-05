@@ -14,6 +14,11 @@ library(msigdbr)
 library(scrime)
 library(fgsea)
 library(biomaRt)
+library(dplyr)
+library(convertid)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(ChIPpeakAnno)
 ```
 
 ```{r}
@@ -194,7 +199,10 @@ list_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM
 #PROBLEM WITH Z-transformation: some genes equally expressed within one tumor type --> results in NaN, removed when ranking next
 #does this cause trouble in the GSEA because number of genes varies across tumor types?
 
-#create ranked gene lists
+```
+
+```{r}
+#create ranked gene lists --> is this useful because gene order isn't universal and gene ID is lost?
 ACC_ranked = as.data.frame(apply(ACC_z, 2, sort, decreasing = TRUE)) #9689 genes
 BLCA_ranked = as.data.frame(apply(BLCA_z, 2, sort, decreasing = TRUE)) # all
 BRCA_ranked = as.data.frame(apply(BRCA_z, 2, sort, decreasing = TRUE)) #9782
@@ -228,19 +236,91 @@ THYM_ranked = as.data.frame(apply(THYM_z, 2, sort, decreasing = TRUE)) #9738
 UCEC_ranked = as.data.frame(apply(UCEC_z, 2, sort, decreasing = TRUE)) #9774
 UCS_ranked = as.data.frame(apply(UCS_z, 2, sort, decreasing = TRUE)) #9739
 UVM_ranked = as.data.frame(apply(UVM_z, 2, sort, decreasing = TRUE)) #9523
+```
+
+
+```{r}
+#create ascending ranked gene vector for first BLCA patient
+#extract column first patient BLCA
+first = BLCA_z[,1, drop = FALSE]
+#sort ascending according to z score, KEEPING gene names
+first_sorted = first[order(first),, drop = FALSE]
+#convert into ranked gene vector
+first_BLCA = as.vector(first_sorted$`TCGA-MV-A51V-01`)
+#retrieve names from before
+first_ensemble_id = rownames(first_sorted)
+names(first_BLCA) = first_ensemble_id
+#turn gene names into NCBI entrez gene ID
+mart = useEnsembl(dataset = "hsapiens_gene_ensembl", biomart='ensembl')
+first_geneids = getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id","entrezgene_id"),values= first_ensemble_id, mart= mart) #gives longer output vector than input???
+sum(duplicated(first_geneids$ensembl_gene_id)) #64 double ensemble! (9847-9783 = 64)
+#remove duplicates, then like original 9783 rows/genes
+first_geneids = first_geneids[!duplicated(first_geneids$ensembl_gene_id),]
+first_geneids = na.omit(first_geneids)# remove NA's --> now 8635 genes left
+
+first_entrez_id = first_geneids$entrezgene_id #8635 entrez ids
+
+
+#need to reorder entrez gene id's because original order is lost after biomart!
+#ALSO: HOW REMOVE GENES WHERE NO ENTREZ ID WAS FOUND? THEY'RE NOT LEFT IN ENTREZ VECTOR!
+#HOW MATCH POSITION OF GENE NAMES NOW TO RANKED GENE VECTOR??
+#give vector elements according entrez gene ID as name
 
 ```
 
 ```{r}
-# try GSEA with first patient of BLCA
-#create new dataframe with first patient of BLCA
-first_BLCA = data.frame(BLCA_z$`TCGA-MV-A51V-01`)
-first = BLCA_z[,1, drop = FALSE]
-#order via z score
-first[order(-first),, drop = FALSE]
-#convert ensemble_id into gene symbol
-ensemble_id = rownames(first)
-gene_symbols <- getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id","hgnc_symbol"),values=ensemble_id,mart= mart)
+#try with convertid package
+convert.bm(first_sorted, id = "rownames", biom.data.set = "human", biom.mart = "ensembl", host = "https://www.ensembl.org", biom.filter = "ensembl_gene_id", biom.attributes = "entrezgene_id", sym.col = "entrezgene_id")
+#didnt work
+```
 
+```{r}
+#try with annotationdb
+n = mapIds(org.Hs.eg.db,
+                    keys=row.names(first_sorted), #Column containing Ensembl gene ids
+                    column="ENSEMBL",
+                    keytype="ENTREZID",
+                    multiVals="first")
+#didnt work
+```
+
+
+```{r}
+#try ChIPpeakAnno
+entrezIDs = convert2EntrezID(IDs=first_ensemble_id, orgAnn="org.Hs.eg.db",
+ ID_type="ensembl_gene_id")
+#returns 9446 elements --> not all entrez ids coulb be found --> same problem HOW MATCH?
+```
+
+
+```{r}
+#create GSEA compatible gene set list, NCBI entrez gene id as characters
+carbohydrates = as.character(Carbohydrates$entrez_gene)
+glycolysis = as.character(Glycolysis$entrez_gene)
+amino_acid = as.character(Amino_Acid$entrez_gene)
+sphingolipid = as.character(Sphingolipid$entrez_gene)
+fatty_acid = as.character(Fatty_acid$entrez_gene)
+pentose_phosphate = as.character(Pentose_phosphate$entrez_gene)
+ether_lipid = as.character(Ether_lipid$entrez_gene)
+glutathione = as.character(Glutathione$entrez_gene)
+nitrogen = as.character(Nitrogen$entrez_gene)
+oxidative_phosphorylation = as.character(Oxidative_phosphorylation$entrez_gene)
+purine = as.character(Purine$entrez_gene)
+pyrimidine = as.character(Pyrimidine$entrez_gene)
+pyruvate = as.character(Pyruvate$entrez_gene)
+steroid = as.character(Steroid$entrez_gene)
+steroid_hormones = as.character(Steroid_hormones$entrez_gene)
+
+pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
+
+names(pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
+```
+
+
+```{r}
+#tried fgsea, couldn't get vector (XXX) into fitting format
+fgsea = fgsea(pathways = pathways, stats = XXX, maxSize=700)
+fgsea
+plotEnrichment(pathways["M16864_Carbohydrates"], XXX) + labs(title="Carbohydrates")
 ```
 
