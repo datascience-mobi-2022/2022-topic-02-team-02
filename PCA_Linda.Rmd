@@ -10,8 +10,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+#load data = run Biotypes.Rmd 
+```
+
+```{r}
 # work with tcga_exp_prc_clean -> w/o low variable under p50
-# using prcomp() like in the exercise sheet
 dim (tcga_exp_prc_clean)
 tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
 pca_var = tcga_exp_pca$sdev^2
@@ -22,21 +25,46 @@ tcga_exp_pca$sdev
 ```
 
 ```{r}
-#data load = run Biotypes.Rmd to get tcga_exp_protein_coding
-
-tcga_prc_var = apply(tcga_exp_protein_coding, 1, var)
-tcga_prc_var_p50 = quantile(tcga_prc_var, 0.5)
-tcga_exp_prc_clean = tcga_exp_protein_coding[-which(tcga_prc_var<= tcga_prc_var_p50),]
+#attempt to save data from environment
+saveRDS(tcga_exp_prc_clean, file = "exp_prc_clean.Rds")
+tcga_exp_prc_clean_copy = readRDS(file = "exp_prc_clean.Rds")
 ```
 
 ```{r}
-nrow(tcga_exp_prc_clean)
-svd(cor(tcga_exp_prc_clean), 2, 0)
+# tcga_exp_pca2 = PCA(tcga_exp_prc_clean)
+
 ```
 
-
 ```{r}
-library(FactoMineR)
-pca_exp_prc = PCA(tcga_exp_prc_clean)
+library(Seurat)
+PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
+#create data frame with PCs and respective genes
+PCA_exp_PCs = PCA_exp@cell.embeddings
+#visualize PCs with respect to explained variance
+PCA_exp_var = PCA_exp@stdev^2
+PCA_exp_proportion_var = PCA_exp_var/sum(PCA_exp_var)
+PC_exp = (PCA_exp_PCs[1:20])
+PCs_20 = PCA_exp@cell.embeddings[1:20]
+
+PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_2 )) +
+  geom_point(color = "blue")
+print(PCA_exp_scatter2) 
+
+PCA_exp_scatter3 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_3 )) +
+  geom_point(color = "blue")
+print(PCA_exp_scatter3) 
+
+# plot scatter plot regarding gender
+exp_gender = ifelse(tcga_annot$gender
+                        == "FEMALE", "orange", "blue")
+PCA_exp_gender = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y= PC_2)) + 
+  geom_point(size = 2, color = exp_gender) + 
+  ggtitle ("PCA regarding gender")
+PCA_exp_gender
+```
+```{r}
+UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
+UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), aes(x = V1, y= V2))
+UMAP_plot
 ```
 
