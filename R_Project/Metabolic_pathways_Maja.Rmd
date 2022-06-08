@@ -283,34 +283,15 @@ first_entrez_id = first_geneids$entrezgene_id #8635 entrez ids
 ```
 
 ```{r}
-gsea = fgsea(pathways = pathways, stats = first_BLCA, maxSize=700)
-gsea
+gsea_1 = fgsea(pathways = pathways, stats = first_BLCA, maxSize=700)
+gsea_1
 plotEnrichment(pathways[["M16864_Carbohydrates"]], first_BLCA) + labs(title="Carbohydrates")
 ```
 
-
 ```{r}
-#try with convertid package
-convert.bm(first_sorted, id = "rownames", biom.data.set = "human", biom.mart = "ensembl", host = "https://www.ensembl.org", biom.filter = "ensembl_gene_id", biom.attributes = "entrezgene_id", sym.col = "entrezgene_id")
-#didnt work
-```
-
-```{r}
-#try with annotationdb
-n = mapIds(org.Hs.eg.db,
-                    keys=row.names(first_sorted), #Column containing Ensembl gene ids
-                    column="ENSEMBL",
-                    keytype="ENTREZID",
-                    multiVals="first")
-#didnt work
-```
-
-
-```{r}
-#try ChIPpeakAnno
-entrezIDs = convert2EntrezID(IDs=first_ensemble_id, orgAnn="org.Hs.eg.db",
- ID_type="ensembl_gene_id")
-#returns 9446 elements --> not all entrez ids coulb be found --> same problem HOW MATCH?
+gsea_2 = fgsea(pathways = metabolic_genesets, stats = first_BLCA, minSize = 20, maxSize=800)
+gsea_2
+plotEnrichment(metabolic_genesets[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], first_BLCA) +labs(title="Epithelial mesenchymal transition")
 ```
 
 
