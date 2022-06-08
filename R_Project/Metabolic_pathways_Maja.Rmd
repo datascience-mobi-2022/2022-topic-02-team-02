@@ -19,6 +19,7 @@ library(convertid)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(ChIPpeakAnno)
+library(data.table)
 ```
 
 ```{r}
@@ -75,6 +76,20 @@ Steroid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5872",]
 
 #Steroid hormones
 Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
+```
+
+```{r}
+hallmarks = msigdbr(species = "Homo sapiens", category = "H")
+hallmarks_gsname = hallmarks$gs_name
+hallmarks_ensembl = hallmarks$ensembl_gene
+hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
+
+pathway_names = c(unique(hallmarks$hallmarks_gsname))
+data = list()
+for (x in 1:nrow(hallmarks)){
+  data[[x]] = hallmarks[which[hallmarks$hallmarks_gsname == v[x]]]
+} 
+
 ```
 
 
@@ -265,8 +280,14 @@ first_entrez_id = first_geneids$entrezgene_id #8635 entrez ids
 #ALSO: HOW REMOVE GENES WHERE NO ENTREZ ID WAS FOUND? THEY'RE NOT LEFT IN ENTREZ VECTOR!
 #HOW MATCH POSITION OF GENE NAMES NOW TO RANKED GENE VECTOR??
 #give vector elements according entrez gene ID as name
-
 ```
+
+```{r}
+gsea = fgsea(pathways = pathways, stats = first_BLCA, maxSize=700)
+gsea
+plotEnrichment(pathways[["M16864_Carbohydrates"]], first_BLCA) + labs(title="Carbohydrates")
+```
+
 
 ```{r}
 #try with convertid package
@@ -295,21 +316,21 @@ entrezIDs = convert2EntrezID(IDs=first_ensemble_id, orgAnn="org.Hs.eg.db",
 
 ```{r}
 #create GSEA compatible gene set list, NCBI entrez gene id as characters
-carbohydrates = as.character(Carbohydrates$entrez_gene)
-glycolysis = as.character(Glycolysis$entrez_gene)
-amino_acid = as.character(Amino_Acid$entrez_gene)
-sphingolipid = as.character(Sphingolipid$entrez_gene)
-fatty_acid = as.character(Fatty_acid$entrez_gene)
-pentose_phosphate = as.character(Pentose_phosphate$entrez_gene)
-ether_lipid = as.character(Ether_lipid$entrez_gene)
-glutathione = as.character(Glutathione$entrez_gene)
-nitrogen = as.character(Nitrogen$entrez_gene)
-oxidative_phosphorylation = as.character(Oxidative_phosphorylation$entrez_gene)
-purine = as.character(Purine$entrez_gene)
-pyrimidine = as.character(Pyrimidine$entrez_gene)
-pyruvate = as.character(Pyruvate$entrez_gene)
-steroid = as.character(Steroid$entrez_gene)
-steroid_hormones = as.character(Steroid_hormones$entrez_gene)
+carbohydrates = as.character(Carbohydrates$ensembl_gene)
+glycolysis = as.character(Glycolysis$ensembl_gene)
+amino_acid = as.character(Amino_Acid$ensembl_gene)
+sphingolipid = as.character(Sphingolipid$ensembl_gene)
+fatty_acid = as.character(Fatty_acid$ensembl_gene)
+pentose_phosphate = as.character(Pentose_phosphate$ensembl_gene)
+ether_lipid = as.character(Ether_lipid$ensembl_gene)
+glutathione = as.character(Glutathione$ensembl_gene)
+nitrogen = as.character(Nitrogen$ensembl_gene)
+oxidative_phosphorylation = as.character(Oxidative_phosphorylation$ensembl_gene)
+purine = as.character(Purine$ensembl_gene)
+pyrimidine = as.character(Pyrimidine$ensembl_gene)
+pyruvate = as.character(Pyruvate$ensembl_gene)
+steroid = as.character(Steroid$ensembl_gene)
+steroid_hormones = as.character(Steroid_hormones$ensembl_gene)
 
 pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
 
