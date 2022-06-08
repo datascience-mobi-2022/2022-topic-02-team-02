@@ -149,30 +149,61 @@ barplot(KIRC_tn_cl_pca_eigval$variance.percent,ylab='Proportion of variance in p
 
 
 ```{r}
-#pca for annotations--> was a try but in the end pointless
-KIRC_annot_matrix = data.matrix(tcga_KIRC_t_annot)
-KIRC_annot_matrix_na = data.matrix(t(sapply(1:ncol(KIRC_annot_matrix), function(x){
-  sum(is.na(KIRC_annot_matrix[,x]))
-  })))
+#pca for normal data only, as it seems like there are two clusters
+KIRC_n_pca = prcomp(t(KIRC_norm_cl))
 
-KIRC_annot_matrix= KIRC_annot_matrix[,-which(KIRC_annot_matrix_na>0)]
-KIRC_annot_pca = prcomp(KIRC_annot_matrix)
+KIRC_n_pca_x = data.frame(KIRC_n_pca[["x"]])
+#plot the data (patients) in the first principal components
+KIRC_gender = ifelse(tcga_KIRC_annot$gender == "FEMALE", "red", "blue")
+sum(tcga_KIRC_annot$gender=="FEMALE")
 
-KIRC_annot_pca_x = data.frame(KIRC_annot_pca[["x"]])
-library("factoextra")
-KIRC_annot_pca_eigval = get_eigenvalue(KIRC_annot_pca)
-rownames(KIRC_annot_pca_eigval) = colnames (KIRC_annot_pca_x)
-barplot(KIRC_annot_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
+ggplot(KIRC_n_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_gender)+
+   ggtitle("PCA with regard to gender ")
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_gender)+
+   ggtitle("PCA with regard to gender ")
+
+KIRC_tumorstatus = ifelse(tcga_KIRC_annot$tumor_status == "TUMOR FREE", "red", "blue") #tumor free or with tumor
+sum(tcga_KIRC_annot$tumor_status=="TUMOR FREE")
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_tumorstatus)+
+  ggtitle("PCA with regard to tumorstatus ")
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_tumorstatus)+
+  ggtitle("PCA with regard to tumorstatus ")
+
+KIRC_tumorstage = ifelse(tcga_KIRC_annot$ajcc_pathologic_tumor_stage == "Stage IV", "red", "blue") #cancer stage I-III or IV
+sum(tcga_KIRC_annot$ajcc_pathologic_tumor_stage == "Stage IV")
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_tumorstage)+
+  ggtitle("PCA with regard to tumorstage ")
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_tumorstage)+
+  ggtitle("PCA with regard to tumorstage ")
+
+mean(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis)#62.51 as mean--> visualization of age with cut off at age 63 
+KIRC_age = ifelse(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis < 63, "red", "blue") #cancer stage I-III or IV
+sum(tcga_KIRC_annot$age_at_initial_pathologic_diagnosis < 63)
+
+ggplot(KIRC_n_pca_x, aes(PC1, PC2))+
+  geom_point( size =2, color = KIRC_age)+
+  ggtitle("PCA with regard to age at initial pathologic diagnosis ")
 
 
-ggplot(KIRC_annot_pca_x, aes(PC1, PC2))+
-  geom_point( size =2, color = KIRC_gender)
-
-
-fviz_contrib(KIRC_annot_pca, choice = "var", axes = 1, top = 10)
-
-KIRC_annot_matrix1= KIRC_annot_matrix[,-13] # as days since birth shows the highest conrtribution to PCs but is also contained in age, we remove it
-KIRC_annot_pca1 = prcomp(KIRC_annot_matrix1)
-fviz_contrib(KIRC_annot_pca1, choice = "var", axes = 1, top = 10)
-#TO DO: welche annotationen finde ich wichtig ? rausnehmen
+ggplot(KIRC_n_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_age)+
+  ggtitle("PCA with regard to age at initial pathologic diagnosis ")
 ```
+
+```{r}
+#kmeans???
+```
+
+
+
