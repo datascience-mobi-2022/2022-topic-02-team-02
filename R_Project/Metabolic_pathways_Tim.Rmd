@@ -203,6 +203,59 @@ tcga_KIRC_GSEA %>%
         x = "Gene set",
         title = "GSEA")
 
+tcga_KIRC_GSEA1 %>%
+  filter(padj <= 0.05) %>%
+  mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
   
-         
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA")
+
+plotEnrichment(met.pathways[["M16864_Carbohydrates"]],fc.order)
+
 ```
+
+
+```{r}
+#log2FC for every patient, only protein coding without constant genes
+KIRC_FC_patients = data.frame(tcga_KIRC_tumor_cl - tcga_KIRC_norm_cl)
+KIRC_GSEA_prep = 
+rownames_to_column(KIRC_FC_patients, var = "ensembl_id")
+
+FC.vec = tcga_KIRC_GSEA_prep[,2]
+names(FC.vec) = tcga_KIRC_GSEA_prep$ensembl_id
+fc.order = FC.vec[order(FC.vec),drop = FALSE]
+
+tcga_KIRC_GSEA = fgsea(pathways = met.pathways,
+                             stats = fc.order,
+                             scoreType = "std")
+tcga_KIRC_GSEA1 = fgsea(pathways = met.pathways,
+                             stats = FC.vec,
+                             scoreType = "std")
+y = (for (i in 2:(ncol(KIRC_GSEA_prep))){
+  data.frame(fgseaSimple(pathways = met.pathways,
+                             stats =  (names(KIRC_GSEA_prep[,i]) =  KIRC_GSEA_prep$ensembl_id),
+                             scoreType = "std",
+                             nperm = 10000))
+})
+  
+KIRC_GSEA_results = list()
+(for (i in 2:(ncol(KIRC_GSEA_prep))){
+  x = c(KIRC_GSEA_prep[,i])
+  names(x) = KIRC_GSEA_prep$ensembl_id
+  x = x[order(x),drop = FALSE]
+  KIRC_GSEA_results[[i]] = fgsea(pathways = met.pathways,
+                             stats =  x,
+                             scoreType = "std")
+})
+
+
+```
+
+
