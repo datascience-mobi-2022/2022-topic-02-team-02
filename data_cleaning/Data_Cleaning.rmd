@@ -1,0 +1,85 @@
+---
+title: "Data.Cleaning"
+author: "Anna von Bachmann"
+date: '2022-05-06'
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#data upload
+tcga_exp = readRDS("../data/tcga_tumor_log2TPM.RDS")
+tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
+tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
+genesets = readRDS("../data/hallmarks_genesets.rds")
+#get data
+genesets = readRDS("../data/hallmarks_genesets.rds")
+```
+
+```{r, include = FALSE}
+#check for N/As
+sum(is.na(tcga_exp))
+#as the sum equals zero, there are no missing values in this data frame 
+```
+
+```{r, include =  FALSE}
+#if there is no difference between min and max of expression counts --> genes will be removed
+min.count.gene = apply(tcga_exp, 1, min)
+max.count.gene = apply(tcga_exp, 1, max)
+sum(which(min.count.gene == max.count.gene)) 
+#to see how many genes show no difference in expression
+tcga_exp_variable_only = tcga_exp[-which(min.count.gene == max.count.gene)]#to remove the genes from these genes from the data set
+
+#how to find genes with low variance? Which threshold?
+```
+
+```{r}
+#Compute variance for all genes
+tcga_exp_var = apply(tcga_exp, 1, var)
+#mean variance for all genes
+tcga_exp_mean_var = mean(tcga_exp_var)
+#Boxplot values
+tcga_exp_var_iqr = quantile(tcga_exp_var,0.75) - quantile(tcga_exp_var,0.25)
+tcga_exp_var_q75 = quantile(tcga_exp_var,0.75)
+tcga_exp_upper_whisker= 1.5*tcga_exp_var_iqr + quantile(tcga_exp_var,0.75)
+tcga_exp_var_max = max(tcga_exp_var)
+#Boxplot variance
+(boxplot(tcga_exp_var))
+#Density plot variance
+plot(density(tcga_exp_var)); abline(v = tcga_exp_var_q75); abline(v= tcga_exp_upper_whisker); abline(v= quantile(tcga_exp_var,0.5))
+#Genes with variance > 75%-quantile (tcga_exp_var_q75)
+tcga_exp_var_75 = tcga_exp_var[which(tcga_exp_var >= quantile(tcga_exp_var,0.75))]
+#How many genes with variance > 75%-quantile (tcga_exp_var_q75)
+length(tcga_exp_var_75)
+#Same with upper whisker quantile
+tcga_exp_genes_upper_whisker = tcga_exp_var[which(tcga_exp_var >= tcga_exp_upper_whisker)]
+length(tcga_exp_genes_upper_whisker)
+
+# We decided for 50% threshold -> p50-quantile
+quantile(tcga_exp_var,0.5) # 2.29988
+tcga_exp_var_50 = which(tcga_exp_var <= quantile(tcga_exp_var,0.5))
+length(tcga_exp_var_50) #30249 genes left
+
+#remove genes with variance < 2.29988 from tcga_exp
+tcga_exp_clean = tcga_exp[-tcga_exp_var_50,] # clean dataframe for future use
+# plot new variance density for tcga_exp_clean
+tcga_exp_clean_var = apply(tcga_exp_clean, 1, var)
+plot(density(tcga_exp_clean_var)); abline(v = 2.29988)
+#check whether right genes were removed from tcga_exp
+min(tcga_exp_clean_var) #2.300057 yesssirrrr
+```
+
+
+
+
+```{r}
+#rename tcga_exp columns according to patient names in tcga_annot 
+# ONLY RUN CHUNK ONCE!!!!!!!!
+
+tcga_exp_colnames_new = c(substr(colnames(tcga_exp_clean),1, nchar(colnames(tcga_exp_clean))-3))
+colnames(tcga_exp_clean) = tcga_exp_colnames_new
+
+```
+
