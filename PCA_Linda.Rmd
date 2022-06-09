@@ -63,8 +63,14 @@ PCA_exp_gender = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y= PC_
 PCA_exp_gender
 ```
 ```{r}
+library(tidyverse)
+cancer_types = tcga_annot$cancer_type_abbreviation
+
 UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
-UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), aes(x = V1, y= V2))
+UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), 
+                    aes(x = V1, y= V2, color = cancer_types))+
+  geom_point(size = 2)
 UMAP_plot
+
 ```
 
