@@ -7,7 +7,7 @@ The aim of this analysis is to find differences in gene expression and pathway a
 ### Pan-cancer analysis
 1. Filter for biotypes with BiomaRt $\\rightarrow$ select only protein coding genes
 2. Filter for low variance genes $\\rightarrow$ keep only upper p50 quantile
-3. Results in 9812 (genes) x 9783 (patients) matrix
+3. Results in 9741 (genes) x 9783 (patients) matrix
 ### KIRC data
 1. Filter for biotypes with BiomaRt $\\rightarrow$ select only protein coding genes
 2. Throwing out constantly expressed genes
