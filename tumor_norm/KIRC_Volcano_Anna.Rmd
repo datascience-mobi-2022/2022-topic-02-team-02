@@ -11,8 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
+#the first chunks are data loading and cleaning, skip if already done, but make sure to name your dataframe accordingly 
 #Load data
-tcga_tumor_norm = readRDS("../data/tcga_tumor_normal_datascience_proj_2022.RDS")
+tcga_tumor_norm = readRDS("data/tcga_tumor_normal_datascience_proj_2022.RDS")
 ```
 
 
