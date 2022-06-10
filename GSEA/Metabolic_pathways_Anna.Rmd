@@ -1,0 +1,88 @@
+---
+title: "Metabolic_Pathways_Anna"
+author: "Anna von Bachmann"
+date: '2022-06-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(msigdbr)
+```
+
+```{r}
+# Obtaining gene sets from msigdb for Carbohydrate metabolism
+Homo_sapiensCPR = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:REACTOME")
+Carbohydrates = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M16864",]
+
+# Glycolysis
+Homo_sapiensCGP = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CGP")
+Glycolysis = Homo_sapiensCGP[Homo_sapiensCGP$gs_id=="M16111",] #22 genes
+
+# Amino acid 
+Homo_sapiensC2 = msigdbr(species = "Homo sapiens", category = "C2")
+Amino_Acid = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39570",] #102 genes
+
+#Sphingolipid
+Sphingolipid = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M14857",]
+
+#Fatty acid
+Homo_sapiensCPK = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
+Fatty_acid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M699",]
+
+#Pentose phosphate
+Pentose_phosphate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1386",]
+
+#Ether lipid
+Ether_lipid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M2130",]
+
+#Glutathione
+Glutathione = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1840",]
+
+#Nitrogen
+Nitrogen = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M4629",]
+
+#Oxidative phosphorylation
+Oxidative_phosphorylation = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M19540",]
+
+#Purines
+Purine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14314",]
+
+#Pyrimidines
+Pyrimidine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5109",]
+
+#Pyruvate
+Pyruvate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M7934",]
+
+#Steroids
+Steroid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5872",]
+
+#Steroid hormones
+Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
+```
+
+```{r}
+#load metabolic genesets
+hallmarks = msigdbr(species = "Homo sapiens", category = "H")
+#create a df with metabolic pathways and genes as columns 
+hallmarks_gsname = hallmarks$gs_name
+hallmarks_ensembl = hallmarks$ensembl_gene
+hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
+
+#create a df with names of pathways
+pathway_names = c(unique(hallmarks$hallmarks_gsname))
+#create a list in which the pathways will be stored (outout has to be a list)
+metabolic_genesets = list(list())#
+#fill the list with pathways and genes
+for (x in 1:length(pathway_names)){
+  metabolic_genesets[[x]] = pathway_names[x]
+  z = c((hallmarks[which(hallmarks$hallmarks_gsname == pathway_names[x]),2]))
+  for (k in 1:length(z)){
+  metabolic_genesets[[x]][[k]] = z[k]
+  }}
+names(metabolic_genesets) = pathway_names
+```
+

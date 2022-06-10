@@ -1,0 +1,86 @@
+---
+title: "Descriptive_Analysis_Maja"
+author: "Maja Glotz"
+date: "5/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#loag vioplot package
+library(vioplot)
+library(ggplot2)
+library(dplyr)
+library(ggrepel)
+```
+
+
+```{r}
+#density plot for tcga_exp_var -> variance across all genes
+plot(density(tcga_exp_var), main = "Density distribution of variance for all genes", xlab = "variance", ylab = "density"); abline(v= quantile(tcga_exp_var,0.5), col = "blue"); text(13, 0.2, "p50-quantile", col = "blue")
+
+```
+
+
+```{r}
+#violin plot for tcga_exp_var
+vioplot(tcga_exp_var, main = "Variance distribution", ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.42,17, "p50-quantile", col = "blue")
+```
+
+```{r}
+#variance density plot for cleaned tcga_exp_clean
+plot(density(tcga_exp_clean_var)); abline(v = 2.29988)
+plot(density(tcga_exp_clean_var), main = "Variance distribution after high variance filtering", xlab = "variance", ylab = "density")
+```
+
+```{r}
+#variance violin plot for cleaned data
+vioplot(tcga_exp_clean_var, main = "Variance distribution", ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.42,17, "threshold", col = "blue")
+```
+
+
+```{r}
+#try to combine violin plots
+vioplot(tcga_exp_var, tcga_exp_clean_var, main = "Variance distribution", names = c("tcga_exp","tcga_exp_clean"), ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.5,68, "p50-quantile = threshold", col = "blue")
+```
+
+
+```{r}
+#create 3 dataframes for ggplot layering
+#variance and mean with ONLY protein coding genes
+tcga_exp_pc_var = apply(tcga_exp_protein_coding, 1, var)
+tcga_exp_pc_mean = apply(tcga_exp_protein_coding, 1, mean)
+#first layer(black): data frame with all mean/var
+tcga_exp_pc_meanvar = data.frame(tcga_exp_pc_mean, tcga_exp_pc_var)
+#second layer(blue): low variance genes 
+tcga_exp_pc_var_50 = which(tcga_exp_pc_var <= quantile(tcga_exp_pc_var,0.5))
+tcga_exp_pc_low_var = tcga_exp_pc_var[tcga_exp_pc_var_50]
+mean_for_low_var_pc = tcga_exp_pc_mean[tcga_exp_pc_var_50]
+tcga_exp_pc_low_meanvar = data.frame(mean_for_low_var_pc, tcga_exp_pc_low_var)
+#third layer(orange): high variance genes
+tcga_exp_pc_high_var = tcga_exp_pc_var[tcga_exp_pc_var > quantile(tcga_exp_pc_var, 0.99)]
+mean_for_high_var_pc = tcga_exp_pc_mean[names(tcga_exp_pc_high_var)]
+tcga_exp_pc_high_meanvar = data.frame(mean_for_high_var_pc, tcga_exp_pc_high_var)
+```
+
+```{r}
+#ggplot mean/var for proteincoding genes
+ggplot(tcga_exp_pc_meanvar, aes(tcga_exp_pc_mean, tcga_exp_pc_var, color = 'Average-high variance genes')) + #first layer black points
+  geom_point(shape = ".",alpha=0.35) + #parameters first layer
+  geom_point(data = tcga_exp_pc_low_meanvar, aes(mean_for_low_var_pc, tcga_exp_pc_low_var, color = 'Low variance genes'), color = "blue", shape = ".", alpha=0.4)  + #low variance layer
+  geom_point(data = tcga_exp_pc_high_meanvar, aes(mean_for_high_var_pc, tcga_exp_pc_high_var, color = 'Very high variance genes'), color = "orange", shape = ".") + #high variance layer
+  geom_text_repel(data = tcga_exp_pc_high_meanvar, aes(mean_for_high_var_pc, tcga_exp_pc_high_var), label = row.names(tcga_exp_pc_high_meanvar), size = 2, show.legend = FALSE) + #label outliers without overlapping
+  ggtitle("mean/variance plot for protein coding genes") + #plot title
+  theme(plot.title = element_text(hjust = 0.5)) + #parameters plot title
+  xlab("average gene expression") + 
+  ylab("variance") + 
+  scale_color_manual(name=' ',
+                     breaks=c('Very high variance genes', 'Average-high variance genes', 'Low variance genes'),
+                     values=c('Very high variance genes'='blue', 'Average-high variance genes'='black', 'Low variance genes'='orange')) + guides(colour = guide_legend(override.aes = list(size = 5))) #try to get bigger legend points
+```
+
+
+
