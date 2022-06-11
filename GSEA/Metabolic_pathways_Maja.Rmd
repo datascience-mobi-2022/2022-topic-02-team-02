@@ -18,6 +18,7 @@ library(dplyr)
 library(org.Hs.eg.db)
 library(data.table)
 library(tibble)
+library(ggpubr)
 ```
 
 ```{r}
@@ -223,70 +224,67 @@ tumorlist_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z
 
 names(tumorlist_z) = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
 
-```
+#remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
+tumorlist_z = lapply(tumorlist_z, na.omit)
+#rownames to column
+tumorlist_z = lapply(tumorlist_z, rownames_to_column)
 
-```{r}#
-#create ranked gene lists --> is this useful because gene order isn't universal and gene ID is lost?
-ACC_ranked = as.data.frame(apply(ACC_z, 2, sort, decreasing = TRUE)) #9689 genes
-BLCA_ranked = as.data.frame(apply(BLCA_z, 2, sort, decreasing = TRUE)) # all
-BRCA_ranked = as.data.frame(apply(BRCA_z, 2, sort, decreasing = TRUE)) #9782
-CESC_ranked = as.data.frame(apply(CESC_z, 2, sort, decreasing = TRUE)) #9771
-CHOL_ranked = as.data.frame(apply(CHOL_z, 2, sort, decreasing = TRUE)) #9616
-COAD_ranked = as.data.frame(apply(COAD_z, 2, sort, decreasing = TRUE)) #9778
-DLBC_ranked = as.data.frame(apply(DLBC_z, 2, sort, decreasing = TRUE)) #9747
-ESCA_ranked = as.data.frame(apply(ESCA_z, 2, sort, decreasing = TRUE)) #9780
-GBM_ranked = as.data.frame(apply(GBM_z, 2, sort, decreasing = TRUE)) #9758
-HNSC_ranked = as.data.frame(apply(HNSC_z, 2, sort, decreasing = TRUE)) #9782
-KICH_ranked = as.data.frame(apply(KICH_z, 2, sort, decreasing = TRUE)) #9644
-KIRC_ranked = as.data.frame(apply(KIRC_z, 2, sort, decreasing = TRUE)) #9780
-KIRP_ranked = as.data.frame(apply(KIRP_z, 2, sort, decreasing = TRUE)) #9779
-LAML_ranked = as.data.frame(apply(LAML_z, 2, sort, decreasing = TRUE)) #9656
-LGG_ranked = as.data.frame(apply(LGG_z, 2, sort, decreasing = TRUE)) #9778
-LIHC_ranked = as.data.frame(apply(LIHC_z, 2, sort, decreasing = TRUE))#9777
-LUAD_ranked = as.data.frame(apply(LUAD_z, 2, sort, decreasing = TRUE)) #all
-LUSC_ranked = as.data.frame(apply(LUSC_z, 2, sort, decreasing = TRUE)) #9782
-MESO_ranked = as.data.frame(apply(MESO_z, 2, sort, decreasing = TRUE)) #9746
-OV_ranked = as.data.frame(apply(OV_z, 2, sort, decreasing = TRUE)) #9770
-PAAD_ranked = as.data.frame(apply(PAAD_z, 2, sort, decreasing = TRUE)) #9776
-PCPG_ranked = as.data.frame(apply(PCPG_z, 2, sort, decreasing = TRUE)) #9753
-PRAD_ranked = as.data.frame(apply(PRAD_z, 2, sort, decreasing = TRUE)) #9780
-READ_ranked = as.data.frame(apply(READ_z, 2, sort, decreasing = TRUE)) #9710
-SARC_ranked = as.data.frame(apply(SARC_z, 2, sort, decreasing = TRUE)) #all
-SKCM_ranked = as.data.frame(apply(SKCM_z, 2, sort, decreasing = TRUE)) #9781
-STAD_ranked = as.data.frame(apply(STAD_z, 2, sort, decreasing = TRUE)) #all
-TGCT_ranked = as.data.frame(apply(TGCT_z, 2, sort, decreasing = TRUE)) #9779
-THCA_ranked = as.data.frame(apply(THCA_z, 2, sort, decreasing = TRUE)) #9775
-THYM_ranked = as.data.frame(apply(THYM_z, 2, sort, decreasing = TRUE)) #9738
-UCEC_ranked = as.data.frame(apply(UCEC_z, 2, sort, decreasing = TRUE)) #9774
-UCS_ranked = as.data.frame(apply(UCS_z, 2, sort, decreasing = TRUE)) #9739
-UVM_ranked = as.data.frame(apply(UVM_z, 2, sort, decreasing = TRUE)) #9523
 ```
 
 ```{r}
-#try to run gsea as loop over all tumor type data frames
-ACC_z = rownames_to_column(ACC_z, var = "ensembl_id")
-
-test = c(ACC_z[,2])
-names(test) = c(ACC_z$ensembl_id)
-test = test[order(test), drop = FALSE]
+#extract final tumortype dataframe from list
+ACC_gsea = tumorlist_z[["ACC"]]
+#single test sample (TCGA-OR-A5K3-01)
+probe = c(ACC_gsea[,2])
+names(probe) = c(ACC_gsea$ensembl_id)
+probe = probe[order(probe), drop = FALSE]
 results = fgsea(pathways = hallmark_genesets,
-                             stats = test)
-results
+                             stats = probe)
 ```
+
+
 ```{r}
+#GSEA loop over ACC dataframe
 GSEA_results = list()
-(for (i in 2:(ncol(ACC_z))){
-  x = c(ACC_z[,i])
-  names(x) = c(ACC_z$ensembl_id)
+(for (i in 2:(ncol(ACC_gsea))){
+  x = c(ACC_gsea[,i])
+  names(x) = c(ACC_gsea$rowname)
   x = x[order(x), drop = FALSE]
   GSEA_results[[i]] = fgsea(pathways = hallmark_genesets,
                              stats = x,
                              scoreType = "std")
 })
+#first list element empty?
+GSEA_results_ACC = GSEA_results[-1]
+#names(GSEA_results_ACC) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
+# no naming here bc for loop for p value matrix needs 1-50 as numbers to index
+
+#print most significant pathways
+head(GSEA_results_ACC[["TCGA-OR-A5K3-01"]][order(padj), ])
+
+#try to create p value dataframe with pathways as rows and patients in column
+ACC_pvalues = data.frame(row.names = pathway_names)
+for (i in 1:77){
+  x = GSEA_results_ACC[[i]][, "padj"]
+  ACC_pvalues[1:50,i] = x
+}
+#rename columns according to patients
+colnames(ACC_pvalues) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
+```
+
+```{r}
+#GSEA table plot for first ACC patient 
+topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][head(order(pval), n=10), pathway]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
 
 
-```{r}
+
+folgendes nur für evtl später gelassen, prinzipiell irrelevant
+
+```{r}#
 #create ascending ranked gene vector for first BLCA patient
 #extract column first patient BLCA
 first = BLCA_z[,1, drop = FALSE]
@@ -300,21 +298,15 @@ names(first_BLCA) = first_ensemble_id
 ```
 
 
-```{r}
+```{r}#
 #example gsea
-gsea_1 = fgsea(pathways = metabolic_pathways, stats = first_BLCA,, minSize = 20 maxSize=700)
+gsea_1 = fgsea(pathways = metabolic_pathways, stats = first_BLCA, minSize = 20, maxSize=700)
 gsea_1
 plotEnrichment(pathways[["M16864_Carbohydrates"]], first_BLCA) + labs(title="Carbohydrates")
 ```
 
-```{r}
+```{r}#
 gsea_2 = fgsea(pathways = metabolic_genesets, stats = first_BLCA, minSize = 20, maxSize=800)
 gsea_2
 plotEnrichment(metabolic_genesets[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], first_BLCA) +labs(title="Epithelial mesenchymal transition")
 ```
-
-
-```{r}
-#for loop gsea
-```
-
