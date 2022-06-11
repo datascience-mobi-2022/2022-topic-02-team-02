@@ -1,0 +1,98 @@
+---
+title: "Data_cleaning_KIRC"
+author: "Anna von Bachmann"
+date: '2022-06-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Load data
+tcga_tumor_norm = readRDS("data/tcga_tumor_normal_datascience_proj_2022.RDS")
+```
+
+
+```{r}
+#extract expression data of KIRK cancer type, divided into tumor normal and annotation data, one data frame each
+tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
+tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
+tcga_KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]])
+```
+
+```{r}
+
+library(biomaRt)
+library(dplyr)
+##biotypes of the tcga_KIRC_tumor dataset
+gene_identifier_tumor = strsplit(rownames(tcga_KIRC_tumor), split = "|", fixed = TRUE)
+
+genes_ens_tumor<- sapply(gene_identifier_tumor, FUN = function(gene_identifier_tumor){
+  ens = gene_identifier_tumor[1]
+  return(ens)
+})
+
+genes_symbol_tumor<- sapply(gene_identifier_tumor, FUN = function(gene_identifier_tumor){
+  ens = gene_identifier_tumor[2]
+  return(ens)
+})
+
+genes_ens_vn_tumor <- strsplit(genes_ens_tumor, split = ".", fixed = TRUE)
+genes_ensembl_tumor <- sapply(genes_ens_vn_tumor, FUN = function(genes_ens_vn_tumor){
+  ens = genes_ens_vn_tumor[1]
+  return(ens)
+})
+
+mart = useEnsembl(dataset = "hsapiens_gene_ensembl", biomart='ensembl')
+
+list_biotype_tumor = getBM(attributes = c("ensembl_gene_id", "gene_biotype"), filters = "ensembl_gene_id", 
+                                    values = genes_ensembl_tumor, mart = mart, useCache = FALSE)
+
+#View(list_biotype_tumor)
+#dim(list_biotype_tumor) = 19349 x 2 --> für manche gene kein biotype in der datenbank, Lösung überlegen?
+#filter for protein coding genes in tcga_KIRC_tumor and norm
+tcga_biotype_filter_tumor = as.matrix(list_biotype_tumor[which(list_biotype_tumor$gene_biotype=="protein_coding"),])
+dim(tcga_biotype_filter_tumor) #19186
+rownames(tcga_KIRC_tumor) = genes_ensembl_tumor
+tcga_KIRC_tumor_protein_coding = tcga_KIRC_tumor[tcga_biotype_filter_tumor[,1],]
+dim(tcga_KIRC_tumor_protein_coding)
+
+rownames(tcga_KIRC_norm) = genes_ensembl_tumor
+tcga_KIRC_norm_protein_coding = tcga_KIRC_norm[tcga_biotype_filter_tumor[,1],]
+dim(tcga_KIRC_norm_protein_coding)
+
+
+``` 
+
+```{r}
+#filtering genes with constant expression (problematic for shapiro test (no normality of the data of constant values) and hence ttest (only usable for normal distributed data))
+tcga_KIRC_norm_min = apply(tcga_KIRC_norm_protein_coding, 1, min)
+tcga_KIRC_norm_max= apply(tcga_KIRC_norm_protein_coding, 1, max) #for normal cell data set
+tcga_KIRC_tumor_min = apply(tcga_KIRC_tumor_protein_coding, 1, min)
+tcga_KIRC_tumor_max= apply(tcga_KIRC_tumor_protein_coding, 1, max)#fpr tumor cell data set
+#determine genes with constant expression
+tcga_KIRC_norm_constant = c(names(which(tcga_KIRC_norm_min==tcga_KIRC_norm_max)))
+length(tcga_KIRC_norm_constant)#for normal cell data set
+tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_tumor_max==tcga_KIRC_tumor_min)))
+length(tcga_KIRC_tumor_constant)#for normal cell data set
+tcga_KIRC_both_constant = c(tcga_KIRC_norm_constant,tcga_KIRC_tumor_constant)
+length(tcga_KIRC_both_constant)#combine constant expressed gene names from normal and tumor data set as these genes have to be removed from both data sets
+#remove the constant expressed genes from both data sets (cl for clean)
+tcga_KIRC_norm_cl = tcga_KIRC_norm_protein_coding[!rownames(tcga_KIRC_norm_protein_coding) %in% tcga_KIRC_both_constant,]
+dim(tcga_KIRC_norm_cl)#18941 genes left
+tcga_KIRC_tumor_cl = tcga_KIRC_tumor_protein_coding[!rownames(tcga_KIRC_tumor_protein_coding) %in% tcga_KIRC_both_constant,]
+dim(tcga_KIRC_tumor_cl)
+
+```
+
+
+```{r}#
+#rename colnames of norm and tumor KIRC data frame
+#ONLY RUN first line ONCE!!!!!!!!
+tcga_KIRC_norm_colnames = c(substr(colnames(tcga_KIRC_norm),1, nchar(colnames(tcga_KIRC_norm))-3))
+colnames(tcga_KIRC_norm_cl) = tcga_KIRC_norm_colnames #first tcga_KIRC_norm
+colnames(tcga_KIRC_tumor_cl) = tcga_KIRC_norm_colnames #same for tcga_KIRC_tumor
+
+```
