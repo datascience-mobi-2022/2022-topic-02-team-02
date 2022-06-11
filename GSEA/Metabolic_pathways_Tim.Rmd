@@ -11,9 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(msigdbr)
 genesets = readRDS("../data/hallmarks_genesets.rds")
+KIRC_tumor_cl = readRDS("/Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/data/tcga_KIRC_tumor_cl.rds")
+KIRC_norm_cl = readRDS("/Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/data/tcga_KIRC_norm_cl.rds")
 library(tidyverse)
 library(fgsea)
-library(clusterProfiler)
 ```
 
 ```{r}
@@ -70,35 +71,6 @@ Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
 ```
 
 ```{r}
-#create ascending ranked gene vector for first BLCA patient
-#extract column first patient BLCA
-first = BLCA_z[,1, drop = FALSE]
-#sort ascending according to z score, KEEPING gene names
-first_sorted = first[order(first),, drop = FALSE]
-#convert into ranked gene vector
-first_BLCA = as.vector(first_sorted$`TCGA-MV-A51V-01`)
-#retrieve names from before
-first_ensemble_id = rownames(first_sorted)
-names(first_BLCA) = first_ensemble_id
-#turn gene names into NCBI entrez gene ID
-mart = useEnsembl(dataset = "hsapiens_gene_ensembl", biomart='ensembl')
-first_geneids = getBM(filters= "ensembl_gene_id", attributes= c("ensembl_gene_id","entrezgene_id"),values= first_ensemble_id, mart= mart) #gives longer output vector than input???
-sum(duplicated(first_geneids$ensembl_gene_id)) #64 double ensemble! (9847-9783 = 64)
-#remove duplicates, then like original 9783 rows/genes
-first_geneids = first_geneids[!duplicated(first_geneids$ensembl_gene_id),]
-first_geneids = na.omit(first_geneids)# remove NA's --> now 8635 genes left
-
-first_entrez_id = first_geneids$entrezgene_id #8635 entrez ids
-
-
-#need to reorder entrez gene id's because original order is lost after biomart!
-#ALSO: HOW REMOVE GENES WHERE NO ENTREZ ID WAS FOUND? THEY'RE NOT LEFT IN ENTREZ VECTOR!
-#HOW MATCH POSITION OF GENE NAMES NOW TO RANKED GENE VECTOR??
-#give vector elements according entrez gene ID as name
-
-```
-
-```{r}
 #create GSEA compatible gene set list, NCBI entrez gene id as characters
 carbohydrates = as.character(Carbohydrates$ensembl_gene)
 glycolysis = as.character(Glycolysis$ensembl_gene)
@@ -121,6 +93,48 @@ met.pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_a
 names(met.pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
 ```
 
+```{r}
+## hallmark genesets ## 
+#load metabolic genesets
+hallmarks = msigdbr(species = "Homo sapiens", category = "H")
+#create a df with metabolic pathways and genes as columns 
+hallmarks_gsname = hallmarks$gs_name
+hallmarks_ensembl = hallmarks$ensembl_gene
+hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
+
+#create a df with names of pathways
+pathway_names_H = c(unique(hallmarks$hallmarks_gsname))
+#create a list in which the pathways will be stored (outout has to be a list)
+metabolic_genesets_H = list(list())
+#fill the list with pathways and genes
+for (x in 1:length(pathway_names_H)){
+  metabolic_genesets_H[[x]] = pathway_names_H[x]
+  z = c((hallmarks[which(hallmarks$hallmarks_gsname == pathway_names_H[x]),2]))
+  for (k in 1:length(z)){
+  metabolic_genesets_H[[x]][[k]] = z[k]
+  }}
+names(metabolic_genesets_H) = pathway_names_H
+
+
+## KEGG genesets ##
+KEGG = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
+
+KEGG_gsname = KEGG$gs_name
+KEGG_ensembl = KEGG$ensembl_gene
+KEGG = as.data.frame(cbind(KEGG_gsname, KEGG_ensembl))
+
+pathway_names_KEGG = c(unique(KEGG$KEGG_gsname))
+#create a list in which the pathways will be stored (outout has to be a list)
+metabolic_genesets_KEGG = list(list())
+#fill the list with pathways and genes
+for (x in 1:length(pathway_names_KEGG)){
+  metabolic_genesets_KEGG[[x]] = pathway_names_KEGG[x]
+  z = c((KEGG[which(KEGG$KEGG_gsname == pathway_names_KEGG[x]),2]))
+  for (k in 1:length(z)){
+  metabolic_genesets_KEGG[[x]][[k]] = z[k]
+  }}
+names(metabolic_genesets_KEGG) = pathway_names_KEGG
+```
 
 
 ```{r}
@@ -140,34 +154,14 @@ metabolic_pathways = list(
 
 
 ```{r}
+#necessary data sets for gsea
 KIRC_tumor_cl = tcga_KIRC_tumor_protein_coding[rownames(tcga_KIRC_tumor_protein_coding) %in% rownames(tcga_KIRC_cl_pv_FC_sig),]
 
 KIRC_norm_cl = tcga_KIRC_norm_protein_coding[rownames(tcga_KIRC_norm_protein_coding) %in% rownames(tcga_KIRC_cl_pv_FC_sig),]
 
 tcga_KIRC_cl_pv_FC
-
-
 ```
 
-
-```{r}
-ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
-carb_ensembl = getBM(attributes='hgnc_symbol', 
-      filters = 'ensembl_gene_id', 
-      values = carbohydrates_genesymbols, 
-      mart = ensembl)
-dim(carb_ensembl)
-
-```
-
-
-```{r}
-#Enrichment analysis using fisher exact test 
-carbohydrate_enricher = select(Carbohydrates, gs_name, ensembl_gene)
-enrich.c = enricher(gene = rownames(KIRC_tumor_cl), TERM2GENE = carbohydrate_enricher )
-head(enrich.c@result)
-#Gene ratio : number of sig.genes in the gene set 
-```
 
 ```{r}
 #actual gsea
@@ -175,9 +169,6 @@ head(enrich.c@result)
 tcga_KIRC_GSEA_prep = 
 rownames_to_column(tcga_KIRC_cl_pv_FC, var = "ensembl_id")
 tcga_KIRC_GSEA_prep = tcga_KIRC_GSEA_prep[,1:2]
-
-tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
-tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
 
 FC.vec = tcga_KIRC_GSEA_prep[,2]
 names(FC.vec) = tcga_KIRC_GSEA_prep$ensembl_id
@@ -188,22 +179,20 @@ tcga_KIRC_GSEA = fgseaSimple(pathways = met.pathways,
                              nperm = 10000)
 
 ```
-```{r}
-tcga_KIRC_GSEA %>%
-  filter(padj <= 0.05) %>%
-  mutate(met.pathways = gsub ("metabolic pathways","",pathway),
-  pathway = gsub("_"," ",pathway)) %>%
-  
-  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
-  geom_col ()+
-  theme_classic()+
-  lims(y=c(-3.2,3.2))+
-  coord_flip()+
-  labs (y = "Normalized enrichment score (NES)",
-        x = "Gene set",
-        title = "GSEA")
 
-tcga_KIRC_GSEA1 %>%
+
+```{r}
+
+FC.vec = KIRC_GSEA_prep[,2]
+names(FC.vec) = KIRC_GSEA_prep$ensembl_id
+fc.order = FC.vec[order(FC.vec),drop = FALSE]
+
+tcga_KIRC_GSEA = fgsea(pathways = met.pathways,
+                             stats = fc.order,
+                             scoreType = "std")
+
+#plotting results
+tcga_KIRC_GSEA %>%
   filter(padj <= 0.05) %>%
   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
   pathway = gsub("_"," ",pathway)) %>%
@@ -224,37 +213,91 @@ plotEnrichment(met.pathways[["M16864_Carbohydrates"]],fc.order)
 
 ```{r}
 #log2FC for every patient, only protein coding without constant genes
+tcga_KIRC_tumor = data.matrix(tcga_tumor_norm[["KIRC"]][["tumor"]])
+tcga_KIRC_norm = data.matrix(tcga_tumor_norm[["KIRC"]][["normal"]])
+
 KIRC_FC_patients = data.frame(tcga_KIRC_tumor_cl - tcga_KIRC_norm_cl)
+round(KIRC_FC_patients)
 KIRC_GSEA_prep = 
 rownames_to_column(KIRC_FC_patients, var = "ensembl_id")
+distinct(KIRC_GSEA_prep)
 
-FC.vec = tcga_KIRC_GSEA_prep[,2]
-names(FC.vec) = tcga_KIRC_GSEA_prep$ensembl_id
-fc.order = FC.vec[order(FC.vec),drop = FALSE]
 
-tcga_KIRC_GSEA = fgsea(pathways = met.pathways,
-                             stats = fc.order,
-                             scoreType = "std")
-tcga_KIRC_GSEA1 = fgsea(pathways = met.pathways,
-                             stats = FC.vec,
-                             scoreType = "std")
-y = (for (i in 2:(ncol(KIRC_GSEA_prep))){
-  data.frame(fgseaSimple(pathways = met.pathways,
-                             stats =  (names(KIRC_GSEA_prep[,i]) =  KIRC_GSEA_prep$ensembl_id),
-                             scoreType = "std",
-                             nperm = 10000))
-})
+KIRC_GSEA_results_H = list()
+for (i in 2:(ncol(KIRC_GSEA_prep))){
+  for (b in 1:72) {
+  x = c(KIRC_GSEA_prep[,i])
+  names(x) = KIRC_GSEA_prep$ensembl_id
+  x = x[rank(x, ties.method = "first")]
+  if (x[b] < 0) {
+  y = -rank(x[b], ties.method = "first") }
+  else {
+  y = rank(x[b], ties.method = "first")
+  }}
   
-KIRC_GSEA_results = list()
+  KIRC_GSEA_results_H[[i]] = fgsea(pathways = metabolic_genesets_H,
+                             stats =  y,
+                             scoreType = "pos")
+}
+
+KIRC_GSEA_results_H = list()
+for (i in 2:(ncol(KIRC_GSEA_prep))){
+  x = c(KIRC_GSEA_prep[,i])
+  names(x) = KIRC_GSEA_prep$ensembl_id
+  x = x[rank(x, ties.method = "first")]
+  
+  KIRC_GSEA_results_H[[i]] = fgsea(pathways = metabolic_genesets_H,
+                             stats =  x,
+                             scoreType = "std")
+}
+
+KIRC_GSEA_results_KEGG = list()
 (for (i in 2:(ncol(KIRC_GSEA_prep))){
   x = c(KIRC_GSEA_prep[,i])
   names(x) = KIRC_GSEA_prep$ensembl_id
-  x = x[order(x),drop = FALSE]
-  KIRC_GSEA_results[[i]] = fgsea(pathways = met.pathways,
+  x = x[rank(x, ties.method = "first")]
+  KIRC_GSEA_results_KEGG[[i]] = fgsea(pathways = metabolic_genesets_KEGG,
                              stats =  x,
                              scoreType = "std")
 })
+#There were 2 pathways for which P-values were not calculated properly due to unbalanced (positive and negative) gene-level statistic values. For such pathways pval, padj, NES, log2err are set to NA. You can try to increase the value of the argument nPermSimple (for example set it nPermSimple = 10000)
 
+```
+
+```{r}
+## convert GSEA results into a pathway actvity matrix and pvalue matrix 
+#1 hallmark activity matrix 
+
+KIRC_GSEA_NES_H = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_NES_H[[v]] = KIRC_GSEA_results_H[[v]]$NES
+}
+KIRC_GSEA_NES_H = KIRC_GSEA_NES_H[-1]
+KIRC_GSEA_NES_H = as.data.frame(KIRC_GSEA_NES_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_H) = pathway_names_H
+colnames(KIRC_GSEA_NES_H) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_NES_H) ## pathway activity matrix with NES values
+
+KIRC_GSEA_PADJ_H = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_PADJ_H[[v]] = KIRC_GSEA_results_H[[v]]$padj
+}
+KIRC_GSEA_PADJ_H = KIRC_GSEA_PADJ_H[-1]
+KIRC_GSEA_PADJ_H = as.data.frame(KIRC_GSEA_PADJ_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_PADJ_H) = pathway_names_H
+colnames(KIRC_GSEA_PADJ_H) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_PADJ_H) ## pathway activity matrix with NES values
+
+KIRC_GSEA_PADJ_sig = KIRC_GSEA_PADJ_H <= 0.05
+for (a in 1:nrow(KIRC_GSEA_NES_H)) {
+  for (b in 1:ncol(KIRC_GSEA_NES_H)){
+    if (KIRC_GSEA_PADJ_sig[a,b] == "FALSE") {
+      KIRC_GSEA_NES_H[a,b] = "NA"
+    }}}
+KIRC_GSEA_NES_sig = if (KIRC_GSEA_PADJ_sig == "FALSE") {
+  KIRC_GSEA_NES_H = "NA"
+}
+View(KIRC_GSEA_NES_sig)
 
 ```
 
