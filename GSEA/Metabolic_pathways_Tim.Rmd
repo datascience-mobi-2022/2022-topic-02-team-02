@@ -7,7 +7,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 ```{r}
 library(msigdbr)
 genesets = readRDS("../data/hallmarks_genesets.rds")
@@ -136,7 +135,6 @@ for (x in 1:length(pathway_names_KEGG)){
 names(metabolic_genesets_KEGG) = pathway_names_KEGG
 ```
 
-
 ```{r}
 #next adapt format to hallmark genesets and extract the genes from our filtered matrix
 carbohydrates_genesymbols = Carbohydrates$human_gene_symbol
@@ -147,11 +145,10 @@ nucleotide_genesymbols = Nucleotide$human_gene_symbol
 metabolic_pathways = list(
   carbohydrate = carbohydrates_genesymbols,
   glycolysis = glycolysis_genesymbols,
-  amini_acid = amino_Acid_genesymbols,
-  nucleotide = nucleotide_genesymbols)
+  amini_acid = amino_Acid_genesymbols
+  )
 
 ```
-
 
 ```{r}
 #necessary data sets for gsea
@@ -161,7 +158,6 @@ KIRC_norm_cl = tcga_KIRC_norm_protein_coding[rownames(tcga_KIRC_norm_protein_cod
 
 tcga_KIRC_cl_pv_FC
 ```
-
 
 ```{r}
 #actual gsea
@@ -179,7 +175,6 @@ tcga_KIRC_GSEA = fgseaSimple(pathways = met.pathways,
                              nperm = 10000)
 
 ```
-
 
 ```{r}
 
@@ -209,7 +204,6 @@ tcga_KIRC_GSEA %>%
 plotEnrichment(met.pathways[["M16864_Carbohydrates"]],fc.order)
 
 ```
-
 
 ```{r}
 #log2FC for every patient, only protein coding without constant genes
@@ -426,6 +420,45 @@ KIRC_GSEA_NES_KEGG = as.data.frame(KIRC_GSEA_NES_KEGG) #auffällig: NA für manc
 rownames(KIRC_GSEA_NES_KEGG) = pathway_names_KEGG
 colnames(KIRC_GSEA_NES_KEGG) = colnames(KIRC_tumor_cl)
 View(KIRC_GSEA_NES_KEGG) ## pathway activity matrix with NES values
+
+KIRC_GSEA_activity = rbind(KIRC_GSEA_NES_H2,KIRC_GSEA_NES_KEGG)
+KIRC_GSEA_pathways = c(pathway_names_H,pathway_names_KEGG)
+dim(KIRC_GSEA_activity)
+View(KIRC_GSEA_pathways)
+## compute the sum of enriched pathways 
+
+KIRC_GSEA_sum = c()
+for (i in 1:nrow(KIRC_GSEA_activity)) {
+  KIRC_GSEA_sum[i] = length(which(KIRC_GSEA_activity[i,] > 0))
+}
+length(KIRC_GSEA_sum)
+KIRC_GSEA_activity_sum = as.data.frame(KIRC_GSEA_sum) 
+rownames(KIRC_GSEA_activity_sum) = rownames(KIRC_GSEA_activity)
+colnames(KIRC_GSEA_activity_sum) = "Enrichment rate"
+
 ```
 
+```{r}
 
+Test_patient = data.frame(KIRC_GSEA_activity[,1])
+rownames(Test_patient) = rownames(KIRC_GSEA_activity)
+rownamos = rownames(Test_patient)
+Testp1 = cbind(rownamos,Test_patient)
+View(Testp1)
+colnames(Testp1) = c("pathway","NES")
+#plotting results
+Testp1 %>%
+  filter(NES != 0) %>%
+   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
+  
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA")
+ 
+```
