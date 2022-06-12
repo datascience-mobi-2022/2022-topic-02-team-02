@@ -221,8 +221,7 @@ round(KIRC_FC_patients)
 KIRC_GSEA_prep = 
 rownames_to_column(KIRC_FC_patients, var = "ensembl_id")
 distinct(KIRC_GSEA_prep)
-
-
+View(KIRC_GSEA_prep)
 KIRC_GSEA_results_H = list()
 for (i in 2:(ncol(KIRC_GSEA_prep))){
   for (b in 1:72) {
@@ -237,7 +236,8 @@ for (i in 2:(ncol(KIRC_GSEA_prep))){
   
   KIRC_GSEA_results_H[[i]] = fgsea(pathways = metabolic_genesets_H,
                              stats =  y,
-                             scoreType = "pos")
+                             scoreType = "pos",
+                             nPermSimple = 10000)
 }
 
 KIRC_GSEA_results_H = list()
@@ -248,7 +248,8 @@ for (i in 2:(ncol(KIRC_GSEA_prep))){
   
   KIRC_GSEA_results_H[[i]] = fgsea(pathways = metabolic_genesets_H,
                              stats =  x,
-                             scoreType = "std")
+                             scoreType = "std",
+                             nPermSimple = 10000)
 }
 
 KIRC_GSEA_results_KEGG = list()
@@ -258,20 +259,69 @@ KIRC_GSEA_results_KEGG = list()
   x = x[rank(x, ties.method = "first")]
   KIRC_GSEA_results_KEGG[[i]] = fgsea(pathways = metabolic_genesets_KEGG,
                              stats =  x,
-                             scoreType = "std")
+                             scoreType = "std",
+                             nPermSimple = 10000)
 })
 #There were 2 pathways for which P-values were not calculated properly due to unbalanced (positive and negative) gene-level statistic values. For such pathways pval, padj, NES, log2err are set to NA. You can try to increase the value of the argument nPermSimple (for example set it nPermSimple = 10000)
 
 ```
 
 ```{r}
+##skip this chunk, the code that worked is in the chunk below, didnt want to delete this one tho
 ## convert GSEA results into a pathway actvity matrix and pvalue matrix 
 #1 hallmark activity matrix 
+
+#avoid NA in the padj list
+KIRC_GSEA_H_noNA = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_H_noNA[[v]] = KIRC_GSEA_results_H[[v]]$padj
+  KIRC_GSEA_H_noNA[[v]][is.na(KIRC_GSEA_H_noNA[[v]])] = 1
+}
 
 KIRC_GSEA_NES_H = list()
 for (v in 2:length(KIRC_GSEA_results_H)){
   KIRC_GSEA_NES_H[[v]] = KIRC_GSEA_results_H[[v]]$NES
 }
+
+KIRC_GSEA_NES_H2 = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_NES_H2[[v]] = KIRC_GSEA_results_H[[v]]$NES
+}
+  
+for (v in 2:length(KIRC_GSEA_results_H)){
+  for (z in 1:length(KIRC_GSEA_results_H[[2]]$padj)){
+  if (KIRC_GSEA_H_noNA[[v]][z] <= 0.05) {
+  KIRC_GSEA_NES_H2[[v]][z]= KIRC_GSEA_results_H[[v]]$NES[z] }
+   else {KIRC_GSEA_NES_H2[[v]][z] = 0}
+  }}
+
+KIRC_GSEA_NES_H4 = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  for (z in 1:length(KIRC_GSEA_results_H[[2]]$padj)){
+  ifelse (KIRC_GSEA_H_noNA[[v]][z] <= 0.05,
+          KIRC_GSEA_NES_H4[[v]][z] = KIRC_GSEA_results_H[[v]]$NES[z],
+          KIRC_GSEA_NES_H4[[v]][z] = 0)
+          }}
+
+
+View(KIRC_GSEA_NES_H2)
+View(KIRC_GSEA_H_noNA)
+
+KIRC_GSEA_NES_H3 = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  if (KIRC_GSEA_H_noNA[[v]] <= 0.05) {
+  KIRC_GSEA_NES_H3[[v]] = KIRC_GSEA_results_H[[v]]$NES}
+   else {KIRC_GSEA_NES_H3[[v]] = 0
+  }
+  }
+
+KIRC_GSEA_NES_H2 = KIRC_GSEA_NES_H2[-1]
+KIRC_GSEA_NES_H2 = as.data.frame(KIRC_GSEA_NES_H2) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_H2) = pathway_names_H
+colnames(KIRC_GSEA_NES_H2) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_NES_H2) ## pathway activity matrix with NES values
+
+
 KIRC_GSEA_NES_H = KIRC_GSEA_NES_H[-1]
 KIRC_GSEA_NES_H = as.data.frame(KIRC_GSEA_NES_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
 rownames(KIRC_GSEA_NES_H) = pathway_names_H
@@ -286,7 +336,7 @@ KIRC_GSEA_PADJ_H = KIRC_GSEA_PADJ_H[-1]
 KIRC_GSEA_PADJ_H = as.data.frame(KIRC_GSEA_PADJ_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
 rownames(KIRC_GSEA_PADJ_H) = pathway_names_H
 colnames(KIRC_GSEA_PADJ_H) = colnames(KIRC_tumor_cl)
-View(KIRC_GSEA_PADJ_H) ## pathway activity matrix with NES values
+View(KIRC_GSEA_PADJ_H) ##  matrix with padj values
 
 KIRC_GSEA_PADJ_sig = KIRC_GSEA_PADJ_H <= 0.05
 for (a in 1:nrow(KIRC_GSEA_NES_H)) {
@@ -297,7 +347,59 @@ for (a in 1:nrow(KIRC_GSEA_NES_H)) {
 KIRC_GSEA_NES_sig = if (KIRC_GSEA_PADJ_sig == "FALSE") {
   KIRC_GSEA_NES_H = "NA"
 }
-View(KIRC_GSEA_NES_sig)
+
+KIRC_GSEA_NES_sig = as.numeric(which(KIRC_GSEA_PADJ_sig == "FALSE"))
+KIRC_GSEA_NES_H[KIRC_GSEA_NES_sig] = "NA"
+```
+
+```{r}
+## final acitvity matrix, H = no pvalue filtering, H2 = pvalue filtering
+KIRC_GSEA_H_noNA = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_H_noNA[[v]] = KIRC_GSEA_results_H[[v]]$padj
+  KIRC_GSEA_H_noNA[[v]][is.na(KIRC_GSEA_H_noNA[[v]])] = 1
+}
+
+KIRC_GSEA_NES_H = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_NES_H[[v]] = KIRC_GSEA_results_H[[v]]$NES
+}
+
+KIRC_GSEA_NES_H2 = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_NES_H2[[v]] = KIRC_GSEA_results_H[[v]]$NES
+}
+  
+for (v in 2:length(KIRC_GSEA_results_H)){
+  for (z in 1:length(KIRC_GSEA_results_H[[2]]$padj)){
+  if (KIRC_GSEA_H_noNA[[v]][z] <= 0.05) {
+  KIRC_GSEA_NES_H2[[v]][z]= KIRC_GSEA_results_H[[v]]$NES[z] }
+   else {KIRC_GSEA_NES_H2[[v]][z] = 0}
+  }}
+
+
+KIRC_GSEA_NES_H2 = KIRC_GSEA_NES_H2[-1]
+KIRC_GSEA_NES_H2 = as.data.frame(KIRC_GSEA_NES_H2) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_H2) = pathway_names_H
+colnames(KIRC_GSEA_NES_H2) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_NES_H2) ## pathway activity matrix with NES values
+
+
+KIRC_GSEA_NES_H = KIRC_GSEA_NES_H[-1]
+KIRC_GSEA_NES_H = as.data.frame(KIRC_GSEA_NES_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_H) = pathway_names_H
+colnames(KIRC_GSEA_NES_H) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_NES_H) ## pathway activity matrix with NES values
+
+KIRC_GSEA_PADJ_H = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_PADJ_H[[v]] = KIRC_GSEA_results_H[[v]]$padj
+}
+KIRC_GSEA_PADJ_H = KIRC_GSEA_PADJ_H[-1]
+KIRC_GSEA_PADJ_H = as.data.frame(KIRC_GSEA_PADJ_H) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_PADJ_H) = pathway_names_H
+colnames(KIRC_GSEA_PADJ_H) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_PADJ_H) ##  matrix with padj values
 
 ```
 
