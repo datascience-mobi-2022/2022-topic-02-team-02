@@ -401,6 +401,31 @@ rownames(KIRC_GSEA_PADJ_H) = pathway_names_H
 colnames(KIRC_GSEA_PADJ_H) = colnames(KIRC_tumor_cl)
 View(KIRC_GSEA_PADJ_H) ##  matrix with padj values
 
+##repeat for KEGG pathways
+
+KIRC_GSEA_KEGG_noNA = list()
+for (v in 2:length(KIRC_GSEA_results_KEGG)){
+  KIRC_GSEA_KEGG_noNA[[v]] = KIRC_GSEA_results_KEGG[[v]]$padj
+  KIRC_GSEA_KEGG_noNA[[v]][is.na(KIRC_GSEA_KEGG_noNA[[v]])] = 1
+}
+
+KIRC_GSEA_NES_KEGG = list()
+for (v in 2:length(KIRC_GSEA_results_KEGG)){
+  KIRC_GSEA_NES_KEGG[[v]] = KIRC_GSEA_results_KEGG[[v]]$NES
+}
+  
+for (v in 2:length(KIRC_GSEA_results_KEGG)){
+  for (z in 1:length(KIRC_GSEA_results_KEGG[[2]]$padj)){
+  if (KIRC_GSEA_KEGG_noNA[[v]][z] <= 0.05) {
+  KIRC_GSEA_NES_KEGG[[v]][z]= KIRC_GSEA_results_KEGG[[v]]$NES[z] }
+   else {KIRC_GSEA_NES_KEGG[[v]][z] = 0}
+  }}
+
+KIRC_GSEA_NES_KEGG = KIRC_GSEA_NES_KEGG[-1]
+KIRC_GSEA_NES_KEGG = as.data.frame(KIRC_GSEA_NES_KEGG) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_KEGG) = pathway_names_KEGG
+colnames(KIRC_GSEA_NES_KEGG) = colnames(KIRC_tumor_cl)
+View(KIRC_GSEA_NES_KEGG) ## pathway activity matrix with NES values
 ```
 
 
