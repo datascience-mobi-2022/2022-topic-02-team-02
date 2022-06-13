@@ -15,19 +15,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 # work with tcga_exp_prc_clean -> w/o low variable under p50
-dim (tcga_exp_prc_clean)
-tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
-pca_var = tcga_exp_pca$sdev^2
-proportion_pca_var = pca_var/sum(pca_var)
-names_prop_pca_var = 1:length(proportion_pca_var)
-barplot(proportion_pca_var[1:20])
-tcga_exp_pca$sdev
+#dim (tcga_exp_prc_clean)
+#tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
+#pca_var = tcga_exp_pca$sdev^2
+#proportion_pca_var = pca_var/sum(pca_var)
+#names_prop_pca_var = 1:length(proportion_pca_var)
+#barplot(proportion_pca_var[1:20])
+#tcga_exp_pca$sdev
 ```
 
 ```{r}
 #attempt to save data from environment
-saveRDS(tcga_exp_prc_clean, file = "exp_prc_clean.Rds")
-tcga_exp_prc_clean_copy = readRDS(file = "exp_prc_clean.Rds")
+#saveRDS(tcga_exp_prc_clean, file = "exp_prc_clean.Rds")
+#tcga_exp_prc_clean_copy = readRDS(file = "exp_prc_clean.Rds")
 ```
 
 ```{r}
@@ -37,6 +37,11 @@ tcga_exp_prc_clean_copy = readRDS(file = "exp_prc_clean.Rds")
 
 ```{r}
 library(Seurat)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
 PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
 #create data frame with PCs and respective genes
 PCA_exp_PCs = PCA_exp@cell.embeddings
@@ -46,7 +51,7 @@ PCA_exp_proportion_var = PCA_exp_var/sum(PCA_exp_var)
 PC_exp = (PCA_exp_PCs[1:20])
 PCs_20 = PCA_exp@cell.embeddings[1:20]
 
-PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_2 )) +
+PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_2, color = cancer_names)) +
   geom_point(color = "blue")
 print(PCA_exp_scatter2) 
 
@@ -62,15 +67,48 @@ PCA_exp_gender = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y= PC_
   ggtitle ("PCA regarding gender")
 PCA_exp_gender
 ```
+
 ```{r}
 library(tidyverse)
 cancer_types = tcga_annot$cancer_type_abbreviation
-
+data_kirc = which(cancer_types == "KIRC")
+xcx = UMAP_exp[cancer_types == "ACC",]
+dim(xcx)
 UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
 UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), 
                     aes(x = V1, y= V2, color = cancer_types))+
-  geom_point(size = 2)
+  geom_point(size = 2) 
 UMAP_plot
+
+#kirc specific
+UMAP_plot_1 = ggplot (data = as.data.frame(UMAP_exp), 
+                    aes(x = V1, y= V2, color = cancer_types=="KIRC"))+
+  geom_point(size = 2) 
+UMAP_plot_1
+UMAP_KIRC = UMAP_exp[data_kirc,]
+UMAP_plot_KIRC = ggplot (data = as.data.frame(UMAP_KIRC), 
+                    aes(x = V1, y= V2, color = "blue"))+
+  geom_point(size = 2) 
+UMAP_plot_KIRC
+
+#run UMAP for each cancer type on its own
+cancer_names = unique(cancer_types)
+UMAP_output = list ()
+for (i in 1:length(cancer_names)) {
+  cancer = c(which(cancer_types == cancer_names[i]))
+  cancer_df = data.frame(UMAP_exp[cancer,])
+  UMAP_output[[i]] = ggplot (data = cancer_df,
+  aes (x = X1, y =X2, color = "blue")) + 
+    geom_point(size = 2 , color = "blue")+ 
+    ggtitle (cancer_names [[i]])
+}
+
+UMAP_output[[1]]
+cancer = c(which(cancer_types == cancer_names[1]))
+names(UMAP_output) = cancer_names
+UMAP_output$KIRC
+
+UMAP_output$ACC
 
 ```
 
