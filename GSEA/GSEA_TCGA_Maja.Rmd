@@ -259,17 +259,36 @@ GSEA_results_ACC = GSEA_results[-1]
 #names(GSEA_results_ACC) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
 # no naming here bc for loop for p value matrix needs 1-50 as numbers to index
 
-#print most significant pathways
-head(GSEA_results_ACC[["TCGA-OR-A5K3-01"]][order(padj), ])
+#print most significant pathways for patient 1 ACC
+head(GSEA_results_ACC[[1]][order(padj), ])
 
+#pvalue matrix
 #try to create p value dataframe with pathways as rows and patients in column
 ACC_pvalues = data.frame(row.names = pathway_names)
 for (i in 1:77){
   x = GSEA_results_ACC[[i]][, "padj"]
   ACC_pvalues[1:50,i] = x
 }
+#NA's = 1
+ACC_pvalues[is.na(ACC_pvalues)] = 1
 #rename columns according to patients
 colnames(ACC_pvalues) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
+
+#NES-matrix
+ACC_NES = data.frame(row.names = pathway_names)
+for (i in 1:77){
+  x = GSEA_results_ACC[[i]][, "NES"]
+  ACC_NES[1:50,i] = x
+}
+colnames(ACC_NES) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
+#get indexes of pvalues >= 0.05
+indexes = which(ACC_pvalues >= 0.05, arr.ind=TRUE)
+rows = as.vector(indexes[,1])
+cols = as.vector(indexes[,2])
+#for loop toset all insignificant NES zero
+for  (i in 1:length(rows)) {
+    ACC_NES[rows[i], cols[i]] = 0
+  }
 ```
 
 ```{r}
@@ -279,6 +298,38 @@ topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][head(order(pval
 topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
+
+```{r}
+#final GSEA lapply/for-loop over all tumor types!
+GSEA_OVERALL = list()
+PVALUES_OVERALL = list()
+NES_OVERALL = list ()
+
+for (j in 1:33) {
+  for (i in 2:(ncol(tumorlist_z[[j]]))){
+  m = c(tumorlist_z[[j]][,i])
+  names(m) = c(tumorlist_z[[j]]["rowname"])
+  m = m[order(m), drop = FALSE]
+  GSEA_OVERALL[[j]][[i]] = fgsea(pathways = hallmark_genesets,
+                             stats = m,
+                             scoreType = "std")}
+GSEA_OVERALL[[j]][-1]
+PVALUES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+for (h in 1:ncol(tumorlist_z[[j]])){
+  a = GSEA_OVERALL[[j]][[h]][, "padj"]
+  PVALUES_OVERALL[[j]][1:50,h] = a}
+PVALUES_OVERALL[[j]][is.na(PVALUES_OVERALL[[j]])] = 1
+colnames(PVALUES_OVERALL[[j]]) = colnames(tumorlist_z[[j]][,2:ncol(tumorlist_z[[j]])])
+NES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+for (k in 1:ncol(tumorlist_z[[j]])){
+  t = GSEA_OVERALL[[j]][[k]][, "NES"]
+  NES_OVERALL[[j]][1:50,k] = t}
+colnames(NES_OVERALL[[j]]) = colnames(tumorlist_z[[j]][,2:ncol(tumorlist_z[[j]])])
+
+}
+```
+
+
 
 
 
