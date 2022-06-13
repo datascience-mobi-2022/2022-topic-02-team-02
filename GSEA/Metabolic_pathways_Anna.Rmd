@@ -87,25 +87,25 @@ names(metabolic_genesets) = pathway_names
 ```
 
 ```{r}
-#more signaling pathways
-PIC_pathways = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
+#additional PID pathways (signaling)
+PID_pathways = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
 
 #create a df with metabolic pathways and genes as columns 
-PIC_gsname = PIC_pathways$gs_name
-PIC_ensembl = PIC_pathways$ensembl_gene
-PIC_pathways = as.data.frame(cbind(PIC_gsname, PIC_ensembl))
+PID_gsname = PID_pathways$gs_name
+PID_ensembl = PID_pathways$ensembl_gene
+PID_pathways = as.data.frame(cbind(PID_gsname, PID_ensembl))
 
 #create a vector with names of pathways
-PIC_pathway_names = c(unique(PIC_pathways$PIC_gsname))
+PID_pathway_names = c(unique(PID_pathways$PID_gsname))
 #create a list in which the pathways will be stored (outout has to be a list)
-PIC_genesets = list(list())
+PID_genesets = list(list())
 #fill the list with pathways and genes
-for (x in 1:length(PIC_pathway_names)){
-  PIC_genesets[[x]] = PIC_pathway_names[x]
-  z = c((PIC_pathways[which(PIC_pathways$PIC_gsname == PIC_pathway_names[x]),2]))
+for (x in 1:length(PID_pathway_names)){
+  PID_genesets[[x]] = PID_pathway_names[x]
+  z = c((PID_pathways[which(PID_pathways$PID_gsname == PID_pathway_names[x]),2]))
   for (k in 1:length(z)){
-  PIC_genesets[[x]][[k]] = z[k]
+  PID_genesets[[x]][[k]] = z[k]
   }}
-names(PIC_genesets) = PIC_pathway_names
+names(PID_genesets) = PID_pathway_names
 ```
 

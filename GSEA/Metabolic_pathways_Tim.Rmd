@@ -133,6 +133,27 @@ for (x in 1:length(pathway_names_KEGG)){
   metabolic_genesets_KEGG[[x]][[k]] = z[k]
   }}
 names(metabolic_genesets_KEGG) = pathway_names_KEGG
+
+## PID pathways ##
+PID_pathways = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
+
+#create a df with metabolic pathways and genes as columns 
+PID_gsname = PID_pathways$gs_name
+PID_ensembl = PID_pathways$ensembl_gene
+PID_pathways = as.data.frame(cbind(PID_gsname, PID_ensembl))
+
+#create a vector with names of pathways
+PID_pathway_names = c(unique(PID_pathways$PID_gsname))
+#create a list in which the pathways will be stored (outout has to be a list)
+PID_genesets = list(list())
+#fill the list with pathways and genes
+for (x in 1:length(PID_pathway_names)){
+  PID_genesets[[x]] = PID_pathway_names[x]
+  z = c((PID_pathways[which(PID_pathways$PID_gsname == PID_pathway_names[x]),2]))
+  for (k in 1:length(z)){
+  PID_genesets[[x]][[k]] = z[k]
+  }}
+names(PID_genesets) = PID_pathway_names
 ```
 
 ```{r}
@@ -425,28 +446,68 @@ KIRC_GSEA_activity = rbind(KIRC_GSEA_NES_H2,KIRC_GSEA_NES_KEGG)
 KIRC_GSEA_pathways = c(pathway_names_H,pathway_names_KEGG)
 dim(KIRC_GSEA_activity)
 View(KIRC_GSEA_pathways)
-## compute the sum of enriched pathways 
-
-KIRC_GSEA_sum = c()
-for (i in 1:nrow(KIRC_GSEA_activity)) {
-  KIRC_GSEA_sum[i] = length(which(KIRC_GSEA_activity[i,] > 0))
-}
-length(KIRC_GSEA_sum)
-KIRC_GSEA_activity_sum = as.data.frame(KIRC_GSEA_sum) 
-rownames(KIRC_GSEA_activity_sum) = rownames(KIRC_GSEA_activity)
-colnames(KIRC_GSEA_activity_sum) = "Enrichment rate"
 
 ```
 
+
 ```{r}
+## plot mean activity
+KIRC_GSEA_activity_mean = data.frame(apply(KIRC_GSEA_activity, 1 , mean))
+rownames(KIRC_GSEA_activity_mean) = rownames(KIRC_GSEA_activity)
+rownamos = rownames(KIRC_GSEA_activity_mean)
+KIRC_GSEA_activity_mean_prep = cbind(rownamos,KIRC_GSEA_activity_mean)
+colnames(KIRC_GSEA_activity_mean_prep) = c("pathway","NES")
+data.frame(KIRC_GSEA_activity_mean_prep)
+
+KIRC_GSEA_activity_mean_prep %>%
+  filter(NES != 0) %>%
+   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
+  
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA")
+
+
+##repeat for median
+KIRC_GSEA_activity_median = data.frame(apply(KIRC_GSEA_activity, 1 , median))
+rownames(KIRC_GSEA_activity_median) = rownames(KIRC_GSEA_activity)
+rownamos = rownames(KIRC_GSEA_activity_median)
+KIRC_GSEA_activity_median_prep = cbind(rownamos,KIRC_GSEA_activity_median)
+colnames(KIRC_GSEA_activity_median_prep) = c("pathway","NES")
+data.frame(KIRC_GSEA_activity_median_prep)
+
+
+KIRC_GSEA_activity_median_prep %>%
+  filter(NES != 0) %>%
+   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
+  
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA")
+
+
+## plot test patient
 
 Test_patient = data.frame(KIRC_GSEA_activity[,1])
 rownames(Test_patient) = rownames(KIRC_GSEA_activity)
 rownamos = rownames(Test_patient)
 Testp1 = cbind(rownamos,Test_patient)
-View(Testp1)
 colnames(Testp1) = c("pathway","NES")
-#plotting results
+
+
+#plotting results for example patient
 Testp1 %>%
   filter(NES != 0) %>%
    mutate(met.pathways = gsub ("metabolic pathways","",pathway),
@@ -462,3 +523,31 @@ Testp1 %>%
         title = "GSEA")
  
 ```
+
+
+```{r}
+## compute the sum of enriched pathways 
+KIRC_GSEA_sum = c()
+for (i in 1:nrow(KIRC_GSEA_activity)) {
+  KIRC_GSEA_sum[i] = length(which(KIRC_GSEA_activity[i,] > 0))
+}
+length(KIRC_GSEA_sum)
+KIRC_GSEA_activity_sum = as.data.frame(KIRC_GSEA_sum) 
+rownames(KIRC_GSEA_activity_sum) = rownames(KIRC_GSEA_activity)
+colnames(KIRC_GSEA_activity_sum) = "Enrichment rate"
+KIRC_GSEA_activity_sum1 = cbind(rownamos, KIRC_GSEA_activity_sum)
+```
+
+
+```{r}
+##plot sum results
+KIRC_GSEA_activity_sum %>%
+  filter(`Enrichment rate` > 0) %>%
+  ggplot(aes(x = `Enrichment rate`)) +
+  geom_histogram(bins = length(which(KIRC_GSEA_activity_sum$`Enrichment rate` > 0)),           binwidth = 0.5,
+    color="darkblue", fill="lightblue",
+    )+
+  labs ( y="Pathway Frequency", x="Enrichment Frequency")
+
+```
+
