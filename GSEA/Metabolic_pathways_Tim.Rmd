@@ -412,6 +412,6 @@ KIRC_GSEA_activity_mean_top10%>%
   coord_flip()+
   labs (y = "Normalized enrichment score (NES)",
         x = "Gene set",
-        title = "GSEA mean expression top 10 sum")
+        title = "GSEA mean expression top 10 mean")
 
 ```
