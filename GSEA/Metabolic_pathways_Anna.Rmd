@@ -65,6 +65,45 @@ Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
 ```
 
 ```{r}
+#create GSEA compatible gene set list, NCBI entrez gene id as characters
+carbohydrates = as.character(Carbohydrates$ensembl_gene)
+glycolysis = as.character(Glycolysis$ensembl_gene)
+amino_acid = as.character(Amino_Acid$ensembl_gene)
+sphingolipid = as.character(Sphingolipid$ensembl_gene)
+fatty_acid = as.character(Fatty_acid$ensembl_gene)
+pentose_phosphate = as.character(Pentose_phosphate$ensembl_gene)
+ether_lipid = as.character(Ether_lipid$ensembl_gene)
+glutathione = as.character(Glutathione$ensembl_gene)
+nitrogen = as.character(Nitrogen$ensembl_gene)
+oxidative_phosphorylation = as.character(Oxidative_phosphorylation$ensembl_gene)
+purine = as.character(Purine$ensembl_gene)
+pyrimidine = as.character(Pyrimidine$ensembl_gene)
+pyruvate = as.character(Pyruvate$ensembl_gene)
+steroid = as.character(Steroid$ensembl_gene)
+steroid_hormones = as.character(Steroid_hormones$ensembl_gene)
+
+met.pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
+
+names(met.pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
+```
+
+
+```{r} 
+
+#next adapt format to hallmark genesets and extract the genes from our filtered matrix
+carbohydrates_genesymbols = Carbohydrates$human_gene_symbol
+glycolysis_genesymbols = Glycolysis$human_gene_symbol
+amino_Acid_genesymbols = Amino_Acid$human_gene_symbol
+nucleotide_genesymbols = Nucleotide$human_gene_symbol
+
+metabolic_pathways = list(
+  carbohydrate = carbohydrates_genesymbols,
+  glycolysis = glycolysis_genesymbols,
+  amino_acid = amino_Acid_genesymbols
+  )
+```
+
+```{r}
 #load metabolic genesets
 hallmarks = msigdbr(species = "Homo sapiens", category = "H")
 #create a df with metabolic pathways and genes as columns 
