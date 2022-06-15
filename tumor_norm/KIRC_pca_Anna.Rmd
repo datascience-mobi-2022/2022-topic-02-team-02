@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 #working with tcga_norm_tumor
-#cleaned version: 1. run whole skript tcga_tumor_norm_Volcano_Anna ; 2. work with KIRC_cl (see next chunk)
 library(ggplot2)
 #plotting
 ggplot(tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange,neg_log10_pv))+
@@ -23,11 +22,15 @@ ggplot(tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange,neg_log10_pv))+
 
 
 ```{r}
+#Load data
+tcga_tumor_norm = readRDS("data/tcga_tumor_normal_datascience_proj_2022.RDS")
+tcga_KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]])
 #work with this data frames!!!!
 
-KIRC_tumor_cl = tcga_KIRC_tumor_protein_coding[rownames(tcga_KIRC_tumor_protein_coding) %in% rownames(tcga_KIRC_cl_pv_FC_sig),]
+KIRC_tumor_cl = readRDS("data/tcga_KIRC_tumor_cl.rds")
 
-KIRC_norm_cl = tcga_KIRC_norm_protein_coding[rownames(tcga_KIRC_norm_protein_coding) %in% rownames(tcga_KIRC_cl_pv_FC_sig),]
+KIRC_norm_cl = readRDS("data/tcga_KIRC_norm_cl.rds")
+
 ```
 
 ```{r}
@@ -37,14 +40,12 @@ length(KIRC_t_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = num
 
 
 ```{r}
-#kommt später nochmal mit funktion deswegen unnötig aber mal da gelassen
-#plotting the variance that is explained by each PC
-KIRC_t_pca_variance = (KIRC_t_pca$sdev)^2
-KIRC_t_pca_prop.variance = KIRC_t_pca_variance/sum(KIRC_t_pca_variance) #calculating the proportion of variance taht is explained by PC ("In linear algebra, the rank of a matrix A is the dimension of the vector space generated (or spanned) by its columns. This corresponds to the maximal number of linearly independent columns of A")
-names(KIRC_t_pca_prop.variance) = 1:length(KIRC_t_pca_prop.variance)
-barplot(KIRC_t_pca_prop.variance[1:72],ylab='Proportion of variance', xlab = "Principal Components") # we only plot the first 20 PCs
+#get the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
+library("factoextra")
+KIRC_t_pca_eigval = get_eigenvalue(KIRC_t_pca)
+rownames(KIRC_t_pca_eigval) = colnames (KIRC_t_pca_x)
+barplot(KIRC_t_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
 ```
-
 
 ```{r}
 KIRC_t_pca_x = data.frame(KIRC_t_pca[["x"]])
@@ -95,14 +96,7 @@ ggplot(KIRC_t_pca_x, aes(PC1, PC3))+
   geom_point( size =2, color = KIRC_age)+
   ggtitle("PCA with regard to age at initial pathologic diagnosis ")
 ```
-```{r}
-#same as before but with package
-#examine the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
-library("factoextra")
-KIRC_t_pca_eigval = get_eigenvalue(KIRC_t_pca)
-rownames(KIRC_t_pca_eigval) = colnames (KIRC_t_pca_x)
-barplot(KIRC_t_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
-```
+
 
 
 
