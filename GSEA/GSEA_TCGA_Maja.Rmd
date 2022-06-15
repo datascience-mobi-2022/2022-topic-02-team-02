@@ -222,12 +222,15 @@ UVM_z = as.data.frame(rowScales(tcga_exp_UVM))
 
 tumorlist_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM_z, HNSC_z, KICH_z, KIRC_z, KIRP_z,LAML_z, LGG_z, LIHC_z, LUAD_z, LUSC_z, MESO_z, OV_z, PAAD_z, PCPG_z, PRAD_z, READ_z, SARC_z, SKCM_z, STAD_z, TGCT_z, THCA_z, THYM_z, UCEC_z, UCS_z, UVM_z)
 
-names(tumorlist_z) = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
+all_tumortypes_names = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
+
+names(tumorlist_z) = all_tumortypes_names
 
 #remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
 tumorlist_z = lapply(tumorlist_z, na.omit)
-#rownames to column
-tumorlist_z = lapply(tumorlist_z, rownames_to_column)
+
+#NICHT rownames to column
+#tumorlist_z = lapply(tumorlist_z, rownames_to_column)
 
 ```
 
@@ -301,35 +304,119 @@ as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[
 
 ```{r}
 #final GSEA lapply/for-loop over all tumor types!
-GSEA_OVERALL = list()
+GSEA_OVERALL = vector(mode = 'list', length = 33)
 PVALUES_OVERALL = list()
-NES_OVERALL = list ()
+NES_OVERALL = list()
 
 for (j in 1:33) {
-  for (i in 2:(ncol(tumorlist_z[[j]]))){
-  m = c(tumorlist_z[[j]][,i])
-  names(m) = c(tumorlist_z[[j]]["rowname"])
-  m = m[order(m), drop = FALSE]
-  GSEA_OVERALL[[j]][[i]] = fgsea(pathways = hallmark_genesets,
-                             stats = m,
-                             scoreType = "std")}
-GSEA_OVERALL[[j]][-1]
-PVALUES_OVERALL[[j]] = data.frame(row.names = pathway_names)
-for (h in 1:ncol(tumorlist_z[[j]])){
-  a = GSEA_OVERALL[[j]][[h]][, "padj"]
-  PVALUES_OVERALL[[j]][1:50,h] = a}
-PVALUES_OVERALL[[j]][is.na(PVALUES_OVERALL[[j]])] = 1
-colnames(PVALUES_OVERALL[[j]]) = colnames(tumorlist_z[[j]][,2:ncol(tumorlist_z[[j]])])
-NES_OVERALL[[j]] = data.frame(row.names = pathway_names)
-for (k in 1:ncol(tumorlist_z[[j]])){
-  t = GSEA_OVERALL[[j]][[k]][, "NES"]
-  NES_OVERALL[[j]][1:50,k] = t}
-colnames(NES_OVERALL[[j]]) = colnames(tumorlist_z[[j]][,2:ncol(tumorlist_z[[j]])])
-
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL[[j]][[i]] = fgsea(pathways = hallmark_genesets,
+                               stats = m,
+                               scoreType = "std")
+    print("yeah")
+  }
+  print("Hallo")
+  names(GSEA_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  print("ich")
+  PVALUES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL[[j]][[h]][,3]
+    PVALUES_OVERALL[[j]][1:50,h] = a
+  }
+  print("bin")
+  PVALUES_OVERALL[[j]][is.na(PVALUES_OVERALL[[j]])] = 1
+  colnames(PVALUES_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+  print("froh")
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL[[j]][[k]][,6]
+    NES_OVERALL[[j]][1:50,k] = t
+  }
+  print("dass")
+  colnames(NES_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL[[j]][rows[l], cols[l]] = 0
+  }
+  print("es geklappt hat")
 }
+names(GSEA_OVERALL) = all_tumortypes_names
+names(PVALUES_OVERALL) = all_tumortypes_names
+names(NES_OVERALL) = all_tumortypes_names
 ```
 
 
+```{r}
+
+probeliste_rownames = lapply(probe_liste, )
+probe_geneset = list(hallmark_genesets[[1]], hallmark_genesets[[2]], hallmark_genesets[[3]])
+namen_pathways = c(pathway_names[1:3])
+names(probe_geneset) = namen_pathways
+
+ACC = tumorlist_z[["ACC"]][,2:6]
+rownames(ACC) = c(tumorlist_z[["ACC"]][,1])
+BLCA =tumorlist_z[["BLCA"]][,2:6]
+rownames(BLCA) = c(tumorlist_z[["BLCA"]][,1])
+BRCA = tumorlist_z[["BRCA"]][,2:6]
+rownames(BRCA) = c(tumorlist_z[["BRCA"]][,1])
+
+probe_liste = list(ACC, BLCA, BRCA)
+names(probe_liste) = c("ACC", "BLCA", "BRCA")
+tumornames = all_tumortypes_names[1:3]
+
+GSEA_OVERALL = list(list(list()))
+
+PVALUES_OVERALL = list()
+NES_OVERALL = list()
+
+GSEA_OVERALL <- vector(mode = 'list',3)
+
+
+for (j in 1:3) {
+  for (i in 1:(ncol(probe_liste[[j]]))){
+    m = c(probe_liste[[j]][,i])
+    names(m) = rownames(probe_liste[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL[[j]][[i]] = fgsea(pathways = probe_geneset,
+                               stats = m,
+                               scoreType = "std")
+    print("yeah")
+  }
+  names(GSEA_OVERALL[[j]]) = colnames(probe_liste[[j]])
+  print("Hallo")
+  names
+  print("ich")
+  PVALUES_OVERALL[[j]] = data.frame(row.names = namen_pathways)
+  for (h in 1:ncol(probe_liste[[j]])){
+    a = GSEA_OVERALL[[j]][[h]][,3]
+    PVALUES_OVERALL[[j]][1:3,h] = a
+  }
+  print("bin")
+  PVALUES_OVERALL[[j]][is.na(PVALUES_OVERALL[[j]])] = 1
+  colnames(PVALUES_OVERALL[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  NES_OVERALL[[j]] = data.frame(row.names = namen_pathways)
+  print("froh")
+  for (k in 1:ncol(probe_liste[[j]])){
+    t = GSEA_OVERALL[[j]][[k]][,6]
+    NES_OVERALL[[j]][1:3,k] = t
+  }
+  print("dass")
+  colnames(NES_OVERALL[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  indexes = which(PVALUES_OVERALL[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL[[j]][rows[l], cols[l]] = 0
+  }
+  print("es geklappt hat")
+}
+names(GSEA_OVERALL) = tumornames
+```
 
 
 
