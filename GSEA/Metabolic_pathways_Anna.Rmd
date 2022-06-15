@@ -65,6 +65,45 @@ Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
 ```
 
 ```{r}
+#create GSEA compatible gene set list, NCBI entrez gene id as characters
+carbohydrates = as.character(Carbohydrates$ensembl_gene)
+glycolysis = as.character(Glycolysis$ensembl_gene)
+amino_acid = as.character(Amino_Acid$ensembl_gene)
+sphingolipid = as.character(Sphingolipid$ensembl_gene)
+fatty_acid = as.character(Fatty_acid$ensembl_gene)
+pentose_phosphate = as.character(Pentose_phosphate$ensembl_gene)
+ether_lipid = as.character(Ether_lipid$ensembl_gene)
+glutathione = as.character(Glutathione$ensembl_gene)
+nitrogen = as.character(Nitrogen$ensembl_gene)
+oxidative_phosphorylation = as.character(Oxidative_phosphorylation$ensembl_gene)
+purine = as.character(Purine$ensembl_gene)
+pyrimidine = as.character(Pyrimidine$ensembl_gene)
+pyruvate = as.character(Pyruvate$ensembl_gene)
+steroid = as.character(Steroid$ensembl_gene)
+steroid_hormones = as.character(Steroid_hormones$ensembl_gene)
+
+met.pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
+
+names(met.pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
+```
+
+
+```{r} 
+
+#next adapt format to hallmark genesets and extract the genes from our filtered matrix
+carbohydrates_genesymbols = Carbohydrates$human_gene_symbol
+glycolysis_genesymbols = Glycolysis$human_gene_symbol
+amino_Acid_genesymbols = Amino_Acid$human_gene_symbol
+nucleotide_genesymbols = Nucleotide$human_gene_symbol
+
+metabolic_pathways = list(
+  carbohydrate = carbohydrates_genesymbols,
+  glycolysis = glycolysis_genesymbols,
+  amino_acid = amino_Acid_genesymbols
+  )
+```
+
+```{r}
 #load metabolic genesets
 hallmarks = msigdbr(species = "Homo sapiens", category = "H")
 #create a df with metabolic pathways and genes as columns 
@@ -87,25 +126,25 @@ names(metabolic_genesets) = pathway_names
 ```
 
 ```{r}
-#more signaling pathways
-PIC_pathways = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
+#additional PID pathways (signaling)
+PID_pathways = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
 
 #create a df with metabolic pathways and genes as columns 
-PIC_gsname = PIC_pathways$gs_name
-PIC_ensembl = PIC_pathways$ensembl_gene
-PIC_pathways = as.data.frame(cbind(PIC_gsname, PIC_ensembl))
+PID_gsname = PID_pathways$gs_name
+PID_ensembl = PID_pathways$ensembl_gene
+PID_pathways = as.data.frame(cbind(PID_gsname, PID_ensembl))
 
 #create a vector with names of pathways
-PIC_pathway_names = c(unique(PIC_pathways$PIC_gsname))
+PID_pathway_names = c(unique(PID_pathways$PID_gsname))
 #create a list in which the pathways will be stored (outout has to be a list)
-PIC_genesets = list(list())
+PID_genesets = list(list())
 #fill the list with pathways and genes
-for (x in 1:length(PIC_pathway_names)){
-  PIC_genesets[[x]] = PIC_pathway_names[x]
-  z = c((PIC_pathways[which(PIC_pathways$PIC_gsname == PIC_pathway_names[x]),2]))
+for (x in 1:length(PID_pathway_names)){
+  PID_genesets[[x]] = PID_pathway_names[x]
+  z = c((PID_pathways[which(PID_pathways$PID_gsname == PID_pathway_names[x]),2]))
   for (k in 1:length(z)){
-  PIC_genesets[[x]][[k]] = z[k]
+  PID_genesets[[x]][[k]] = z[k]
   }}
-names(PIC_genesets) = PIC_pathway_names
+names(PID_genesets) = PID_pathway_names
 ```
 

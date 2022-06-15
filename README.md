@@ -50,3 +50,7 @@ PCA shows no clustering of patients when comparing gene expression in tumor data
 1. Look for micro RNA expression/pathways (same principle as for protein coding genes)
 2. pathway activity via challenge
 
+
+##Literature
+1. Xiaying Han, Dianwen Song (2022) Using a Machine Learning Approach to Identify Key Biomarkers for Renal Clear Cell Carcinoma
+$\\rightarrow$ "However, the main cause of death in KIRC patients is tumor metastasis. There are no obvious clinical features in the early stage of kidney cancer, and 25-30% of patients have already metastasized when they are first diagnosed..."
