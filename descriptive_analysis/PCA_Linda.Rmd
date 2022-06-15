@@ -42,6 +42,9 @@ library(tidyverse)
 ```
 
 ```{r}
+#Run PCA 
+
+
 PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
 #create data frame with PCs and respective genes
 PCA_exp_PCs = PCA_exp@cell.embeddings
@@ -51,45 +54,55 @@ PCA_exp_proportion_var = PCA_exp_var/sum(PCA_exp_var)
 PC_exp = (PCA_exp_PCs[1:20])
 PCs_20 = PCA_exp@cell.embeddings[1:20]
 
-PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_2, color = cancer_names)) +
-  geom_point(color = "blue")
+#plot PCA, PC1 vs PC2 KIRC = black --> outlier
+pca_kirc = data.frame(PCA_exp[cancer_types == "KIRC",])
+PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_2, color = cancer_types)) +
+  geom_point(point = 0.5)+ 
+  geom_point(data= pca_kirc , aes(x = PC_1, y = PC_2), color = "black")
 print(PCA_exp_scatter2) 
 
-PCA_exp_scatter3 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_3 )) +
-  geom_point(color = "blue")
+#plot PCA, PC1 vs PC2, KIRC = black --> outlier
+PCA_exp_scatter3 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_3, color = cancer_types )) +
+  geom_point(point = 0.5) + 
+  geom_point(data= pca_kirc , aes(x = PC_1, y = PC_3), color = "black")
 print(PCA_exp_scatter3) 
 
-# plot scatter plot regarding gender
+# plot scatter plot regarding gender -> no clustering detectable
 exp_gender = ifelse(tcga_annot$gender
                         == "FEMALE", "orange", "blue")
 PCA_exp_gender = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y= PC_2)) + 
-  geom_point(size = 2, color = exp_gender) + 
+  geom_point(size = 0.5, color = exp_gender) + 
   ggtitle ("PCA regarding gender")
 PCA_exp_gender
 ```
 
 ```{r}
+#run UMAP
+
+
 library(tidyverse)
+
 cancer_types = tcga_annot$cancer_type_abbreviation
 data_kirc = which(cancer_types == "KIRC")
 xcx = UMAP_exp[cancer_types == "ACC",]
 dim(xcx)
+
+
+#calculate UMAP on PCA 
+dim(UMAP_exp)
 UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
+UMAP_exp_KIRC = data.frame(UMAP_exp[cancer_types == "KIRC",])
 UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), 
                     aes(x = V1, y= V2, color = cancer_types))+
-  geom_point(size = 2) 
+  geom_point(size = 2) +
+  geom_point(data= UMAP_exp_KIRC , aes(x = X1, y = X2), color = "black")
 UMAP_plot
 
-#kirc specific
+#kirc in different color
 UMAP_plot_1 = ggplot (data = as.data.frame(UMAP_exp), 
                     aes(x = V1, y= V2, color = cancer_types=="KIRC"))+
   geom_point(size = 2) 
 UMAP_plot_1
-UMAP_KIRC = UMAP_exp[data_kirc,]
-UMAP_plot_KIRC = ggplot (data = as.data.frame(UMAP_KIRC), 
-                    aes(x = V1, y= V2, color = "blue"))+
-  geom_point(size = 2) 
-UMAP_plot_KIRC
 
 #run UMAP for each cancer type on its own
 cancer_names = unique(cancer_types)
@@ -106,9 +119,56 @@ for (i in 1:length(cancer_names)) {
 UMAP_output[[1]]
 cancer = c(which(cancer_types == cancer_names[1]))
 names(UMAP_output) = cancer_names
+
+#use UMAP_output$"cancer name" to acces individual Umap plots
+
 UMAP_output$KIRC
 
-UMAP_output$ACC
+#plot Umaps for all 33 cancer types
+sapply(1:33, function(i){
+  plot(UMAP_output[[i]])
+  })
 
+```
+
+
+```{r}
+
+#find optimal clusternumber
+library(ggpubr)
+library(factoextra)
+
+kmeans(UMAP_exp, centers= 20, nstart = 50)##
+# for 4 centers
+km.4 = kmeans(UMAP_exp, centers= 20, nstart = 50)
+
+fviz_cluster(km.4, data.frame(UMAP_exp),
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+UMAP_plot
+
+#extract tot.withinss --> for silhouette plot (elbow method)
+tcga_UMAP_kmeans_tw = sapply(1:20, function(k){
+  kmeans(x = UMAP_exp , centers = k, nstart = 50 )$tot.withinss})
+
+#elbow plot
+plot(tcga_UMAP_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
+umap_elbow
+
+
+fviz_nbclust(UMAP_exp, kmeans, method='silhouette')
+
+#extract cluster values for silhouette plot
+tcga_UMAP_kmeans_c = sapply(2:20, function(k){
+  kmeans(x = UMAP_exp , centers = k, nstart = 50 )$cluster})
+
+library(cluster)
+
+
+#silhouette plot
+sapply(1:19, function(x){
+  plot(silhouette(tcga_UMAP_kmeans_c[,x], dist(UMAP_exp)), main ="Silhouette plot")})
 ```
 
