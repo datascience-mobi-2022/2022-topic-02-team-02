@@ -385,7 +385,7 @@ for (j in 1:3) {
     m = m[order(m), drop = FALSE]
     GSEA_OVERALL[[j]][[i]] = fgsea(pathways = probe_geneset,
                                stats = m,
-                               scoreType = "std")
+                               scoreType = "std")#nproc
     print("yeah")
   }
   names(GSEA_OVERALL[[j]]) = colnames(probe_liste[[j]])
@@ -435,7 +435,7 @@ for (j in 1:33){
 }
 colnames(NES_mean) = all_tumortypes_names
 #plot enrichment for each tumor type
-#funktioniert nicht ???
+#heatmap 1
 melted = melt(NES_mean)
 pathwaynames = rep(pathway_names, 33)
 melted = cbind(melted, pathwaynames)
@@ -446,11 +446,15 @@ ggplot(melted, aes(variable, pathwaynames)) +
   xlab(" ") +
   ylab(" ") +
   ggtitle("Pathway activity heatmap") +
-  theme(plot.title = element_text(hjust = 0.5))
-
+  theme(text = element_text(size = 6), plot.title = element_text(hjust = 0.5))
+#heatmap 2
+heatmap(matrix, Rowv = NA, hclustfun = hclust)
 ```
 
+```{r}
+#comparison of tumor types
+```
 
 
 plotEnrichment(metabolic_genesets[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], first_BLCA) +labs(title="Epithelial mesenchymal transition")
-```
+
