@@ -19,6 +19,7 @@ library(org.Hs.eg.db)
 library(data.table)
 library(tibble)
 library(ggpubr)
+library(ggplot2)
 ```
 
 ```{r}
@@ -297,7 +298,7 @@ for  (i in 1:length(rows)) {
 ```{r}
 #GSEA table plot for first ACC patient 
 topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
-topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][tail(order(pval), n=10), pathway]
 topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
@@ -420,33 +421,36 @@ names(PVALUES_OVERALL) = all_tumortypes_names
 names(NES_OVERALL) = all_tumortypes_names
 ```
 
+```{r}
+#need to plot enrichment for example patient
 
+#need to calculate mean NES across patients within tumor type --> compare (pan-cancer)
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL[[i]], 1 , mean))
+}
+NES_mean = data.frame(row.names = pathway_names)
+for (j in 1:33){
+  NES_mean[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean) = all_tumortypes_names
+#plot enrichment for each tumor type
+#funktioniert nicht ???
+melted = melt(NES_mean)
+pathwaynames = rep(pathway_names, 33)
+melted = cbind(melted, pathwaynames)
+ggplot(melted, aes(variable, pathwaynames)) + 
+  geom_tile(aes(fill = value), colour = "white") + 
+  scale_fill_gradient(low = "orange", high = "blue") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab(" ") +
+  ylab(" ") +
+  ggtitle("Pathway activity heatmap") +
+  theme(plot.title = element_text(hjust = 0.5))
 
-folgendes nur für evtl später gelassen, prinzipiell irrelevant
-
-```{r}#
-#create ascending ranked gene vector for first BLCA patient
-#extract column first patient BLCA
-first = BLCA_z[,1, drop = FALSE]
-#sort ascending according to z score, KEEPING gene names
-first_sorted = first[order(first),, drop = FALSE]
-#convert into vector
-first_BLCA = as.vector(first_sorted$`TCGA-MV-A51V-01`)
-#retrieve names from before
-first_ensemble_id = rownames(first_sorted)
-names(first_BLCA) = first_ensemble_id
 ```
 
 
-```{r}#
-#example gsea
-gsea_1 = fgsea(pathways = metabolic_pathways, stats = first_BLCA, minSize = 20, maxSize=700)
-gsea_1
-plotEnrichment(pathways[["M16864_Carbohydrates"]], first_BLCA) + labs(title="Carbohydrates")
-```
 
-```{r}#
-gsea_2 = fgsea(pathways = metabolic_genesets, stats = first_BLCA, minSize = 20, maxSize=800)
-gsea_2
 plotEnrichment(metabolic_genesets[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], first_BLCA) +labs(title="Epithelial mesenchymal transition")
 ```
