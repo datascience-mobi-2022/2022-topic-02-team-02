@@ -43,8 +43,6 @@ library(tidyverse)
 
 ```{r}
 #Run PCA 
-
-
 PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
 #create data frame with PCs and respective genes
 PCA_exp_PCs = PCA_exp@cell.embeddings
@@ -79,14 +77,10 @@ PCA_exp_gender
 ```{r}
 #run UMAP
 
-
 library(tidyverse)
 
 cancer_types = tcga_annot$cancer_type_abbreviation
 data_kirc = which(cancer_types == "KIRC")
-xcx = UMAP_exp[cancer_types == "ACC",]
-dim(xcx)
-
 
 #calculate UMAP on PCA 
 dim(UMAP_exp)
@@ -104,7 +98,7 @@ UMAP_plot_1 = ggplot (data = as.data.frame(UMAP_exp),
   geom_point(size = 2) 
 UMAP_plot_1
 
-#run UMAP for each cancer type on its own
+#plot umap for each cancer type (umap of all cancer types split into 33 plots per cancer type)
 cancer_names = unique(cancer_types)
 UMAP_output = list ()
 for (i in 1:length(cancer_names)) {
@@ -132,7 +126,7 @@ sapply(1:33, function(i){
 ```
 
 
-```{r}
+```{r}#
 
 #find optimal clusternumber
 library(ggpubr)
@@ -170,5 +164,66 @@ library(cluster)
 #silhouette plot
 sapply(1:19, function(x){
   plot(silhouette(tcga_UMAP_kmeans_c[,x], dist(UMAP_exp)), main ="Silhouette plot")})
+```
+```{r}
+tumorlist = readRDS("../data/tumorlist_z.RDS")
+
+#calculate PCA for each tumor type 
+tumorlist_ACC_BLCA = tumorlist[c(1,2)]
+PCA_tumorlist1 = lapply (1:33, function (i) {
+  RunPCA(as.matrix(tumorlist[[i]], npcs = 50 ))
+})
+#Error in irlba(A = t(x = object), nv = npcs, ...) : 
+#max(nu, nv) must be strictly less than min(nrow(A), ncol(A))
+6.
+stop("max(nu, nv) must be strictly less than min(nrow(A), ncol(A))")
+5.
+irlba(A = t(x = object), nv = npcs, ...)
+4.
+RunPCA.default(as.matrix(tumorlist[[i]]))
+3.
+RunPCA(as.matrix(tumorlist[[i]]))
+2.
+FUN(X[[i]], ...)
+1.
+lapply(1:9, function(i) {
+RunPCA(as.matrix(tumorlist[[i]]))
+})
+
+ cancer_abc = sort(cancer_names)
+names(PCA_tumorlist) = cancer_abc
+
+UMAP_tumorlist = lapply (1:length(tumorlist), function (j) {
+  uwot::umap(PCA_tumorlist1@cell.embeddings)
+})
+```
+```{r}
+tumorlist = readRDS("../data/tumorlist_z.RDS")
+
+#calculate PCA for each tumor type --> tried with the first two tumor types
+tumorlist_ACC_BLCA = tumorlist[c(1,2)]
+PCA_tumorlist_ACC_BLCA = lapply (1:2, function (i) {
+  RunPCA(as.matrix(tumorlist_ACC_BLCA[[i]]))
+})
+
+ cancer_abc = sort(cancer_names)
+names(PCA_tumorlist_ACC_BLCA) = cancer_abc[1:2]
+```
+
+```{r}
+UMAP_tumorlist1 = lapply (1:length(PCA_tumorlist_ACC_BLCA), function (j) {
+  uwot::umap(PCA_tumorlist_ACC_BLCA[[j]]@cell.embeddings)
+})
+
+is.na(PCA_tumorlist_ACC_BLCA[[1]])
+```
+```{r}
+#funktioniert alles nicht --> von Hand machen ...
+tumor_ACC = tumorlist [[1]]
+PCA_1 = RunPCA (as.matrix(tumor_ACC))
+UMAP_1 = uwot:: umap(PCA_1@cell.embeddings)
+
+ACC = which(tcga_exp_cleaned == "ACC")
+PCA_ACC = RunPCA (as.matrix(ACC))
 ```
 
