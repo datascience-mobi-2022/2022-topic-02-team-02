@@ -225,5 +225,13 @@ UMAP_1 = uwot:: umap(PCA_1@cell.embeddings)
 
 ACC = which(tcga_exp_cleaned == "ACC")
 PCA_ACC = RunPCA (as.matrix(ACC))
+
+cancer_types = tcga_annot$cancer_type_abbreviation
+data_kirc = which(cancer_types == "KIRC")
+PCA_KIRC = RunPCA (as.matrix(tcga_exp_cleaned$data_kirc)) 
+
+test = sum(tumorlist [[1]])
+test #= NaN --> Fehler!!!! Wie kann ich auf Tumorlist zugreifen????
+
 ```
 
