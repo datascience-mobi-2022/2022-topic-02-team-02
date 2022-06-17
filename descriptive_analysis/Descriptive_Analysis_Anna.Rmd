@@ -6,6 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+library(reshape2)
 knitr::opts_chunk$set(echo = TRUE)
 tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
 tcga_exp_colnames_new = c(substr(colnames(tcga_exp_protein_coding),1, nchar(colnames(tcga_exp_protein_coding))-3))
@@ -195,9 +196,7 @@ tumornames = data.frame("ACC","BLCA","BRCA","CESC","CHOL","COAD","DLBC","ESCA","
 
 colnames(mean_all) = tumornames
 
-library(reshape2)
 
-  
 boxplot_mean =
 ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y =value, fill = variable))+
   geom_boxplot()+

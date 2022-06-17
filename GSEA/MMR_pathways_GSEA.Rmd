@@ -1,0 +1,171 @@
+---
+title: "MMR pathways"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(msigdbr)
+library(tidyverse)
+library(fgsea)
+```
+
+```{r get MMR pathways}
+C5 = msigdbr(species = "Homo sapiens", category = "C5")
+GOBP_MISMATCH_REPAIR = C5[C5$gs_id=="M14852",]
+GOCC_MISMATCH_REPAIR_COMPLEX = C5[C5$gs_id=="M17469",]
+GOMF_MISMATCH_REPAIR_COMPLEX_BINDING = C5[C5$gs_id=="M26570",]
+GOMF_MISMATCHED_DNA_BINDING = C5[C5$gs_id=="M18427",]
+
+KEGG = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
+KEGG_MISMATCH_REPAIR = KEGG[KEGG$gs_id=="M13515",]
+
+CPR = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:REACTOME")
+REACTOME_DISEASES_OF_MISMATCH_REPAIR_MMR = CPR[CPR$gs_id=="M27448",]
+REACTOME_MISMATCH_REPAIR = CPR[CPR$gs_id=="M27442",]
+
+CPW = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:WIKIPATHWAYS")
+WP_DNA_MISMATCH_REPAIR = CPW[CPW$gs_id=="M39668",]
+
+##get ensemble ids ##
+GOBP_MISMATCH_REPAIR = as.character(GOBP_MISMATCH_REPAIR$ensembl_gene)
+GOCC_MISMATCH_REPAIR_COMPLEX = as.character(GOCC_MISMATCH_REPAIR_COMPLEX$ensembl_gene)
+GOMF_MISMATCH_REPAIR_COMPLEX_BINDING = as.character(GOMF_MISMATCH_REPAIR_COMPLEX_BINDING$ensembl_gene)
+GOMF_MISMATCHED_DNA_BINDING = as.character(GOMF_MISMATCHED_DNA_BINDING$ensembl_gene)
+KEGG_MISMATCH_REPAIR = as.character(KEGG_MISMATCH_REPAIR$ensembl_gene)
+REACTOME_DISEASES_OF_MISMATCH_REPAIR_MMR = as.character(REACTOME_DISEASES_OF_MISMATCH_REPAIR_MMR$ensembl_gene)
+REACTOME_MISMATCH_REPAIR = as.character(REACTOME_MISMATCH_REPAIR$ensembl_gene)
+WP_DNA_MISMATCH_REPAIR = as.character(WP_DNA_MISMATCH_REPAIR$ensembl_gene)
+
+MMR = list(GOBP_MISMATCH_REPAIR,GOCC_MISMATCH_REPAIR_COMPLEX,GOMF_MISMATCH_REPAIR_COMPLEX_BINDING,GOMF_MISMATCHED_DNA_BINDING,KEGG_MISMATCH_REPAIR,REACTOME_DISEASES_OF_MISMATCH_REPAIR_MMR,REACTOME_MISMATCH_REPAIR,WP_DNA_MISMATCH_REPAIR)
+
+pathway_names_MMR = c("GOBP_MISMATCH_REPAIR","GOCC_MISMATCH_REPAIR_COMPLEX","GOMF_MISMATCH_REPAIR_COMPLEX_BINDING","GOMF_MISMATCHED_DNA_BINDING","KEGG_MISMATCH_REPAIR","REACTOME_DISEASES_OF_MISMATCH_REPAIR_MMR","REACTOME_MISMATCH_REPAIR","WP_DNA_MISMATCH_REPAIR")
+names(MMR) = pathway_names_MMR
+View(MMR)
+```
+
+```{r log FC tumor vs norm}
+#log2FC for every patient, only protein coding without constant genes
+KIRC_FC_patients = data.frame(tcga_KIRC_tumor_cl - tcga_KIRC_norm_cl)
+KIRC_GSEA_prep = 
+rownames_to_column(KIRC_FC_patients, var = "ensembl_id")
+```
+
+```{r run GSEA}
+KIRC_GSEA_MMR = list()
+for (i in 2:(ncol(KIRC_GSEA_prep))){
+  x = c(KIRC_GSEA_prep[,i])
+  names(x) = KIRC_GSEA_prep$ensembl_id
+  x = x[rank(x, ties.method = "first")]
+  
+  KIRC_GSEA_MMR[[i]] = fgsea(pathways = MMR,
+                             stats =  x,
+                             scoreType = "std",
+                             nPermSimple = 10000)}
+View(KIRC_GSEA_MMR)
+KIRC_GSEA_MMR_noNA = list()
+for (v in 2:length(KIRC_GSEA_results_H)){
+  KIRC_GSEA_MMR_noNA[[v]] = KIRC_GSEA_MMR[[v]]$padj
+  KIRC_GSEA_MMR_noNA[[v]][is.na(KIRC_GSEA_MMR_noNA[[v]])] = 1
+}
+
+
+KIRC_GSEA_NES_MMR = list()
+for (v in 2:length(KIRC_GSEA_MMR)){
+  KIRC_GSEA_NES_MMR[[v]] = KIRC_GSEA_MMR[[v]]$NES
+}
+
+KIRC_GSEA_NES_MMR = KIRC_GSEA_NES_MMR[-1]
+KIRC_GSEA_NES_MMR = as.data.frame(KIRC_GSEA_NES_MMR) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_MMR) = pathway_names_MMR
+colnames(KIRC_GSEA_NES_MMR) = colnames(KIRC_tumor_cl)
+
+##repeat with padj filtering
+
+KIRC_GSEA_NES_MMR2 = list()
+for (v in 2:length(KIRC_GSEA_MMR)){
+  KIRC_GSEA_NES_MMR2[[v]] = KIRC_GSEA_MMR[[v]]$NES
+}
+  
+for (v in 2:length(KIRC_GSEA_MMR)){
+  for (z in 1:length(KIRC_GSEA_MMR[[2]]$padj)){
+  if (KIRC_GSEA_MMR_noNA[[v]][z] <= 0.05) {
+  KIRC_GSEA_NES_MMR2[[v]][z]= KIRC_GSEA_MMR[[v]]$NES[z] }
+   else {KIRC_GSEA_NES_MMR2[[v]][z] = 0}
+  }}
+
+KIRC_GSEA_NES_MMR2 = KIRC_GSEA_NES_MMR2[-1]
+KIRC_GSEA_NES_MMR2 = as.data.frame(KIRC_GSEA_NES_MMR2) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(KIRC_GSEA_NES_MMR2) = pathway_names_MMR
+colnames(KIRC_GSEA_NES_MMR2) = colnames(KIRC_tumor_cl)
+
+#no significant NES value 
+```
+
+```{r}
+KIRC_GSEA_MMR_mean = data.frame(apply(KIRC_GSEA_NES_MMR, 1 , mean))
+rownames(KIRC_GSEA_MMR_mean) = rownames(KIRC_GSEA_NES_MMR)
+rowMMR = rownames(KIRC_GSEA_MMR_mean)
+KIRC_GSEA_MMR_mean_prep = cbind(rowMMR,KIRC_GSEA_MMR_mean)
+colnames(KIRC_GSEA_MMR_mean_prep) = c("pathway","NES")
+data.frame(KIRC_GSEA_MMR_mean_prep)
+
+KIRC_GSEA_MMR_mean_prep %>%
+   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
+  
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA mean expression MMR")
+
+
+
+##repeat for median
+KIRC_GSEA_MMR_median = data.frame(apply(KIRC_GSEA_NES_MMR, 1 , median))
+rownames(KIRC_GSEA_MMR_median) = rownames(KIRC_GSEA_NES_MMR)
+rowMMR = rownames(KIRC_GSEA_MMR_mean)
+KIRC_GSEA_MMR_median_prep = cbind(rowMMR,KIRC_GSEA_MMR_median)
+colnames(KIRC_GSEA_MMR_median_prep) = c("pathway","NES")
+data.frame(KIRC_GSEA_MMR_median_prep)
+
+KIRC_GSEA_MMR_median_prep %>%
+   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
+  pathway = gsub("_"," ",pathway)) %>%
+  
+  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  geom_col ()+
+  theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Gene set",
+        title = "GSEA median expression MMR")
+
+```
+```{r Enrichment Frequency}
+MMR_sum = c()
+for (i in 1:nrow(KIRC_GSEA_NES_MMR)) {
+  MMR_sum[i] = length(which(KIRC_GSEA_NES_MMR[i,] > 0))
+}
+MMR_activity_sum = as.data.frame(MMR_sum) 
+rownames(MMR_activity_sum) = rownames(KIRC_GSEA_NES_MMR)
+colnames(MMR_activity_sum) = "Enrichment rate"
+MMR_activity_sum1 = cbind(rowMMR, MMR_activity_sum)
+
+MMR_activity_sum %>%
+  filter(`Enrichment rate` > 0) %>%
+  ggplot(aes(x = `Enrichment rate`)) +
+  geom_histogram(binwidth = 1,
+    color="darkblue", fill="lightblue",
+    )+
+  labs ( y="Pathway Frequency", x="Enrichment Frequency")
+```
+
