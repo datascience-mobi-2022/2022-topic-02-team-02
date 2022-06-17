@@ -247,7 +247,7 @@ results = fgsea(pathways = hallmark_genesets,
 ```
 
 
-```{r}
+```{r example GSEA loop over 1 dataframe}
 #GSEA loop over ACC dataframe
 GSEA_results = list()
 (for (i in 2:(ncol(ACC_gsea))){
@@ -295,7 +295,7 @@ for  (i in 1:length(rows)) {
   }
 ```
 
-```{r}
+```{r GSEA table plot}
 #GSEA table plot for first ACC patient 
 topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
 topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][tail(order(pval), n=10), pathway]
@@ -303,7 +303,7 @@ topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
 
-```{r}
+```{r final GSEA loop for hallmark genesets}
 #final GSEA lapply/for-loop over all tumor types!
 GSEA_OVERALL = vector(mode = 'list', length = 33)
 PVALUES_OVERALL = list()
@@ -376,7 +376,6 @@ NES_OVERALL_test = list()
 
 GSEA_OVERALL_test <- vector(mode = 'list',3)
 
-
 for (j in 1:3) {
   for (i in 1:(ncol(probe_liste[[j]]))){
     m = c(probe_liste[[j]][,i])
@@ -421,11 +420,11 @@ names(GSEA_OVERALL_test) = tumornames
 
 ```
 
-```{r}#
-#probe mit PID gene set --> abgestürzt!
-PVALUES_OVERALL_PID = list()
-NES_OVERALL_PID = list()
-GSEA_OVERALL_PID <- vector(mode = 'list',3)
+```{r}
+#probe mit MMR gene set --> abgestürzt!
+PVALUES_OVERALL_MMR = list()
+NES_OVERALL_MMR = list()
+GSEA_OVERALL_MMR <- vector(mode = 'list',3)
 
 
 for (j in 1:3) {
@@ -433,42 +432,36 @@ for (j in 1:3) {
     m = c(probe_liste[[j]][,i])
     names(m) = rownames(probe_liste[[j]])
     m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = metabolic_genesets_PID,
+    GSEA_OVERALL_MMR[[j]][[i]] = fgsea(pathways = MMR,
                                stats = m,
                                scoreType = "std", 
-                               minSize = 30,
-                               maxSize = 500,
-                               nproc = 7)
-    print("yeah")
+                               nproc = 6)
   }
-  names(GSEA_OVERALL_PID[[j]]) = colnames(probe_liste[[j]])
-  print("Hallo")
-  print("ich")
-  PVALUES_OVERALL_PID[[j]] = data.frame(row.names = namen_pathways)
+  print("GSEA done")
+  names(GSEA_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]])
+  PVALUES_OVERALL_MMR[[j]] = data.frame(row.names = pathway_names_MMR)
   for (h in 1:ncol(probe_liste[[j]])){
-    a = GSEA_OVERALL_PID[[j]][[h]][,3]
-    PVALUES_OVERALL_PID[[j]][1:3,h] = a
+    a = GSEA_OVERALL_MMR[[j]][[h]][,3]
+    PVALUES_OVERALL_MMR[[j]][1:3,h] = a
   }
-  print("bin")
-  PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
-  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  NES_OVERALL_PID[[j]] = data.frame(row.names = namen_pathways)
-  print("froh")
+  PVALUES_OVERALL_MMR[[j]][is.na(PVALUES_OVERALL_MMR[[j]])] = 1
+  colnames(PVALUES_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  print("PVALUE done")
+  NES_OVERALL_MMR[[j]] = data.frame(row.names = pathway_names_MMR)
   for (k in 1:ncol(probe_liste[[j]])){
-    t = GSEA_OVERALL_PID[[j]][[k]][,6]
-    NES_OVERALL_PID[[j]][1:3,k] = t
+    t = GSEA_OVERALL_MMR[[j]][[k]][,6]
+    NES_OVERALL_MMR[[j]][1:3,k] = t
   }
-  print("dass")
-  colnames(NES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
+  colnames(NES_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  indexes = which(PVALUES_OVERALL_MMR[[j]] >= 0.05, arr.ind=TRUE)
   rows = as.vector(indexes[,1])
   cols = as.vector(indexes[,2])
   for (l in 1:length(rows)) {
-    NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
+    NES_OVERALL_MMR[[j]][rows[l], cols[l]] = 0
   }
-  print("es geklappt hat")
+  print("NES done")
 }
-names(GSEA_OVERALL_PID) = tumornames
+names(GSEA_OVERALL_MMR) = tumornames
 ```
 
 

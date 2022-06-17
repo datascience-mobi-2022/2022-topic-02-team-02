@@ -14,7 +14,7 @@ library(msigdbr)
 library(biomaRt)
 library(vissE)
 library(GeneOverlap)
-library(dplyr)
+?newGlibrary(dplyr)
 library(ggplot2)
 ```
 
