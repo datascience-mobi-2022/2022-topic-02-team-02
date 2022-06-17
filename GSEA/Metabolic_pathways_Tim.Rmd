@@ -74,8 +74,8 @@ pathway_names_PID = c(unique(PID_pathways$PID_gsname))
 #create a list in which the pathways will be stored (outout has to be a list)
 metabolic_genesets_PID = list(list())
 #fill the list with pathways and genes
-for (x in 1:length(PID_pathway_names)){
-  metabolic_genesets_PID[[x]] = PID_pathway_names[x]
+for (x in 1:length(pathway_names_PID)){
+  metabolic_genesets_PID[[x]] = pathway_names_PID[x]
   z = c((PID_pathways[which(PID_pathways$PID_gsname == pathway_names_PID[x]),2]))
   for (k in 1:length(z)){
   metabolic_genesets_PID[[x]][[k]] = z[k]
