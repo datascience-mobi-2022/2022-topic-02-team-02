@@ -18,7 +18,8 @@ KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
 KIRC_pa =  readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity.rds")
 
 #depending on which pathways you want to analyze, assign the variable accordingly
-#KIRC_pa = KIRC_GSEA_activity_PID
+#KIRC_GSEA_activity_PID <- readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_PID.rds")
+KIRC_pa = KIRC_GSEA_activity_PID
 #KIRC_pa = KIRC_GSEA_activity_hallmark
 #KIRC_pa = KIRC_GSEA_activity_KEGG
 ```
@@ -163,7 +164,7 @@ fviz_cluster(PID_km2, KIRC_pa_UMAP,
              ellipse.type = "convex", 
              ggtheme = theme_bw()
              )
-#see above for colored UMAP--> cluster 2: more tumor free patients
+
 
 PID_c1 = KIRC_pa[,colnames(KIRC_pa) %in% PID_c1_names] # df with patients of cluster1
 PID_c2 = KIRC_pa[,!colnames(KIRC_pa) %in% PID_c1_names] #df with patients cluster 2
@@ -176,26 +177,104 @@ PID_c1_c2_dif = PID_c1_mean - PID_c2_mean #compare the mean activity scores of p
 #rank the compared pw-matrix to see the most differently expressed pw
 PID_c1_c2_dif_rank = data.frame(PID_c1_c2_dif$apply.PID_c1..1..mean.[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
 PID_rownames = c(rownames(PID_c1_c2_dif))
-PID_rownames_rank = data.frame(PID_rownames[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+PID_rownames_rank = c(PID_rownames[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
 
-PID_c1_c2_dif_rank = cbind(PID_rownames_rank, PID_c1_c2_dif_rank)
+PID_c1_c2_dif_rank = as.data.frame(cbind(PID_rownames_rank, PID_c1_c2_dif_rank))
 colnames(PID_c1_c2_dif_rank) = c("Pathway", "diff")
 
-PID_c1_c2_dif_rank%>%
-  filter(PID_c1_c2_dif_rank$dif!=0)%>%
-ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
-  geom_bar(stat="identity")+
-  coord_flip()
   
-       
-
-
-PID_c1_c2_dif_rank%>%
-  filter(abs(PID_c1_c2_dif_rank$dif)>0.20)%>%
-ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
+ggplot(PID_c1_c2_dif_rank, aes(x=reorder(Pathway,diff), y=diff)) +
   geom_bar(stat="identity")+
   coord_flip()
+       
+#PID_c1_c2_dif_rank %>%
+#  filter(PID_c1_c2_dif_rank$diff!=0) %>%
+#ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
+ # geom_bar(stat="identity")+
+  #coord_flip()
+  
+
+#PID_c1_c2_dif_rank%>%
+ # filter(abs(PID_c1_c2_dif_rank$dif)>0.20)%>%
+#ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
+#  geom_bar(stat="identity")+
+#  coord_flip()
 ```
+
+```{r}
+#working with FC and not with difference (minus)
+PID_c1_c2_FC = data.matrix(PID_c1_mean/PID_c2_mean)
+colnames(PID_c1_c2_FC) = "FC"
+PID_c1_c2_FC[is.nan(PID_c1_c2_FC)]=0
+#PROBLEM: what to do with INF??? (because of e.g. 0.1/0)
+
+#work with wilcoxon test as some of the pw have an enrichment score of zero for all patients, thus no normality, as shown below
+PID_c1_min = apply(PID_c1, 1, min)
+PID_c1_max = apply(PID_c1, 1, max) 
+PID_c1_constant = c(names(which(PID_c1_min==PID_c1_max)))
+length(PID_constant)#there are 271 pw with constant NES, hence we use wilcoxon test 
+
+
+#perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
+PID_c1_m = as.matrix(PID_c1) #matrix needed for wilcoxon
+PID_c2_m = as.matrix(PID_c2)
+PID_wilcox_pv  = data.matrix(sapply ( 1:nrow(PID_c1_m),function (x) {
+  wilcox.test(PID_c1_m[x,],PID_c2_m[x,],paired=FALSE)
+}$p.value))
+rownames(PID_wilcox_pv)=rownames(PID_c1)
+colnames(PID_wilcox_pv)="pvalue"
+#a lot of NaNs--> Maybe because of constant NES??
+
+#Bonferroni-Korrektur
+alpha=0.05/(nrow(PID_wilcox_pv))#0.000255102
+#how many pathways have sign different NES??
+length(which(PID_wilcox_pv<alpha))#118
+
+
+PID_wilcox_pv[is.nan(PID_wilcox_pv)] = 1
+```
+
+```{r Volcano Plot}
+#data preparation for Volcano Plot
+
+#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
+#NaNs in FC can be converted to zero because 0/0=0
+#thus not the FC value data is used but the difference (minus)
+#calculate -log10 of p-value for plotting
+PID_wilcox_pv_log =-log10(PID_wilcox_pv)
+colnames(PID_wilcox_pv_log) = "neg_log10_pv"
+PID_wilcox_pv_log [PID_wilcox_pv_log  == Inf] <- 0
+
+#combine FC and pv matrix
+PID_pv_dif =as.data.frame(cbind(PID_c1_c2_dif,PID_wilcox_pv_log))
+colnames(PID_pv_dif) = c("diff","neg_log10_pv")
+
+
+
+#extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+cutoffpv = -log10(alpha)#=3.593286, cut off later in plot 
+PID_pv_dif_sig = PID_pv_dif[which(PID_pv_dif$neg_log10_pv>cutoffpv),]
+min(PID_pv_dif_sig$neg_log10_pv)
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_pv_dif_sigup = PID_pv_dif_sig[which(PID_pv_dif_sig$diff>0),]
+
+#volcano plot, there are no sign downregulated pw
+library(ggplot2)
+#plotting
+ggplot(PID_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
+  geom_point( size =0.3)+
+  geom_point(data= PID_pv_dif_sig, aes(diff , neg_log10_pv, color = "lower NES"), size=0.3, color = "orange")+
+  geom_point(data = PID_pv_dif_sigup, aes(diff,neg_log10_pv, color = "higher NES"), size=0.3, color = "blue")+
+  ggtitle("gene expression normal vs tumor tissue ")+
+  xlab ("mean(c1)-mean(c2)")+
+  ylab ("-log10(p-value)")+
+  scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
+                     values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=3)))
+
+```
+
+
 
 
 
