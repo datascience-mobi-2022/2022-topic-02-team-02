@@ -145,7 +145,7 @@ go_PID_matrix = newGOM(metabolic_genesets_PID, metabolic_genesets_PID)
 go_PID_jaccard = getMatrix(go_PID_matrix, "Jaccard")
 diag(go_PID_jaccard) = 0
 heatmap(go_PID_jaccard, Rowv = NA, Colv = NA, margins = c(8,8))
-
+#reduce geneset to most independent pathways
 for (i in 1:nrow(go_PID_jaccard)){
   for (j in 1:ncol(go_PID_jaccard)){
     if (go_PID_jaccard[i,j] > 0.2) {
@@ -153,11 +153,26 @@ for (i in 1:nrow(go_PID_jaccard)){
     }
   }
 }
-
 go_PID_jaccard = na.omit(go_PID_jaccard)
-
 PID_independent = metabolic_genesets_PID[rownames(go_PID_jaccard)]
-
+PID_independent = PID_independent[-c(74,82)] #only run once
 ```
 
+```{r check KEGG pathways}
+go_KEGG_matrix = newGOM(metabolic_genesets_KEGG, metabolic_genesets_KEGG)
+go_KEGG_jaccard = getMatrix(go_KEGG_matrix, "Jaccard")
+diag(go_KEGG_jaccard) = 0
+heatmap(go_KEGG_jaccard, Rowv = NA, Colv = NA, margins = c(14,14))
+#reduce geneset to most independent pathways
+for (i in 1:nrow(go_KEGG_jaccard)){
+  for (j in 1:ncol(go_KEGG_jaccard)){
+    if (go_KEGG_jaccard[i,j] > 0.2) {
+    go_KEGG_jaccard[i,j] = NA
+    }
+  }
+}
+go_KEGG_jaccard = na.omit(go_KEGG_jaccard)
+KEGG_independent = metabolic_genesets_KEGG[rownames(go_KEGG_jaccard)]
+KEGG_independent = KEGG_independent[names(KEGG_independent) != "KEGG_OLFACTORY_TRANSDUCTION"]
+```
 

@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r load packages}
 library(msigdbr)
 library(scrime)
 library(fgsea)
@@ -153,7 +153,7 @@ tumorlist_z = lapply(tumorlist_z, na.omit)
 
 
 ```{r final GSEA loop for hallmark genesets}
-#final GSEA lapply/for-loop over all tumor types!
+#final GSEA lapply/for-loop over all tumor types hallmark genesets!
 GSEA_OVERALL = vector(mode = 'list', length = 33)
 PVALUES_OVERALL = list()
 NES_OVERALL = list()
@@ -196,117 +196,160 @@ names(PVALUES_OVERALL) = all_tumortypes_names
 names(NES_OVERALL) = all_tumortypes_names
 ```
 
-```{r}
-#Probe des for loops mit hallmarks
-probe_geneset = list(hallmark_genesets[[1]], hallmark_genesets[[2]], hallmark_genesets[[3]])
-namen_pathways = c(pathway_names[1:3])
-names(probe_geneset) = namen_pathways
+```{r GSEA TCGA KEGG}
+#RUNNN TONIGHT
+#final GSEA lapply/for-loop over all tumor types KEGG genesets!
+#only run once    metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)]
 
-#hier wurde ab 2. spalte gewählt da vorher column 1 rownames waren 
-ACC = tumorlist_z[["ACC"]][,2:6]
-BLCA =tumorlist_z[["BLCA"]][,2:6]
-BRCA = tumorlist_z[["BRCA"]][,2:6]
+PVALUES_OVERALL_KEGG = list()
+NES_OVERALL_KEGG = list()
+GSEA_OVERALL_KEGG <- vector(mode = 'list', length = 33)
 
-probe_liste = list(ACC, BLCA, BRCA)
-names(probe_liste) = c("ACC", "BLCA", "BRCA")
-tumornames = all_tumortypes_names[1:3]
+KEGG_names = names(metabolic_genesets_KEGG)
 
-
-PVALUES_OVERALL_test = list()
-NES_OVERALL_test = list()
-
-GSEA_OVERALL_test <- vector(mode = 'list',3)
-
-for (j in 1:3) {
-  for (i in 1:(ncol(probe_liste[[j]]))){
-    m = c(probe_liste[[j]][,i])
-    names(m) = rownames(probe_liste[[j]])
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
     m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_test[[j]][[i]] = fgsea(pathways = probe_geneset,
+    GSEA_OVERALL_KEGG[[j]][[i]] = fgsea(pathways = metabolic_genesets_KEGG,
                                stats = m,
-                               scoreType = "std", 
-                               minSize = 50,
-                               maxSize = 500,
-                               nproc = 7)
-    print("yeah")
+                               scoreType = "std")
   }
-  names(GSEA_OVERALL_test[[j]]) = colnames(probe_liste[[j]])
-  print("Hallo")
-  print("ich")
-  PVALUES_OVERALL_test[[j]] = data.frame(row.names = namen_pathways)
-  for (h in 1:ncol(probe_liste[[j]])){
-    a = GSEA_OVERALL_test[[j]][[h]][,3]
-    PVALUES_OVERALL_test[[j]][1:3,h] = a
+  print("GSEA done")
+  names(GSEA_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_KEGG[[j]][[h]][,3]
+    PVALUES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),h] = a
   }
-  print("bin")
-  PVALUES_OVERALL_test[[j]][is.na(PVALUES_OVERALL_test[[j]])] = 1
-  colnames(PVALUES_OVERALL_test[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  NES_OVERALL_test[[j]] = data.frame(row.names = namen_pathways)
-  print("froh")
-  for (k in 1:ncol(probe_liste[[j]])){
-    t = GSEA_OVERALL_test[[j]][[k]][,6]
-    NES_OVERALL_test[[j]][1:3,k] = t
+  PVALUES_OVERALL_KEGG[[j]][is.na(PVALUES_OVERALL_KEGG[[j]])] = 1
+  colnames(PVALUES_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_KEGG[[j]][[k]][,6]
+    NES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),k] = t
   }
-  print("dass")
-  colnames(NES_OVERALL_test[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  indexes = which(PVALUES_OVERALL_test[[j]] >= 0.05, arr.ind=TRUE)
+  colnames(NES_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_KEGG[[j]] >= 0.05, arr.ind=TRUE)
   rows = as.vector(indexes[,1])
   cols = as.vector(indexes[,2])
   for (l in 1:length(rows)) {
-    NES_OVERALL_test[[j]][rows[l], cols[l]] = 0
+    NES_OVERALL_KEGG[[j]][rows[l], cols[l]] = 0
+    print(l)
   }
-  print("es geklappt hat")
+  print("once again")
 }
-names(GSEA_OVERALL_test) = tumornames
-
+names(GSEA_OVERALL_KEGG) = all_tumortypes_names
+names(PVALUES_OVERALL_KEGG) = all_tumortypes_names
+names(NES_OVERALL_KEGG) = all_tumortypes_names
 ```
 
-```{r}
-#probe mit PID new independent gene set 
+```{r GSEA TCGA PID}
+#RUNNN TONIGHT
+#final GSEA lapply/for-loop over all tumor types PID genesets!
+# only run once, remove problematic ones PID_independent = PID_independent[-c(74,82)]
+
 PVALUES_OVERALL_PID = list()
 NES_OVERALL_PID = list()
-GSEA_OVERALL_PID <- vector(mode = 'list',3)
+GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
 
 PID_names = names(PID_independent)
 
-for (j in 1:3) {
-  for (i in 1:(ncol(probe_liste[[j]]))){
-    m = c(probe_liste[[j]][,i])
-    names(m) = rownames(probe_liste[[j]])
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
     m = m[order(m), drop = FALSE]
     GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
                                stats = m,
-                               scoreType = "std", 
-                               minSize = 25,
-                               nproc = 6)
+                               scoreType = "std")
   }
   print("GSEA done")
-  names(GSEA_OVERALL_PID[[j]]) = colnames(probe_liste[[j]])
+  names(GSEA_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
   PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
-  for (h in 1:ncol(probe_liste[[j]])){
+  for (h in 1:ncol(tumorlist_z[[j]])){
     a = GSEA_OVERALL_PID[[j]][[h]][,3]
-    PVALUES_OVERALL_PID[[j]][1:3,h] = a
+    PVALUES_OVERALL_PID[[j]][1:length(PID_independent),h] = a
   }
   PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
-  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  print("PVALUE done")
+  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
   NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
-  for (k in 1:ncol(probe_liste[[j]])){
+  for (k in 1:ncol(tumorlist_z[[j]])){
     t = GSEA_OVERALL_PID[[j]][[k]][,6]
-    NES_OVERALL_PID[[j]][1:3,k] = t
+    NES_OVERALL_PID[[j]][1:length(PID_independent),k] = t
   }
-  colnames(NES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  colnames(NES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
   indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
   rows = as.vector(indexes[,1])
   cols = as.vector(indexes[,2])
   for (l in 1:length(rows)) {
     NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL_PID) = all_tumortypes_names
+names(PVALUES_OVERALL_PID) = all_tumortypes_names
+names(NES_OVERALL_PID) = all_tumortypes_names
+```
+
+```{r Probe loop}
+#Für Proben des for loops, gerade zB. KEGG
+
+ACC = tumorlist_z[["ACC"]][,1:6]
+BLCA =tumorlist_z[["BLCA"]][,1:6]
+BRCA = tumorlist_z[["BRCA"]][,1:6]
+
+probe_liste = list(ACC, BLCA, BRCA)
+tumornames = all_tumortypes_names[1:3]
+names(probe_liste) = tumornames
+
+PVALUES_OVERALL_KEGG = list()
+NES_OVERALL_KEGG = list()
+GSEA_OVERALL_KEGG <- vector(mode = 'list',3)
+
+#ONLY RUN ONCE:  metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)]
+KEGG_names = names(metabolic_genesets_KEGG)
+
+for (j in 1:3) {
+  for (i in 1:(ncol(probe_liste[[j]]))){
+    m = c(probe_liste[[j]][,i])
+    names(m) = rownames(probe_liste[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_KEGG[[j]][[i]] = fgsea(pathways = metabolic_genesets_KEGG,
+                               stats = m,
+                               scoreType = "std", 
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]])
+  PVALUES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (h in 1:ncol(probe_liste[[j]])){
+    a = GSEA_OVERALL_KEGG[[j]][[h]][,3]
+    PVALUES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),h] = a
+  }
+  PVALUES_OVERALL_KEGG[[j]][is.na(PVALUES_OVERALL_KEGG[[j]])] = 1
+  colnames(PVALUES_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  print("PVALUE done")
+  NES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (k in 1:ncol(probe_liste[[j]])){
+    t = GSEA_OVERALL_KEGG[[j]][[k]][,6]
+    NES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),k] = t
+  }
+  colnames(NES_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  indexes = which(PVALUES_OVERALL_KEGG[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_KEGG[[j]][rows[l], cols[l]] = 0
   }
   print("NES done")
 }
-names(GSEA_OVERALL_PID) = tumornames
-names(PVALUES_OVERALL_PID) = tumornames
-names(NES_OVERALL_PID) = tumornames
+names(GSEA_OVERALL_KEGG) = tumornames
+names(PVALUES_OVERALL_KEGG) = tumornames
+names(NES_OVERALL_KEGG) = tumornames
+
 ```
 
 ```{r GSEA table plot}
@@ -317,7 +360,7 @@ topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
 
-```{r}
+```{r mean NES for hallmark}
 #calculate mean NES across patients within tumor type --> compare (pan-cancer)
 NES_mean_list = list()
 for (i in 1:33){
@@ -346,7 +389,7 @@ ggplot(melted, aes(variable, pathwaynames)) +
 heatmap(matrix, Rowv = NA, hclustfun = hclust)
 ```
 
-```{r}
+```{r pan-cancer analysis}
 #comparison of tumor types
 
 ```
