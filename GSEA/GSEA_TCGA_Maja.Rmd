@@ -20,96 +20,15 @@ library(data.table)
 library(tibble)
 library(ggpubr)
 library(ggplot2)
+library(GeneOverlap)
 ```
 
-```{r}
+```{r load data}
 tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
 tcga_exp_cleaned = readRDS("../data/tcga_exp_cleaned.RDS")
 ```
 
-
-```{r}
-# Carbohydrates
-Homo_sapiensCPR = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:REACTOME")
-Carbohydrates = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M16864",]
-# Glycolysis
-Homo_sapiensCGP = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CGP")
-Glycolysis = Homo_sapiensCGP[Homo_sapiensCGP$gs_id=="M16111",] #22 genes
-# Amino acid 
-Homo_sapiensC2 = msigdbr(species = "Homo sapiens", category = "C2")
-Amino_Acid = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39570",] #102 genes
-#Sphingolipid
-Sphingolipid = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M14857",]
-#Fatty acid
-Homo_sapiensCPK = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
-Fatty_acid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M699",]
-#Pentose phosphate
-Pentose_phosphate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1386",]
-#Ether lipid
-Ether_lipid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M2130",]
-#Glutathione
-Glutathione = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1840",]
-#Nitrogen
-Nitrogen = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M4629",]
-#Oxidative phosphorylation
-Oxidative_phosphorylation = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M19540",]
-#Purines
-Purine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14314",]
-#Pyrimidines
-Pyrimidine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5109",]
-#Pyruvate
-Pyruvate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M7934",]
-#Steroids
-Steroid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5872",]
-#Steroid hormones
-Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
-```
-
-```{r}
-#create GSEA compatible gene set list, ensembl id as characters
-carbohydrates = as.character(Carbohydrates$ensembl_gene)
-glycolysis = as.character(Glycolysis$ensembl_gene)
-amino_acid = as.character(Amino_Acid$ensembl_gene)
-sphingolipid = as.character(Sphingolipid$ensembl_gene)
-fatty_acid = as.character(Fatty_acid$ensembl_gene)
-pentose_phosphate = as.character(Pentose_phosphate$ensembl_gene)
-ether_lipid = as.character(Ether_lipid$ensembl_gene)
-glutathione = as.character(Glutathione$ensembl_gene)
-nitrogen = as.character(Nitrogen$ensembl_gene)
-oxidative_phosphorylation = as.character(Oxidative_phosphorylation$ensembl_gene)
-purine = as.character(Purine$ensembl_gene)
-pyrimidine = as.character(Pyrimidine$ensembl_gene)
-pyruvate = as.character(Pyruvate$ensembl_gene)
-steroid = as.character(Steroid$ensembl_gene)
-steroid_hormones = as.character(Steroid_hormones$ensembl_gene)
-
-metabolic_pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
-
-names(metabolic_pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
-```
-
-```{r}
-hallmarks = msigdbr(species = "Homo sapiens", category = "H")
-hallmarks_gsname = hallmarks$gs_name
-hallmarks_ensembl = hallmarks$ensembl_gene
-hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
-
-#create a df with names of pathways
-pathway_names = c(unique(hallmarks$hallmarks_gsname))
-#create a list in which the pathways will be stored (outout has to be a list)
-hallmark_genesets = list(list())#
-#fill the list with pathways and genes
-for (x in 1:length(pathway_names)){
-  hallmark_genesets[[x]] = pathway_names[x]
-  z = c((hallmarks[which(hallmarks$hallmarks_gsname == pathway_names[x]),2]))
-  for (k in 1:length(z)){
-  hallmark_genesets[[x]][[k]] = z[k]
-  }}
-names(hallmark_genesets) = pathway_names
-```
-
-
-```{r}
+```{r split annotation dataframe}
 #split annotation dataframe via tumor types
 tcga_annot_ACC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ACC"),]
 tcga_annot_BLCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BLCA"),]
@@ -146,7 +65,7 @@ tcga_annot_UCS = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCS"),]
 tcga_annot_UVM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UVM"),]
 ```
 
-```{r}
+```{r split TCGA into single tumor types}
 #create single dataframes for each tumor type with FINAL CLEAN TCGA dataframe
 tcga_exp_ACC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_ACC$sample]
 tcga_exp_BLCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_BLCA$sample]
@@ -184,9 +103,8 @@ tcga_exp_UVM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UVM$sa
 
 ```
 
-```{r}
+```{r z transformation}
 #Compute z transformation
-
 ACC_z = as.data.frame(rowScales(tcga_exp_ACC))
 BLCA_z = as.data.frame(rowScales(tcga_exp_BLCA))
 BRCA_z = as.data.frame(rowScales(tcga_exp_BRCA))
@@ -220,7 +138,9 @@ THYM_z = as.data.frame(rowScales(tcga_exp_THYM))
 UCEC_z = as.data.frame(rowScales(tcga_exp_UCEC))
 UCS_z = as.data.frame(rowScales(tcga_exp_UCS))
 UVM_z = as.data.frame(rowScales(tcga_exp_UVM))
+```
 
+```{r create tumor types list}
 tumorlist_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM_z, HNSC_z, KICH_z, KIRC_z, KIRP_z,LAML_z, LGG_z, LIHC_z, LUAD_z, LUSC_z, MESO_z, OV_z, PAAD_z, PCPG_z, PRAD_z, READ_z, SARC_z, SKCM_z, STAD_z, TGCT_z, THCA_z, THYM_z, UCEC_z, UCS_z, UVM_z)
 
 all_tumortypes_names = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
@@ -229,79 +149,8 @@ names(tumorlist_z) = all_tumortypes_names
 
 #remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
 tumorlist_z = lapply(tumorlist_z, na.omit)
-
-#NICHT rownames to column
-#tumorlist_z = lapply(tumorlist_z, rownames_to_column)
-
 ```
 
-```{r}
-#extract final tumortype dataframe from list
-ACC_gsea = tumorlist_z[["ACC"]]
-#single test sample (TCGA-OR-A5K3-01)
-probe = c(ACC_gsea[,2])
-names(probe) = c(ACC_gsea$ensembl_id)
-probe = probe[order(probe), drop = FALSE]
-results = fgsea(pathways = hallmark_genesets,
-                             stats = probe)
-```
-
-
-```{r example GSEA loop over 1 dataframe}
-#GSEA loop over ACC dataframe
-GSEA_results = list()
-(for (i in 2:(ncol(ACC_gsea))){
-  x = c(ACC_gsea[,i])
-  names(x) = c(ACC_gsea$rowname)
-  x = x[order(x), drop = FALSE]
-  GSEA_results[[i]] = fgsea(pathways = hallmark_genesets,
-                             stats = x,
-                             scoreType = "std")
-})
-#first list element empty?
-GSEA_results_ACC = GSEA_results[-1]
-#names(GSEA_results_ACC) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
-# no naming here bc for loop for p value matrix needs 1-50 as numbers to index
-
-#print most significant pathways for patient 1 ACC
-head(GSEA_results_ACC[[1]][order(padj), ])
-
-#pvalue matrix
-#try to create p value dataframe with pathways as rows and patients in column
-ACC_pvalues = data.frame(row.names = pathway_names)
-for (i in 1:77){
-  x = GSEA_results_ACC[[i]][, "padj"]
-  ACC_pvalues[1:50,i] = x
-}
-#NA's = 1
-ACC_pvalues[is.na(ACC_pvalues)] = 1
-#rename columns according to patients
-colnames(ACC_pvalues) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
-
-#NES-matrix
-ACC_NES = data.frame(row.names = pathway_names)
-for (i in 1:77){
-  x = GSEA_results_ACC[[i]][, "NES"]
-  ACC_NES[1:50,i] = x
-}
-colnames(ACC_NES) = colnames(ACC_gsea[,2:ncol(ACC_gsea)])
-#get indexes of pvalues >= 0.05
-indexes = which(ACC_pvalues >= 0.05, arr.ind=TRUE)
-rows = as.vector(indexes[,1])
-cols = as.vector(indexes[,2])
-#for loop toset all insignificant NES zero
-for  (i in 1:length(rows)) {
-    ACC_NES[rows[i], cols[i]] = 0
-  }
-```
-
-```{r GSEA table plot}
-#GSEA table plot for first ACC patient 
-topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
-topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][tail(order(pval), n=10), pathway]
-topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
-as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
-```
 
 ```{r final GSEA loop for hallmark genesets}
 #final GSEA lapply/for-loop over all tumor types!
@@ -348,23 +197,15 @@ names(NES_OVERALL) = all_tumortypes_names
 ```
 
 ```{r}
-#second gsea with KEGG and PID
-
-```
-
-
-```{r}
 #Probe des for loops mit hallmarks
 probe_geneset = list(hallmark_genesets[[1]], hallmark_genesets[[2]], hallmark_genesets[[3]])
 namen_pathways = c(pathway_names[1:3])
 names(probe_geneset) = namen_pathways
 
+#hier wurde ab 2. spalte gewählt da vorher column 1 rownames waren 
 ACC = tumorlist_z[["ACC"]][,2:6]
-rownames(ACC) = c(tumorlist_z[["ACC"]][,1])
 BLCA =tumorlist_z[["BLCA"]][,2:6]
-rownames(BLCA) = c(tumorlist_z[["BLCA"]][,1])
 BRCA = tumorlist_z[["BRCA"]][,2:6]
-rownames(BRCA) = c(tumorlist_z[["BRCA"]][,1])
 
 probe_liste = list(ACC, BLCA, BRCA)
 names(probe_liste) = c("ACC", "BLCA", "BRCA")
@@ -421,54 +262,63 @@ names(GSEA_OVERALL_test) = tumornames
 ```
 
 ```{r}
-#probe mit MMR gene set --> abgestürzt!
-PVALUES_OVERALL_MMR = list()
-NES_OVERALL_MMR = list()
-GSEA_OVERALL_MMR <- vector(mode = 'list',3)
+#probe mit PID new independent gene set 
+PVALUES_OVERALL_PID = list()
+NES_OVERALL_PID = list()
+GSEA_OVERALL_PID <- vector(mode = 'list',3)
 
+PID_names = names(PID_independent)
 
 for (j in 1:3) {
   for (i in 1:(ncol(probe_liste[[j]]))){
     m = c(probe_liste[[j]][,i])
     names(m) = rownames(probe_liste[[j]])
     m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_MMR[[j]][[i]] = fgsea(pathways = MMR,
+    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
                                stats = m,
                                scoreType = "std", 
+                               minSize = 25,
                                nproc = 6)
   }
   print("GSEA done")
-  names(GSEA_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]])
-  PVALUES_OVERALL_MMR[[j]] = data.frame(row.names = pathway_names_MMR)
+  names(GSEA_OVERALL_PID[[j]]) = colnames(probe_liste[[j]])
+  PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
   for (h in 1:ncol(probe_liste[[j]])){
-    a = GSEA_OVERALL_MMR[[j]][[h]][,3]
-    PVALUES_OVERALL_MMR[[j]][1:3,h] = a
+    a = GSEA_OVERALL_PID[[j]][[h]][,3]
+    PVALUES_OVERALL_PID[[j]][1:3,h] = a
   }
-  PVALUES_OVERALL_MMR[[j]][is.na(PVALUES_OVERALL_MMR[[j]])] = 1
-  colnames(PVALUES_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
+  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
   print("PVALUE done")
-  NES_OVERALL_MMR[[j]] = data.frame(row.names = pathway_names_MMR)
+  NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
   for (k in 1:ncol(probe_liste[[j]])){
-    t = GSEA_OVERALL_MMR[[j]][[k]][,6]
-    NES_OVERALL_MMR[[j]][1:3,k] = t
+    t = GSEA_OVERALL_PID[[j]][[k]][,6]
+    NES_OVERALL_PID[[j]][1:3,k] = t
   }
-  colnames(NES_OVERALL_MMR[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  indexes = which(PVALUES_OVERALL_MMR[[j]] >= 0.05, arr.ind=TRUE)
+  colnames(NES_OVERALL_PID[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
+  indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
   rows = as.vector(indexes[,1])
   cols = as.vector(indexes[,2])
   for (l in 1:length(rows)) {
-    NES_OVERALL_MMR[[j]][rows[l], cols[l]] = 0
+    NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
   }
   print("NES done")
 }
-names(GSEA_OVERALL_MMR) = tumornames
+names(GSEA_OVERALL_PID) = tumornames
+names(PVALUES_OVERALL_PID) = tumornames
+names(NES_OVERALL_PID) = tumornames
 ```
 
+```{r GSEA table plot}
+#GSEA table plot for first ACC patient 
+topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][tail(order(pval), n=10), pathway]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
+```
 
 ```{r}
-#need to plot enrichment for example patient
-
-#need to calculate mean NES across patients within tumor type --> compare (pan-cancer)
+#calculate mean NES across patients within tumor type --> compare (pan-cancer)
 NES_mean_list = list()
 for (i in 1:33){
   NES_mean_list[[i]] = data.frame(apply(NES_OVERALL[[i]], 1 , mean))
@@ -478,7 +328,8 @@ for (j in 1:33){
   NES_mean[,j] = NES_mean_list[[j]]
 }
 colnames(NES_mean) = all_tumortypes_names
-#plot enrichment for each tumor type
+
+#plot mean enrichment for each tumor type
 #heatmap 1
 melted = melt(NES_mean)
 pathwaynames = rep(pathway_names, 33)
@@ -501,5 +352,4 @@ heatmap(matrix, Rowv = NA, hclustfun = hclust)
 ```
 
 
-plotEnrichment(metabolic_genesets[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], first_BLCA) +labs(title="Epithelial mesenchymal transition")
 
