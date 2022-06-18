@@ -21,6 +21,7 @@ library(tibble)
 library(ggpubr)
 library(ggplot2)
 library(GeneOverlap)
+library(gplots)
 ```
 
 ```{r load data}
@@ -194,12 +195,40 @@ for (j in 1:33) {
 names(GSEA_OVERALL) = all_tumortypes_names
 names(PVALUES_OVERALL) = all_tumortypes_names
 names(NES_OVERALL) = all_tumortypes_names
+
+#calculate mean NES across patients within tumor type --> compare (pan-cancer)
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL[[i]], 1 , mean))
+}
+NES_mean = data.frame(row.names = pathway_names)
+for (j in 1:33){
+  NES_mean[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean) = all_tumortypes_names
+
+#plot mean enrichment for each tumor type
+#heatmap 1
+melted = melt(NES_mean)
+pathwaynames = rep(pathway_names, 33)
+melted = cbind(melted, pathwaynames)
+ggplot(melted, aes(variable, pathwaynames)) + 
+  geom_tile(aes(fill = value), colour = "white") + 
+  scale_fill_gradient(low = "orange", high = "blue") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab(" ") +
+  ylab(" ") +
+  ggtitle("Pathway activity heatmap") +
+  theme(text = element_text(size = 6), plot.title = element_text(hjust = 0.5))
+#heatmap 2, matrix is matrix von NES_mean
+heatmap(matrix, Rowv = NA, hclustfun = hclust)
 ```
 
 ```{r GSEA TCGA KEGG}
 #RUNNN TONIGHT
 #final GSEA lapply/for-loop over all tumor types KEGG genesets!
 #only run once    metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)]
+#ist in der data variable schon gemacht
 
 PVALUES_OVERALL_KEGG = list()
 NES_OVERALL_KEGG = list()
@@ -214,7 +243,8 @@ for (j in 1:33) {
     m = m[order(m), drop = FALSE]
     GSEA_OVERALL_KEGG[[j]][[i]] = fgsea(pathways = metabolic_genesets_KEGG,
                                stats = m,
-                               scoreType = "std")
+                               scoreType = "std",
+                               nproc = 6)
   }
   print("GSEA done")
   names(GSEA_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
@@ -236,19 +266,14 @@ for (j in 1:33) {
   cols = as.vector(indexes[,2])
   for (l in 1:length(rows)) {
     NES_OVERALL_KEGG[[j]][rows[l], cols[l]] = 0
-    print(l)
   }
-  print("once again")
+  print(j)
 }
 names(GSEA_OVERALL_KEGG) = all_tumortypes_names
 names(PVALUES_OVERALL_KEGG) = all_tumortypes_names
 names(NES_OVERALL_KEGG) = all_tumortypes_names
-```
 
-```{r GSEA TCGA PID}
-#RUNNN TONIGHT
-#final GSEA lapply/for-loop over all tumor types PID genesets!
-# only run once, remove problematic ones PID_independent = PID_independent[-c(74,82)]
+#damit alles heute nacht durchläuft PID code nochmal in diesen chunk kopiert
 
 PVALUES_OVERALL_PID = list()
 NES_OVERALL_PID = list()
@@ -263,7 +288,57 @@ for (j in 1:33) {
     m = m[order(m), drop = FALSE]
     GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
                                stats = m,
-                               scoreType = "std")
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_PID[[j]][[h]][,3]
+    PVALUES_OVERALL_PID[[j]][1:length(PID_independent),h] = a
+  }
+  PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
+  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_PID[[j]][[k]][,6]
+    NES_OVERALL_PID[[j]][1:length(PID_independent),k] = t
+  }
+  colnames(NES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
+  }
+  print(j)
+}
+names(GSEA_OVERALL_PID) = all_tumortypes_names
+names(PVALUES_OVERALL_PID) = all_tumortypes_names
+names(NES_OVERALL_PID) = all_tumortypes_names
+```
+
+```{r GSEA TCGA PID}
+#final GSEA lapply/for-loop over all tumor types PID genesets!
+# only run once, remove problematic ones PID_independent = PID_independent[-c(74,82)]
+#ist in der data variable schon gemacht
+
+PVALUES_OVERALL_PID = list()
+NES_OVERALL_PID = list()
+GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
+
+PID_names = names(PID_independent)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
   }
   print("GSEA done")
   names(GSEA_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
@@ -293,6 +368,69 @@ names(GSEA_OVERALL_PID) = all_tumortypes_names
 names(PVALUES_OVERALL_PID) = all_tumortypes_names
 names(NES_OVERALL_PID) = all_tumortypes_names
 ```
+
+```{r}
+#final GSEA lapply/for-loop over all tumor types MMR genesets!
+#need to remove geneset 2, 3 and 7 from MMR
+#MMR = MMR[-c(2,3,4,7] #only run once; already updated in data file
+
+PVALUES_OVERALL_MMR = list()
+NES_OVERALL_MMR = list()
+GSEA_OVERALL_MMR <- vector(mode = 'list', length = 33)
+
+MMR_names = names(MMR)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_MMR[[j]][[i]] = fgsea(pathways = MMR,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_MMR[[j]] = data.frame(row.names = MMR_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_MMR[[j]][[h]][,3]
+    PVALUES_OVERALL_MMR[[j]][1:length(MMR),h] = a
+  }
+  PVALUES_OVERALL_MMR[[j]][is.na(PVALUES_OVERALL_MMR[[j]])] = 1
+  colnames(PVALUES_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_MMR[[j]] = data.frame(row.names = MMR_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_MMR[[j]][[k]][,6]
+    NES_OVERALL_MMR[[j]][1:length(MMR),k] = t
+  }
+  colnames(NES_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_MMR[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_MMR[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL_MMR) = all_tumortypes_names
+names(PVALUES_OVERALL_MMR) = all_tumortypes_names
+names(NES_OVERALL_MMR) = all_tumortypes_names
+
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_MMR[[i]], 1 , mean))
+}
+NES_mean_MMR = data.frame(row.names = MMR_names)
+for (j in 1:33){
+  NES_mean_MMR[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_MMR) = all_tumortypes_names
+NES_matrix_MMR = as.matrix(NES_mean_MMR)
+heatmap.2(NES_matrix_MMR, dendrogram = "column", hclustfun = hclust, trace = "none")
+```
+
 
 ```{r Probe loop}
 #Für Proben des for loops, gerade zB. KEGG
@@ -360,34 +498,6 @@ topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
 ```
 
-```{r mean NES for hallmark}
-#calculate mean NES across patients within tumor type --> compare (pan-cancer)
-NES_mean_list = list()
-for (i in 1:33){
-  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL[[i]], 1 , mean))
-}
-NES_mean = data.frame(row.names = pathway_names)
-for (j in 1:33){
-  NES_mean[,j] = NES_mean_list[[j]]
-}
-colnames(NES_mean) = all_tumortypes_names
-
-#plot mean enrichment for each tumor type
-#heatmap 1
-melted = melt(NES_mean)
-pathwaynames = rep(pathway_names, 33)
-melted = cbind(melted, pathwaynames)
-ggplot(melted, aes(variable, pathwaynames)) + 
-  geom_tile(aes(fill = value), colour = "white") + 
-  scale_fill_gradient(low = "orange", high = "blue") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  xlab(" ") +
-  ylab(" ") +
-  ggtitle("Pathway activity heatmap") +
-  theme(text = element_text(size = 6), plot.title = element_text(hjust = 0.5))
-#heatmap 2
-heatmap(matrix, Rowv = NA, hclustfun = hclust)
-```
 
 ```{r pan-cancer analysis}
 #comparison of tumor types

@@ -155,7 +155,6 @@ for (i in 1:nrow(go_PID_jaccard)){
 }
 go_PID_jaccard = na.omit(go_PID_jaccard)
 PID_independent = metabolic_genesets_PID[rownames(go_PID_jaccard)]
-PID_independent = PID_independent[-c(74,82)] #only run once
 ```
 
 ```{r check KEGG pathways}
