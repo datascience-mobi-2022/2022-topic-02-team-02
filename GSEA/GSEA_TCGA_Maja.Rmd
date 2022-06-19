@@ -22,6 +22,7 @@ library(ggpubr)
 library(ggplot2)
 library(GeneOverlap)
 library(gplots)
+library(ggdendro)
 ```
 
 ```{r load data}
@@ -144,12 +145,12 @@ UVM_z = as.data.frame(rowScales(tcga_exp_UVM))
 ```{r create tumor types list}
 tumorlist_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM_z, HNSC_z, KICH_z, KIRC_z, KIRP_z,LAML_z, LGG_z, LIHC_z, LUAD_z, LUSC_z, MESO_z, OV_z, PAAD_z, PCPG_z, PRAD_z, READ_z, SARC_z, SKCM_z, STAD_z, TGCT_z, THCA_z, THYM_z, UCEC_z, UCS_z, UVM_z)
 
+#remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
+tumorlist_z = lapply(tumorlist_z, na.omit)
+
 all_tumortypes_names = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
 
 names(tumorlist_z) = all_tumortypes_names
-
-#remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
-tumorlist_z = lapply(tumorlist_z, na.omit)
 ```
 
 
@@ -273,50 +274,39 @@ names(GSEA_OVERALL_KEGG) = all_tumortypes_names
 names(PVALUES_OVERALL_KEGG) = all_tumortypes_names
 names(NES_OVERALL_KEGG) = all_tumortypes_names
 
-#damit alles heute nacht durchläuft PID code nochmal in diesen chunk kopiert
-
-PVALUES_OVERALL_PID = list()
-NES_OVERALL_PID = list()
-GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
-
-PID_names = names(PID_independent)
-
-for (j in 1:33) {
-  for (i in 1:(ncol(tumorlist_z[[j]]))){
-    m = c(tumorlist_z[[j]][,i])
-    names(m) = rownames(tumorlist_z[[j]])
-    m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
-                               stats = m,
-                               scoreType = "std",
-                               nproc = 6)
-  }
-  print("GSEA done")
-  names(GSEA_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
-  PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
-  for (h in 1:ncol(tumorlist_z[[j]])){
-    a = GSEA_OVERALL_PID[[j]][[h]][,3]
-    PVALUES_OVERALL_PID[[j]][1:length(PID_independent),h] = a
-  }
-  PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
-  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
-  NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
-  for (k in 1:ncol(tumorlist_z[[j]])){
-    t = GSEA_OVERALL_PID[[j]][[k]][,6]
-    NES_OVERALL_PID[[j]][1:length(PID_independent),k] = t
-  }
-  colnames(NES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
-  indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
-  rows = as.vector(indexes[,1])
-  cols = as.vector(indexes[,2])
-  for (l in 1:length(rows)) {
-    NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
-  }
-  print(j)
+#create NES mean matrix over each tumor type
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_KEGG[[i]], 1 , mean))
 }
-names(GSEA_OVERALL_PID) = all_tumortypes_names
-names(PVALUES_OVERALL_PID) = all_tumortypes_names
-names(NES_OVERALL_PID) = all_tumortypes_names
+NES_mean_KEGG = data.frame(row.names = KEGG_names)
+for (j in 1:33){
+  NES_mean_KEGG[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_KEGG) = all_tumortypes_names
+NES_matrix_KEGG = as.matrix(NES_mean_KEGG)
+#plot as heatmap
+heatmap.2(NES_matrix_KEGG, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+#create dendrogram 
+KEGG_dendro_matrix = t(NES_matrix_KEGG)
+KEGG_dendro = as.dendrogram(hclust(d = dist(x = KEGG_dendro_matrix)))
+dendro_KEGG =  ggdendrogram(data = KEGG_dendro, rotate = TRUE)
+print(dendro_KEGG)
+
+#repeat for sum
+NES_sum_list = list()
+for (i in 1:33){
+  NES_sum_list[[i]] = data.frame(apply(NES_OVERALL_KEGG[[i]], 1 , sum))
+}
+NES_sum_KEGG = data.frame(row.names = KEGG_names)
+for (j in 1:33){
+  NES_sum_KEGG[,j] = NES_sum_list[[j]]
+}
+colnames(NES_sum_KEGG) = all_tumortypes_names
+NES_summatrix_KEGG = as.matrix(NES_sum_KEGG)
+heatmap.2(NES_summatrix_KEGG, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
 ```
 
 ```{r GSEA TCGA PID}
@@ -367,6 +357,18 @@ for (j in 1:33) {
 names(GSEA_OVERALL_PID) = all_tumortypes_names
 names(PVALUES_OVERALL_PID) = all_tumortypes_names
 names(NES_OVERALL_PID) = all_tumortypes_names
+
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_PID[[i]], 1 , mean))
+}
+NES_mean_PID = data.frame(row.names = PID_names)
+for (j in 1:33){
+  NES_mean_PID[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_PID) = all_tumortypes_names
+NES_matrix_PID = as.matrix(NES_mean_PID)
+heatmap.2(NES_matrix_PID, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 ```
 
 ```{r}
@@ -428,7 +430,7 @@ for (j in 1:33){
 }
 colnames(NES_mean_MMR) = all_tumortypes_names
 NES_matrix_MMR = as.matrix(NES_mean_MMR)
-heatmap.2(NES_matrix_MMR, dendrogram = "column", hclustfun = hclust, trace = "none")
+heatmap.2(NES_matrix_MMR, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 ```
 
 
