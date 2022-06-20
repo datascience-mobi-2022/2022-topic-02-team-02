@@ -292,7 +292,8 @@ for (i in 1: length(UMAP_output_33)) {
                          aes (x = X1, y = X2, color = cancer_types)) +
     geom_point(size = 0.5)
 }
-umap_plot_33
+umap_plot_33 #wie loop schreiben, dass alle Tumortypen zusammen geplottet werden?? 
+# wie Daten mergen? Muss das überhaupt passieren? jetzt alle in Liste UMAP_tumorlist_33
 
 cancer = c(which(cancer_types == cancer_names[1]))
 ```
