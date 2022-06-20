@@ -48,6 +48,12 @@ u1 = umap(PCA_NES_PID_x)
 UMAP_NES_PID_plot_wo = ggplot (data = data.frame(u1[["layout"]]), aes (x = X1, y = X2)) + 
   geom_point(size = 0.5)
 UMAP_NES_PID_plot_wo
+
+UMAP_NES_PID_names = rownames(UMAP_NES_PID_wo)
+UMAP_NES_PID_names_split = strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)
+UMAP_NES_PID_patients = UMAP_NES_PID_patients[[]]
+
+#einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
 ```
 
 
