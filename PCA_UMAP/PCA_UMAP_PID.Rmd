@@ -22,18 +22,15 @@ UMAP_NES_PID_plot_mean = ggplot (data = data.frame(UMAP_NES_PID_mean), aes (x = 
 UMAP_NES_PID_plot_mean
 
 ```
-
-```{r}
-NES_OVERALL_PID_alle <-  readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_alle.RDS")
-
+```{r}#
 PCA_NES_PID = prcomp(t(NES_OVERALL_PID_alle))
-PCA_NES_PID_x =PCA_NES_PID[["x"]]
+PCA_NES_PID_x =PCA_NES_PID[["x"]] #PCA
 
 PCA_NES_PID_plot = ggplot(data = as.data.frame(PCA_NES_PID_x), aes (x = PC1, y = PC3))+
   geom_point (size = 0.5)
 PCA_NES_PID_plot
 
-UMAP_NES_PID = uwot::umap(PCA_NES_PID_x)
+UMAP_NES_PID = uwot::umap(PCA_NES_PID_x) # -> komisches Muster
 
 UMAP_NES_PID = data.frame(UMAP_NES_PID)
 UMAP_NES_PID_plot = ggplot (data = (UMAP_NES_PID), aes (x = X1, y = X2)) + geom_point(size = 2)
@@ -41,19 +38,72 @@ UMAP_NES_PID_plot = ggplot (data = (UMAP_NES_PID), aes (x = X1, y = X2)) + geom_
 UMAP_NES_PID_plot
 
 UMAP_NES_PID_wo = uwot::umap(t(NES_OVERALL_PID_alle))
-UMAP_NES_PID_plot_wo = ggplot (data = data.frame(UMAP_NES_PID_wo), aes (x = X1, y = X2)) + 
+UMAP_NES_PID_plot_patterned = ggplot (data = data.frame(UMAP_NES_PID_wo), aes (x = X1, y = X2)) + 
   geom_point(size = 2)
-UMAP_NES_PID_plot_wo
-u1 = umap(PCA_NES_PID_x)
-UMAP_NES_PID_plot_wo = ggplot (data = data.frame(u1[["layout"]]), aes (x = X1, y = X2)) + 
-  geom_point(size = 0.5)
-UMAP_NES_PID_plot_wo
-
-UMAP_NES_PID_names = rownames(UMAP_NES_PID_wo)
-UMAP_NES_PID_names_split = strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)
-UMAP_NES_PID_patients = UMAP_NES_PID_patients[[]]
-
-#einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
+UMAP_NES_PID_plot_patterned #-> komisches Muster
 ```
 
+
+```{r}
+NES_OVERALL_PID_alle <-  readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_alle.RDS")
+
+#nochmal richtig programmieren
+RunPCA_NES_PID = RunPCA(as.matrix(NES_OVERALL_PID_alle))
+UMAP_NES_PID_right = umap(RunPCA_NES_PID@cell.embeddings)
+UMAP_NES_PID_right_l = UMAP_NES_PID_right[["layout"]]
+UMAP_NES_PID_right_plot = ggplot (data = data.frame(UMAP_NES_PID_right_l), 
+                                  aes (x = X1, y = X2)) +
+  geom_point(size = 0.5)
+UMAP_NES_PID_right_plot
+
+UMAP_NES_PID_names = rownames (UMAP_NES_PID_right_l)
+UMAP_NES_PID_names_split = strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)
+
+UMAP_NES_PID_patients = list()
+for (i in length(UMAP_NES_PID_names_split)) {
+  UMAP_NES_PID_patients = list(UMAP_NES_PID_names_split[[i]][2])
+}
+UMAP_NES_PID_patients # error -> nur vom ersten Objekt -> loop läuft nicht 
+
+xy = unlist(strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)) #-> Vektor mit Namen
+
+#einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
+
+
+```
+
+```{r}
+#find oprimal cluster number
+library(ggpubr)
+library(factoextra)
+
+km_UMAP_PID = kmeans(UMAP_NES_PID_right_l, centers= 2, nstart = 50)
+
+fviz_cluster(km_UMAP_PID, data.frame(UMAP_NES_PID_right_l),
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+
+km_UMAP_PID_20 = kmeans (UMAP_NES_PID_right_l, centers = 20, nstart = 50)
+
+#elbow plot
+km_UMAP_PID_tw = sapply(1:20, function(k){
+  kmeans(x = UMAP_NES_PID_right_l, centers = k, nstart = 50 )$tot.withinss})
+
+UMAP_PID_elbow = plot(km_UMAP_PID_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
+
+#silhouette plot
+km_UMAP_PID_20 = sapply(2:20, function(k){
+  kmeans(x = UMAP_NES_PID_right_l , centers = k, nstart = 50 )$cluster})
+
+library(cluster)
+
+#find the optimal number clusters, silhouette plot (average silhouette width)
+fviz_nbclust(UMAP_NES_PID_right_l, kmeans, method='silhouette') #-> opt. cluster = 2
+
+#silhouette plot
+sapply(1:19, function(x){
+  plot(silhouette(km_UMAP_PID_20[,x], dist(data.frame(UMAP_NES_PID_right_l)), main ="Silhouette plot")}) #kp wieso das nicht klappt...
+```
 
