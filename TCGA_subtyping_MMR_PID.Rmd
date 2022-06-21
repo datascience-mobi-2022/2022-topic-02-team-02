@@ -1,0 +1,77 @@
+---
+title: "TCGA_subtyping_MMR/PID"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r data}
+#load pathway activity matricesd for MMR and PID for all 33 tumortypes
+TCGA_pw_MMR = NES_OVERALL_MMR
+TCGA_pw_PID = NES_OVERALL_PID
+```
+
+```{r packages}
+library(ggplot2)
+library(tidyverse)
+library(Seurat)
+library(gridExtra)
+
+```
+
+```{r PCA / umap for PID}
+
+cancer_abc = names(TCGA_pw_MMR)
+PCA_PID = lapply (1:length(TCGA_pw_PID), function (i) {
+  RunPCA(as.matrix(TCGA_pw_PID[[i]]),npcs = (nrow(TCGA_pw_MMR[[i]])-1)
+         )
+         }) 
+
+UMAP_PID = lapply (1:length(TCGA_pw_PID), function (j) {
+  uwot::umap(PCA_PID[[j]]@cell.embeddings)
+})
+
+UMAP_output_PID = list ()
+for (i in 1: length(TCGA_pw_PID)) {
+  UMAP_df_PID = data.frame(UMAP_PID[[i]])
+  UMAP_output_PID[[i]] = ggplot (data = UMAP_df_PID,
+  aes (x = X1, y =X2, color = "blue")) + 
+    geom_point(size = 0.5 , color = "blue")+ 
+    ggtitle (cancer_abc [[i]])
+}
+names(UMAP_output_PID) = cancer_abc
+
+sapply(1:33, function(i){
+  plot(UMAP_output_PID[[i]])
+  })
+
+```
+
+```{r PCA / umap for MMR}
+PCA_MMR = lapply (1:length(TCGA_pw_MMR), function (i) {
+  RunPCA(as.matrix(TCGA_pw_MMR[[i]]), npcs = (nrow(TCGA_pw_MMR[[i]])))
+         }) 
+
+UMAP_MMR = lapply (1:length(TCGA_pw_MMR), function (j) {
+  uwot::umap(PCA_MMR[[j]]@cell.embeddings)
+})
+
+UMAP_output_MMR = list ()
+for (i in 1: length(TCGA_pw_MMR)) {
+  UMAP_df_MMR = data.frame(UMAP_MMR[[i]])
+  UMAP_output_MMR[[i]] = ggplot (data = UMAP_df_MMR,
+  aes (x = X1, y =X2, color = "blue")) + 
+    geom_point(size = 0.5 , color = "blue")+ 
+    ggtitle (cancer_abc [[i]])
+}
+names(UMAP_output_MMR) = cancer_abc
+
+UMAP_plot = list()
+for (i in 1:33) { UMAP_plot[[i]] = plot(UMAP_output_MMR[[i]])
+}
+
+```
+
