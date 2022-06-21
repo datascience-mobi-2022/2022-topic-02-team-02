@@ -24,6 +24,7 @@ library(GeneOverlap)
 library(gplots)
 library(ggdendro)
 library(PPInfer)
+library(enrichplot)
 ```
 
 ```{r load data}
@@ -325,22 +326,23 @@ GSEA.barplot(GSEA_firstACC, category = "pathway", score = 'NES',
 ```
 
 ```{r GSEA TCGA PID}
+#--> LAUFEN LASSEN 
 #final GSEA lapply/for-loop over all tumor types PID genesets!
-# only run once, remove problematic ones PID_independent = PID_independent[-c(74,82)]
-#ist in der data variable schon gemacht
+
 
 PVALUES_OVERALL_PID = list()
 NES_OVERALL_PID = list()
 GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
 
-PID_names = names(PID_independent)
+metabolic_genesets_PID = metabolic_genesets_PID[-c(152, 170)] ## only run once, remove problematic ones!
+PID_names = names(metabolic_genesets_PID)
 
 for (j in 1:33) {
   for (i in 1:(ncol(tumorlist_z[[j]]))){
     m = c(tumorlist_z[[j]][,i])
     names(m) = rownames(tumorlist_z[[j]])
     m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = PID_independent,
+    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = metabolic_genesets_PID,
                                stats = m,
                                scoreType = "std",
                                nproc = 6)
@@ -350,14 +352,14 @@ for (j in 1:33) {
   PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
   for (h in 1:ncol(tumorlist_z[[j]])){
     a = GSEA_OVERALL_PID[[j]][[h]][,3]
-    PVALUES_OVERALL_PID[[j]][1:length(PID_independent),h] = a
+    PVALUES_OVERALL_PID[[j]][1:length(metabolic_genesets_PID),h] = a
   }
   PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
   colnames(PVALUES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
   NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
   for (k in 1:ncol(tumorlist_z[[j]])){
     t = GSEA_OVERALL_PID[[j]][[k]][,6]
-    NES_OVERALL_PID[[j]][1:length(PID_independent),k] = t
+    NES_OVERALL_PID[[j]][1:length(metabolic_genesets_PID),k] = t
   }
   colnames(NES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
   indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
@@ -382,6 +384,8 @@ for (j in 1:33){
   NES_mean_PID[,j] = NES_mean_list[[j]]
 }
 colnames(NES_mean_PID) = all_tumortypes_names
+###
+
 NES_matrix_PID = as.matrix(NES_mean_PID)
 heatmap.2(NES_matrix_PID, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 
@@ -390,6 +394,7 @@ PID_dendro_matrix = t(NES_matrix_PID)
 PID_dendro = as.dendrogram(hclust(d = dist(x = PID_dendro_matrix)))
 dendro_PID =  ggdendrogram(data = PID_dendro, rotate = TRUE)
 print(dendro_PID)
+##probe
 ```
 
 ```{r}
@@ -529,11 +534,21 @@ as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[
 
 
 ```{r pan-cancer analysis}
+#LInda kriegt gemergte dataframes von pathway activity (mit allen gene sets)
+#Tim kriegt für PID Liste mit 33 Tumortypen alle samples NES
 #comparison of tumor types
-#melt Hallmark, KEGG, PID and MMR pathway activity matrices
-pathway_activity_matrix = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID, NES_mean_MMR)
+#--> mean über pathway activity MEAN! matrix und dann top 15 in beide extreme heraussuchen und heatplot machen (30x33)
+NES_OVERALL_hallmark_alle = list.cbind(nes_overall)
+NES_OVERALL_PID_alle = list.cbind(NES_OVERALL_PID) 
+NES_OVERALL_KEGG_alle = list.cbind(NES_OVERALL_KEGG)
+NES_OVERALL_MMR_alle = list.cbind(NES_OVERALL_MMR)
+
+# pathway activity matrix über alle erstellen! erst listcbind mit NES und dann rbind über hallmark, KEGG, PID, MMR
+pathway_activity_matrix = rbind(NES_OVERALL_hallmark_alle, NES_OVERALL_PID_alle, NES_OVERALL_KEGG_alle, NES_OVERALL_MMR_alle)
+#melt Hallmark, KEGG, PID and MMR MEAN pathway activity matrices
+pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID, NES_mean_MMR)
 #heatmap
-NES_matrix_ALLE = as.matrix(pathway_activity_matrix)
+NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
 heatmap.2(NES_matrix_ALLE, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 #create dendrogram 
 alle_dendro_matrix = t(NES_matrix_ALLE)
@@ -542,7 +557,7 @@ dendro_alle =  ggdendrogram(data = alle_dendro, rotate = TRUE)
 print(dendro_alle)
 
 # select top 15 UP and DOWN regulated pathways for ACC
-ACC_ordered = pathway_activity_matrix[,1, drop = FALSE]
+ACC_ordered = pathway_activity_matrix_mean[,1, drop = FALSE]
 ACC_topup = slice_max(ACC_ordered, order_by = ACC_ordered[,1], n = 15)
 ACC_topdown = slice_min(ACC_ordered, order_by = ACC_ordered[,1], n = 15)
 ACC_topdown = ACC_topdown[order(nrow(ACC_topdown):1),, drop = FALSE]
@@ -551,14 +566,17 @@ ACC_top = rownames_to_column(ACC_top)
 
 ACC_top$rowname <- factor(ACC_top$rowname, levels = ACC_top$rowname)
 ggplot(ACC_top, aes(x=rowname, y=ACC)) + 
-  geom_bar(stat = "identity")+
+  geom_bar(stat = "identity", fill="lightblue")+
   coord_flip() +
   labs (y = "Pathways",
         x = "NES",
-        title = "Top up- and downregulated pathways in ACC")
+        title = "Top up- and downregulated pathways in ACC")+ 
+        theme(axis.text.x = element_text(size = 10)) +
+        theme(axis.text.y = element_text(size = 5)) 
+
 
 # select top 15 UP and DOWN regulated pathways for ACC
-KIRC_ordered = pathway_activity_matrix[,12, drop = FALSE]
+KIRC_ordered = pathway_activity_matrix_mean[,12, drop = FALSE]
 KIRC_topup = slice_max(KIRC_ordered, order_by = KIRC_ordered[,1], n = 15)
 KIRC_topdown = slice_min(KIRC_ordered, order_by = KIRC_ordered[,1], n = 15)
 KIRC_topdown = KIRC_topdown[order(nrow(KIRC_topdown):1),, drop = FALSE]
@@ -575,7 +593,7 @@ ggplot(KIRC_top, aes(x=rowname, y=KIRC)) +
         title = "Top up- and downregulated pathways in KIRC")
 
 # compare enrichment for top 15 up- and downregulated pathways in KIRC with other tumor types:
-KEGG_O_GLYCAN_BIOSYNTHESIS = t(pathway_activity_matrix[rownames(pathway_activity_matrix) == "KEGG_O_GLYCAN_BIOSYNTHESIS",, drop = FALSE])
+KEGG_O_GLYCAN_BIOSYNTHESIS = t(pathway_activity_matrix_mean[rownames(pathway_activity_matrix_mean) == "KEGG_O_GLYCAN_BIOSYNTHESIS",, drop = FALSE])
 KEGG_O_GLYCAN_BIOSYNTHESIS = as.data.frame(KEGG_O_GLYCAN_BIOSYNTHESIS)
 KEGG_O_GLYCAN_BIOSYNTHESIS = rownames_to_column(KEGG_O_GLYCAN_BIOSYNTHESIS)
 
@@ -588,8 +606,6 @@ ggplot(KEGG_O_GLYCAN_BIOSYNTHESIS, aes(x=rowname, y=KEGG_O_GLYCAN_BIOSYNTHESIS))
   labs (y = "Tumor types",
         x = "NES",
         title = "KEGG_O_GLYCAN_BIOSYNTHESIS in all tumor types")
-
 ```
-
 
 
