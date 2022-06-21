@@ -377,12 +377,12 @@ sum_larger_0 = data.frame(activity_sum_rank[which_larger_0,])
 KIRC_GSEA_activity_sum_top10 = KIRC_GSEA_activity_mean_prep[sum_larger_0$Pathway[1:10],]
 
 
-KIRC_GSEA_activity_sum_top10%>%
+  KIRC_GSEA_activity_sum_top10 %>%
   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
   pathway = gsub("_"," ",pathway)) %>%
   
   ggplot(aes(x=reorder(pathway,NES), y=NES)) +
-  geom_col ()+
+  geom_col (fill = "lightblue")+
   theme_classic()+
   lims(y=c(-3.2,3.2))+
   coord_flip()+
@@ -390,6 +390,7 @@ KIRC_GSEA_activity_sum_top10%>%
         x = "Gene set",
         title = "GSEA mean expression top 10 sum")
 ```
+
 ```{r filter top 10 mean}
 ##compute top 10 mean (absolute values)
 KIRC_GSEA_activity_mean_order = KIRC_GSEA_activity_mean_prep$NES[order(abs(KIRC_GSEA_activity_mean_prep$NES), decreasing = TRUE)]
@@ -453,7 +454,7 @@ KIRC_GSEA_activity_sum_top10_rel%>%
 ```
 
 ```{r heatmap}
-heatmap.2(as.matrix(KIRC_GSEA_NES_KEGG),dendrogram = "column", hclustfun = hclust, trace = "none")
+heatmap.2(as.matrix(KIRC_GSEA_NES_KEGG),dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(10,10))
 
 heatmap.2(as.matrix(KIRC_GSEA_NES_PID),dendrogram = "column", hclustfun = hclust, trace = "none")
 
