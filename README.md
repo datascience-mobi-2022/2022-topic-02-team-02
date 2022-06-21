@@ -54,3 +54,6 @@ PCA shows no clustering of patients when comparing gene expression in tumor data
 ##Literature
 1. Xiaying Han, Dianwen Song (2022) Using a Machine Learning Approach to Identify Key Biomarkers for Renal Clear Cell Carcinoma
 $\\rightarrow$ "However, the main cause of death in KIRC patients is tumor metastasis. There are no obvious clinical features in the early stage of kidney cancer, and 25-30% of patients have already metastasized when they are first diagnosed..."
+
+Nowak, J.A., Yurgelun, M.B., Bruce, J.L., Rojas-Rudilla, V., Hall, D.L., Shivdasani, P., Garcia, E.P., Agoston, A.T., Srivastava, A., Ogino, S., et al. (2017). Detection of Mismatch Repair Deficiency and Microsatellite Instability in Colorectal Adenocarcinoma by Targeted Next-Generation Sequencing. J Mol Diagn 19, 84-91. 10.1016/j.jmoldx.2016.07.010. $\\rightarrow$ 2 genesets for MIS/MMR_D!
+

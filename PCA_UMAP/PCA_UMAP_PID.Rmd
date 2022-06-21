@@ -1,0 +1,53 @@
+---
+title: "PCA_UMAP_pathway_activity"
+author: "Linda Blaier"
+date: '2022-06-20'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+#PCA and UMAP over mean pathway activity matrix for PID 
+
+#NES_mean_PID = readRDS("../data/NES_mean_PID.RDS")
+
+PCA_NES_PID_mean = RunPCA(as.matrix(NES_mean_PID), npcs = 32)
+UMAP_NES_PID_mean = uwot::umap(PCA_NES_PID_mean@cell.embeddings)
+                               
+UMAP_NES_PID_plot_mean = ggplot (data = data.frame(UMAP_NES_PID_mean), aes (x = X1, y = X2, color = cancer_names)) + 
+  geom_point(size = 2)
+
+UMAP_NES_PID_plot_mean
+
+```
+
+```{r}
+NES_OVERALL_PID_alle <-  readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_alle.RDS")
+
+PCA_NES_PID = prcomp(t(NES_OVERALL_PID_alle))
+PCA_NES_PID_x =PCA_NES_PID[["x"]]
+
+PCA_NES_PID_plot = ggplot(data = as.data.frame(PCA_NES_PID_x), aes (x = PC1, y = PC3))+
+  geom_point (size = 0.5)
+PCA_NES_PID_plot
+
+UMAP_NES_PID = uwot::umap(PCA_NES_PID_x)
+
+UMAP_NES_PID = data.frame(UMAP_NES_PID)
+UMAP_NES_PID_plot = ggplot (data = (UMAP_NES_PID), aes (x = X1, y = X2)) + geom_point(size = 2)
+
+UMAP_NES_PID_plot
+
+UMAP_NES_PID_wo = uwot::umap(t(NES_OVERALL_PID_alle))
+UMAP_NES_PID_plot_wo = ggplot (data = data.frame(UMAP_NES_PID_wo), aes (x = X1, y = X2)) + 
+  geom_point(size = 2)
+UMAP_NES_PID_plot_wo
+u1 = umap(PCA_NES_PID_x)
+UMAP_NES_PID_plot_wo = ggplot (data = data.frame(u1[["layout"]]), aes (x = X1, y = X2)) + 
+  geom_point(size = 0.5)
+UMAP_NES_PID_plot_wo
+```
+
+

@@ -189,13 +189,14 @@ UMAP_tumorlist_1_4 = lapply (1:4, function (j) {
 
 UMAP_output_1_4 = list ()
 for (i in 1:4) {
-  cancer = c(which(cancer_types == cancer_abc[i]))
-  cancer_df = data.frame(UMAP_tumorlist_1_4[[i]])
-  UMAP_output_1_4[[i]] = ggplot (data = cancer_df,
+  UMAP_df = data.frame(UMAP_tumorlist_1_4[[i]])
+  UMAP_output_1_4[[i]] = ggplot (data = UMAP_df,
   aes (x = X1, y =X2, color = "blue")) + 
     geom_point(size = 0.5 , color = "blue")+ 
     ggtitle (cancer_abc [[i]])
 }
+
+names(UMAP_output_1_4) = cancer_abc[1:4]
 
 sapply(1:4, function(i){
   plot(UMAP_output_1_4[[i]])
@@ -213,17 +214,17 @@ UMAP_tumorlist_8_33 = lapply (1:26, function (j) {
 cancer_abc_8_33 = cancer_abc[8:33]
 UMAP_output_8_33 = list ()
 for (i in 1:26) {
-  cancer = c(which(cancer_types == cancer_abc[i]))
-  cancer_df = data.frame(UMAP_tumorlist_8_33[[i]])
-  UMAP_output_8_33[[i]] = ggplot (data = cancer_df,
+  UMAP_df = data.frame(UMAP_tumorlist_8_33[[i]])
+  UMAP_output_8_33[[i]] = ggplot (data = UMAP_df,
   aes (x = X1, y =X2, color = "blue")) + 
     geom_point(size = 0.5 , color = "blue")+ 
     ggtitle (cancer_abc_8_33 [[i]])
 }
+names(UMAP_output_8_33) = cancer_abc[8:33]
 
 sapply(1:26, function(i){
   plot(UMAP_output_8_33[[i]])
-  }) [6]
+  })
 
 #PCA and UMAP for COAD
 tumorlist_COAD = tumorlist[[6]]
@@ -234,6 +235,7 @@ UMAP_COAD_plot = ggplot (data = data.frame(UMAP_COAD),
   geom_point(size = 0.5, color = "blue")+
   ggtitle("COAD")
 UMAP_COAD_plot
+colnames(UMAP_COAD) = c("X1", "X2")
 
 #PCA and UMAP for CHOL and DLBC but set custom npcs
 tumorlist_CHOL = tumorlist [[5]]
@@ -253,6 +255,47 @@ UMAP_DLBC_plot = ggplot (data = data.frame(UMAP_DLBC),
   geom_point(size = 0.5, color = "blue")+
   ggtitle("DLBC")
 UMAP_DLBC_plot
+```
+
+```{r}
+#PCA over all tumor types in one 
+
+PCA_tumorlist_33 = lapply (1:length(tumorlist), function (i) {
+  RunPCA(as.matrix(tumorlist[[i]]), npcs = (ncol(tumorlist[[i]]))-1)
+         }) 
+
+UMAP_tumorlist_33 = lapply (1:length(tumorlist), function (j) {
+  uwot::umap(PCA_tumorlist_33[[j]]@cell.embeddings)
+})
+
+UMAP_output_33 = list ()
+for (i in 1: length(tumorlist)) {
+  UMAP_df = data.frame(UMAP_tumorlist_33[[i]])
+  UMAP_output_33[[i]] = ggplot (data = UMAP_df,
+  aes (x = X1, y =X2, color = "blue")) + 
+    geom_point(size = 0.5 , color = "blue")+ 
+    ggtitle (cancer_abc [[i]])
+}
+names(UMAP_output_33) = cancer_abc
+
+sapply(1:33, function(i){
+  plot(UMAP_output_33[[i]])
+  })
+```
+ 
+```{r}
+umap_plot_33 = list ()
+for (i in 1: length(UMAP_output_33)) {
+  UMAP_tumor = UMAP_output_33[[i]]$data
+  UMAP_output_33_df = data.frame(UMAP_tumor)
+  umap_plot_33 = ggplot (data = UMAP_output_33_df, 
+                         aes (x = X1, y = X2, color = cancer_types)) +
+    geom_point(size = 0.5)
+}
+umap_plot_33 #wie loop schreiben, dass alle Tumortypen zusammen geplottet werden?? 
+# wie Daten mergen? Muss das überhaupt passieren? jetzt alle in Liste UMAP_tumorlist_33
+
+cancer = c(which(cancer_types == cancer_names[1]))
 ```
 
 
