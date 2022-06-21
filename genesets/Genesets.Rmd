@@ -170,6 +170,7 @@ for (i in 1:nrow(go_KEGG_jaccard)){
     }
   }
 }
+heatmap.2(go_KEGG_jaccard, dendrogram = "none", trace = "none", margins = c(11,11))
 go_KEGG_jaccard = na.omit(go_KEGG_jaccard)
 KEGG_independent = metabolic_genesets_KEGG[rownames(go_KEGG_jaccard)]
 KEGG_independent = KEGG_independent[names(KEGG_independent) != "KEGG_OLFACTORY_TRANSDUCTION"]
