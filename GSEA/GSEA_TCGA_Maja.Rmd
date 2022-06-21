@@ -25,6 +25,7 @@ library(gplots)
 library(ggdendro)
 library(PPInfer)
 library(enrichplot)
+library(rlist)
 ```
 
 ```{r load data}
@@ -547,6 +548,20 @@ NES_OVERALL_MMR_alle = list.cbind(NES_OVERALL_MMR)
 pathway_activity_matrix = rbind(NES_OVERALL_hallmark_alle, NES_OVERALL_PID_alle, NES_OVERALL_KEGG_alle, NES_OVERALL_MMR_alle)
 #melt Hallmark, KEGG, PID and MMR MEAN pathway activity matrices
 pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID, NES_mean_MMR)
+
+
+#find top pathways across all tumor types
+pathway_mean_alle = as.data.frame(apply(pathway_activity_matrix_mean, 1, mean))
+colnames(pathway_mean_alle) = "NES"
+topup_pathways = slice_max(pathway_mean_alle, order_by = pathway_mean_alle[,1], n = 15)
+topdown_pathways = slice_min(pathway_mean_alle, order_by = pathway_mean_alle[,1], n = 15)
+topdown_pathways = topdown_pathways[order(nrow(topdown_pathways):1),, drop = FALSE]
+top_pathways = rbind(topup_pathways, topdown_pathways)
+top_pathways_names = c(rownames(top_pathways))
+top_pathways_meandf = as.matrix(pathway_activity_matrix_mean[top_pathways_names, ])
+heatmap.2(top_pathways_meandf, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+
 #heatmap
 NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
 heatmap.2(NES_matrix_ALLE, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
