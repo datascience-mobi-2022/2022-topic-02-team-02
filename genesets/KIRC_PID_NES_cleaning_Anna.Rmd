@@ -1,0 +1,34 @@
+---
+title: "PID_NES_cleaning_Anna"
+author: "Anna von Bachmann"
+date: '2022-06-22'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Load data
+
+KIRC_PID = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_PID.rds")
+
+```
+
+```{r}
+#filtering pathways with constant expression 
+KIRC_PID_min = apply(KIRC_PID, 1, min)
+KIRC_PID_max= apply(KIRC_PID, 1, max) 
+#determine genes with constant expression
+KIRC_PID_constant = c(names(which(KIRC_PID_min == KIRC_PID_max)))
+length(KIRC_PID_constant)
+#remove the constant expressed genes from both data sets (cl for clean)
+KIRC_PID_cl = KIRC_PID[!rownames(KIRC_PID) %in% KIRC_PID_constant,]
+dim(KIRC_PID_cl)#18941 genes left
+KIRC_PID_const = KIRC_PID[rownames(KIRC_PID) %in% KIRC_PID_constant,]
+dim(KIRC_PID_cl)#18941 genes left
+sum(which(KIRC_PID_const != 0))
+plot(hist(apply(KIRC_PID_cl, 1, var)))
+```
+
