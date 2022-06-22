@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r data}
 #load pathway activity matricesd for MMR and PID for all 33 tumortypes
-TCGA_pw_MMR = NES_OVERALL_MMR
-TCGA_pw_PID = NES_OVERALL_PID
+TCGA_pw_MMR = readRDS("../data/NES_OVERALL_MMR.RDS")
+TCGA_pw_PID =  readRDS("../data/NES_OVERALL_PID.RDS")
 ```
 
 ```{r packages}
@@ -19,7 +19,10 @@ library(ggplot2)
 library(tidyverse)
 library(Seurat)
 library(gridExtra)
-
+library(cluster)
+library(ggpubr)
+library(factoextra)
+set.seed(69)
 ```
 
 ```{r PCA / umap for PID}
@@ -43,11 +46,10 @@ for (i in 1: length(TCGA_pw_PID)) {
     ggtitle (cancer_abc [[i]])
 }
 names(UMAP_output_PID) = cancer_abc
+View(UMAP_output_PID)
+do.call("ggarrange", c(UMAP_output_PID))
 
-sapply(1:33, function(i){
-  plot(UMAP_output_PID[[i]])
-  })
-
+ggarrange(plotlist=UMAP_output_PID)
 ```
 
 ```{r PCA / umap for MMR}
@@ -68,10 +70,51 @@ for (i in 1: length(TCGA_pw_MMR)) {
     ggtitle (cancer_abc [[i]])
 }
 names(UMAP_output_MMR) = cancer_abc
+ggarrange(plotlist = UMAP_output_MMR)
 
-UMAP_plot = list()
-for (i in 1:33) { UMAP_plot[[i]] = plot(UMAP_output_MMR[[i]])
+```
+
+```{r kmeans for PID}
+kmeans_PID = vector(mode = "list",33)
+for (i in (1:length(UMAP_PID))){
+  for (k in (1:5)) {
+    x = UMAP_PID[[i]]
+    kmeans_PID[[i]][[k]] = kmeans(x, centers = k, nstart = 200)
+  }
 }
+names(kmeans_PID) = cancer_abc
+
+cluster_PID = vector(mode = "list",33)
+for(i in (1:length(cluster_PID))){
+  for (k in (1:5)){
+    y = kmeans_PID[[i]][[k]]
+    z = data.frame(UMAP_PID[[i]])
+    cluster_PID[[i]][[k]] = fviz_cluster(y, data = z,
+             palette = c("orange", "blue","forestgreen","pink","yellow"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+  }
+}
+names(cluster_PID) = cancer_abc
+
+w = c(1:5)
+tot_PID =  list()
+for (i in (1:length(UMAP_PID))){
+  for (k in (1:5)) {
+    n = data.frame(kmeans_PID[[i]][[k]]$tot.withinss)
+    tot_PID[[i]] = ggplot(data = n, aes(x = n, y = c(1:5) ,color = "blue"))+
+      geom_point(size =2)+
+      geom_line()+
+      labs (y = "tot withins",
+        x = "cluster frequenz",
+        title = "elbow plot")
+  }
+}
+View(tot_PID)
+tot_PID[[1]]
+ggarrange(plotlist = tot_PID)
 
 ```
 
