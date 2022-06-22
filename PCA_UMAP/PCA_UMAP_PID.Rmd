@@ -59,13 +59,31 @@ UMAP_NES_PID_right_plot
 UMAP_NES_PID_names = rownames (UMAP_NES_PID_right_l)
 UMAP_NES_PID_names_split = strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)
 
-UMAP_NES_PID_patients = list()
-for (i in length(UMAP_NES_PID_names_split)) {
-  UMAP_NES_PID_patients = list(UMAP_NES_PID_names_split[[i]][2])
-}
-UMAP_NES_PID_patients # error -> nur vom ersten Objekt -> loop läuft nicht 
+})
+View(xy)
+UMAP_PID_names_vector = xy
 
-xy = unlist(strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)) #-> Vektor mit Namen
+#-> Vektor mit Namen
+UMAP_PID_names_vector = unlist(strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE))
+
+UMAP_PID_cancer = UMAP_PID_names_vector[c(TRUE, FALSE)]
+
+UMAP_PID_patients = UMAP_PID_names_vector[c(FALSE, TRUE)]
+
+#create data frame with V1 and v2 of UMAP_NES_PID_right_l and UMAP_PID_cancer and UMAP_PID_patients
+
+UMAP_PID_V1 = as.vector(UMAP_NES_PID_right_l[,1])
+UMAP_PID_V2 = as.vector(UMAP_NES_PID_right_l[,2])
+UMAP_PID = data.frame (UMAP_PID_cancer, UMAP_PID_patients, UMAP_PID_V1, UMAP_PID_V2)
+
+UMAP_PID_plot = ggplot(data = data.frame(UMAP_PID), aes (x = UMAP_PID_V1, y = UMAP_PID_V2, color = UMAP_PID_cancer)) + 
+  geom_point(size = 0.5)
+UMAP_PID_plot
+
+UMAP_NES_PID_right_plot = ggplot (data = data.frame(UMAP_NES_PID_right_l), 
+                                  aes (x = X1, y = X2)) +
+  geom_point(size = 0.5)
+
 
 #einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
 
@@ -73,7 +91,7 @@ xy = unlist(strsplit(UMAP_NES_PID_names, split = ".", fixed = TRUE)) #-> Vektor 
 ```
 
 ```{r}
-#find oprimal cluster number
+#find optimal cluster number
 library(ggpubr)
 library(factoextra)
 
@@ -97,13 +115,22 @@ UMAP_PID_elbow = plot(km_UMAP_PID_tw, type = "b", pch= 20, xlab = "centers", yla
 km_UMAP_PID_20 = sapply(2:20, function(k){
   kmeans(x = UMAP_NES_PID_right_l , centers = k, nstart = 50 )$cluster})
 
-library(cluster)
-
-#find the optimal number clusters, silhouette plot (average silhouette width)
-fviz_nbclust(UMAP_NES_PID_right_l, kmeans, method='silhouette') #-> opt. cluster = 2
-
 #silhouette plot
-sapply(1:19, function(x){
+sapply(1:10, function(x){
   plot(silhouette(km_UMAP_PID_20[,x], dist(data.frame(UMAP_NES_PID_right_l)), main ="Silhouette plot")}) #kp wieso das nicht klappt...
+  
+#find the optimal number clusters, silhouette plot (average silhouette width)
+library(cluster)
+fviz_nbclust(UMAP_NES_PID_right_l, kmeans, method='silhouette') #-> opt. cluster = 2
+```
+
+```{r}
+#Untersuchen der Clusterzugehörigkeit der Tumortypen
+#1. nur Betrachtung von 2 Clustern
+
+km_UMAP_annot = data.frame (UMAP_PID_cancer, UMAP_PID_patients, (km_UMAP_PID_20[,1:19]))
+
+km_UMAP_2 = data.frame(UMAP_PID_cancer, UMAP_PID_patients, km_UMAP_annot$X1)
+
 ```
 
