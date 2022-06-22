@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r Load data}
 #Load data
+set.seed(69)
 tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
 KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
 
@@ -97,14 +98,14 @@ KIRC_UMAP_kmeans = sapply(2:5, function(k){
 
 #extract tot.withinss --> for silhouette plot (elbow method)
 KIRC_UMAP_kmeans_tw = sapply(1:5, function(k){
-  kmeans(x = KIRC_pa_UMAP , centers = k, nstart = 50 )$tot.withinss})
+  kmeans(x = KIRC_pa_UMAP , centers = k, nstart = 100 )$tot.withinss})
 
 #elbow plot
 plot(KIRC_UMAP_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
 
 #extract cluster values for silhouette plot
 KIRC_UMAP_kmeans_c = sapply(2:7, function(k){
-  kmeans(x = KIRC_pa_UMAP , centers = k, nstart = 50 )$cluster})
+  kmeans(x = KIRC_pa_UMAP , centers = k, nstart = 100)$cluster})
 
 #silhouette plot
 sapply(1:6, function(x){
@@ -119,7 +120,7 @@ fviz_nbclust(KIRC_pa_UMAP, kmeans, method='silhouette')
 library(ggpubr)
 library(factoextra)
 #for 2 centers
-km.2 = kmeans(KIRC_pa_UMAP, centers = 2, nstart = 200)
+km.2 = kmeans(KIRC_pa_UMAP, centers = 2, nstart = 100)
 fviz_cluster(km.2, KIRC_pa_UMAP,
              palette = c("orange", "blue"), 
              geom = "point",
@@ -128,7 +129,7 @@ fviz_cluster(km.2, KIRC_pa_UMAP,
              )
 
 # for 3 centers
-km.3 = kmeans(KIRC_pa_UMAP, centers = 3, nstart = 50)
+km.3 = kmeans(KIRC_pa_UMAP, centers = 3, nstart = 100)
 fviz_cluster(km.3, KIRC_pa_UMAP,
              palette = c("orange", "blue", "forestgreen"), 
              geom = "point",
@@ -137,7 +138,7 @@ fviz_cluster(km.3, KIRC_pa_UMAP,
              )
 
 # for 4 centers
-km.4 = kmeans(KIRC_pa_UMAP, centers = 4, nstart = 50)
+km.4 = kmeans(KIRC_pa_UMAP, centers = 4, nstart = 100)
 fviz_cluster(km.4, KIRC_pa_UMAP,
              palette = c("orange", "blue", "forestgreen", "black"), 
              geom = "point",
@@ -151,7 +152,7 @@ fviz_cluster(km.4, KIRC_pa_UMAP,
 
 ```{r KEGG culsters}
 #for all pathways: optimal number of cluster: 3 
-PA_km3 =kmeans(KIRC_pa_UMAP, 3 ,nstart = 50)
+PA_km3 =kmeans(KIRC_pa_UMAP, 3 ,nstart = 200)
 fviz_cluster(PA_km3, KIRC_pa_UMAP,
              palette = c("orange", "blue", "forestgreen"), 
              geom = "point",
