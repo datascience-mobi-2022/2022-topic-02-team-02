@@ -214,7 +214,7 @@ HM_c1_c2_dif_rank%>%
 #!!! until now there was no testing for significance--> these pw are differentially expressed but we dont now yet if significant--> see below
 ```
 
-```{r PID calculations (wilcoxon, FC)}
+```{r HM calculations (wilcoxon, FC)}
 #working with FC and not with difference (minus)
 HM_c1_c2_FC = data.matrix(HM_c1_mean/HM_c2_mean)
 colnames(HM_c1_c2_FC) = "FC"
@@ -247,7 +247,7 @@ length(which(HM_wilcox_pv<alpha_HM))#10
 HM_wilcox_pv[is.nan(HM_wilcox_pv)] = 1
 ```
 
-```{r PID Volcano Plot}
+```{r Volcano Plot}
 #data preparation for Volcano Plot
 
 #problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
@@ -300,5 +300,29 @@ ggplot(HM_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   ggtitle("Hallmark pw with signif different NES in 2 KIRC clusters")+
   theme(plot.title = element_text(size=10))
   
+
+```
+
+```{r top ten diff pw }
+#top ten pathways
+library(dplyr)
+abs_HM_dif_sig<- HM_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_HM_dif_sig = cbind(HM_dif_sig_names, abs_HM_dif_sig)
+colnames( abs_HM_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_HM_dif_sig_rank = abs_HM_dif_sig[order(abs_HM_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_HM_dif_sig_rank = c(abs_HM_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_HM_dif_sig = HM_dif_sig[which(HM_dif_sig[,1] %in% names_abs_HM_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_HM_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PA pw with signif different NES in cluster 3")+
+  theme(plot.title = element_text(size=6))
 
 ```

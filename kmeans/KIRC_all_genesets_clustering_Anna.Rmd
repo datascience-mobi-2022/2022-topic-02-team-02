@@ -267,7 +267,31 @@ ggplot(PA_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   coord_flip()+
   ggtitle("PA pw with signif different NES in cluster 1")+
   theme(plot.title = element_text(size=10))
+```
+
+
+```{r top ten diff pw Cluster 1 vs 2+3}
+#top ten pathways
+library(dplyr)
+abs_PA_1_dif_sig<- PA_1_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_PA_1_dif_sig = cbind(PA_1_dif_sig_names, abs_PA_1_dif_sig)
+colnames( abs_PA_1_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_PA_1_dif_sig_rank = abs_PA_1_dif_sig[order(abs_PA_1_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_PA_1_dif_sig_rank = c(abs_PA_1_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_PA_1_dif_sig = PA_1_dif_sig[which(PA_1_dif_sig[,1] %in% names_abs_PA_1_dif_sig_rank),]# df with top ten dif (significant) pw
   
+ggplot(top_PA_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PA pw with signif different NES in cluster 1")+
+  theme(plot.title = element_text(size=6))
+
 ```
 
 ##Cluster 2 vs 1+3
@@ -366,6 +390,29 @@ ggplot(PA_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   coord_flip()+
   ggtitle("PA pw with signif different NES in cluster 2")+
   theme(plot.title = element_text(size=10))
+```
+```{r top ten diff pw Cluster 2 vs 1+3}
+#top ten pathways
+library(dplyr)
+abs_PA_2_dif_sig<- PA_2_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_PA_2_dif_sig = cbind(PA_2_dif_sig_names, abs_PA_2_dif_sig)
+colnames( abs_PA_2_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_PA_2_dif_sig_rank = abs_PA_2_dif_sig[order(abs_PA_2_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_PA_2_dif_sig_rank = c(abs_PA_2_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_PA_2_dif_sig = PA_2_dif_sig[which(PA_2_dif_sig[,1] %in% names_abs_PA_2_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_PA_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PA pw with signif different NES in cluster 2")+
+  theme(plot.title = element_text(size=6))
+
 ```
 
 ##Cluster 3 vs 1+2
@@ -466,3 +513,28 @@ ggplot(PA_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   ggtitle("PA with signif different NES in cluster 3")+
   theme(plot.title = element_text(size=10))
 ```
+
+```{r top ten diff pw Cluster 3 vs 1+2}
+#top ten pathways
+library(dplyr)
+abs_PA_3_dif_sig<- PA_3_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_PA_3_dif_sig = cbind(PA_3_dif_sig_names, abs_PA_3_dif_sig)
+colnames( abs_PA_3_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_PA_3_dif_sig_rank = abs_PA_3_dif_sig[order(abs_PA_3_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_PA_3_dif_sig_rank = c(abs_PA_3_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_PA_3_dif_sig = PA_3_dif_sig[which(PA_3_dif_sig[,1] %in% names_abs_PA_3_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_PA_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PA pw with signif different NES in cluster 3")+
+  theme(plot.title = element_text(size=6))
+
+```
+

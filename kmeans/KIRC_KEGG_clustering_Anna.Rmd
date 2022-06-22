@@ -151,7 +151,7 @@ fviz_cluster(km.4, KIRC_KEGG_UMAP,
 
 ```{r KEGG culsters}
 #for KEGG pathways: optimal number of cluster: 3 
-KEGG_km3 =kmeans(KIRC_KEGG_UMAP, 3 ,nstart = 50)
+KEGG_km3 =kmeans(KIRC_KEGG_UMAP, 3 ,nstart = 200)
 fviz_cluster(KEGG_km3, KIRC_KEGG_UMAP,
              palette = c("orange", "blue", "forestgreen"), 
              geom = "point",
@@ -269,7 +269,29 @@ ggplot(KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   theme(plot.title = element_text(size=10))
   
 ```
+```{r top ten diff pw Cluster 1 vs 2+3}
+#top ten pathways
+library(dplyr)
+abs_KEGG_1_dif_sig<- KEGG_1_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
 
+abs_KEGG_1_dif_sig = cbind(KEGG_1_dif_sig_names, abs_KEGG_1_dif_sig)
+colnames( abs_KEGG_1_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_1_dif_sig_rank = abs_KEGG_1_dif_sig[order(abs_KEGG_1_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_1_dif_sig_rank = c(abs_KEGG_1_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_1_dif_sig = KEGG_1_dif_sig[which(KEGG_1_dif_sig[,1] %in% names_abs_KEGG_1_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 1")+
+  theme(plot.title = element_text(size=6))
+
+```
 ##Cluster 2 vs 1+3
 
 ```{r Cluster 2 vs cluster 1+3}
@@ -292,7 +314,7 @@ colnames(KEGG_c2_c13_dif_rank) = c("Pathway", "diff")
 
 ```
 
-```{r Wilcoxon Cluster 1 vs 2+3}
+```{r Wilcoxon Cluster 2 vs 1+3}
 
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 KEGG_c2_m = as.matrix(KEGG_c2) #matrix needed for wilcoxon
@@ -367,6 +389,30 @@ ggplot(KEGG_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   ggtitle("KEGG pw with signif different NES in cluster 2")+
   theme(plot.title = element_text(size=10))
 ```
+```{r top ten diff pw Cluster 2 vs 1+3}
+#top ten pathways
+library(dplyr)
+abs_KEGG_2_dif_sig<- KEGG_2_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_KEGG_2_dif_sig = cbind(KEGG_2_dif_sig_names, abs_KEGG_2_dif_sig)
+colnames( abs_KEGG_2_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_2_dif_sig_rank = abs_KEGG_2_dif_sig[order(abs_KEGG_2_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_2_dif_sig_rank = c(abs_KEGG_2_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_2_dif_sig = KEGG_2_dif_sig[which(KEGG_2_dif_sig[,1] %in% names_abs_KEGG_2_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 2")+
+  theme(plot.title = element_text(size=6))
+
+```
+
 
 ##Cluster 3 vs 1+2
 
@@ -465,4 +511,28 @@ ggplot(KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   coord_flip()+
   ggtitle("KEGG pw with signif different NES in cluster 3")+
   theme(plot.title = element_text(size=10))
+```
+
+```{r top ten diff pw Cluster 3 vs 1+2}
+#top ten pathways
+library(dplyr)
+abs_KEGG_3_dif_sig<- KEGG_3_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_KEGG_3_dif_sig = cbind(KEGG_3_dif_sig_names, abs_KEGG_3_dif_sig)
+colnames( abs_KEGG_3_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_3_dif_sig_rank = abs_KEGG_3_dif_sig[order(abs_KEGG_3_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_3_dif_sig_rank = c(abs_KEGG_3_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_3_dif_sig = KEGG_3_dif_sig[which(KEGG_3_dif_sig[,1] %in% names_abs_KEGG_3_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 3")+
+  theme(plot.title = element_text(size=6))
+
 ```
