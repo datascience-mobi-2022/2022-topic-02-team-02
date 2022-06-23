@@ -22,13 +22,13 @@ KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
 
 
 
-KIRC_PID = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_PID.rds")
-
+KIRC_PID_cl = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
+KIRC_PID = KIRC_PID_cl
 ```
 
 ```{r PCA}
 #run pca 
-KIRC_PID_pca = prcomp(t(KIRC_PID))#center = F, scale. = F???
+KIRC_PID_pca = prcomp(t(KIRC_PID_cl))#center = F, scale. = F???
 length(KIRC_PID_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
 
 #dataframe with PCs (resulting from pathways) and patients
@@ -64,6 +64,7 @@ ggplot(KIRC_PID_pca_x, aes(PC1, PC3))+
   geom_point( size =2, color = KIRC_gender)+
    ggtitle("PCA with regard to gender ")
 ```
+
 ```{r UMAP}
 #UMAP for better clusterin/visualization, running on PCA result
 library(uwot)
@@ -119,6 +120,7 @@ sapply(1:6, function(x){
 #find the optimal number clusters, silhouette plot (average silhouette width)
 fviz_nbclust(KIRC_PID_UMAP, kmeans, method='silhouette')
 ```
+
 ```{r Kmeans Plot}
 # visualize the clusters in plot
 library(ggpubr)
@@ -297,6 +299,41 @@ ggplot(PID_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 ```
 
 
+```{r top ten diff pw }
+#top ten pathways
+library(dplyr)
+abs_PID_dif_sig<- PID_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_PID_dif_sig = cbind(PID_dif_sig_names, abs_PID_dif_sig)
+colnames( abs_PID_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_PID_dif_sig_rank = abs_PID_dif_sig[order(abs_PID_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_PID_dif_sig_rank = c(abs_PID_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_PID_dif_sig = PID_dif_sig[which(PID_dif_sig[,1] %in% names_abs_PID_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_PID_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PID pw with signif different NES in cluster 1 vs 2")+
+  theme(plot.title = element_text(size=6))
+
+```
+
+
+
+```{r}
+#Are the pathways in both clusters upregulated compared to normal tissue and in one of the clusters even more? or are the pw in one cluster up and one downregulated compared to normal tissue?? -->whats the absolute NES in the top ten pw for both clusters?
+
+PID_top_c1 = PID_c1[which(rownames(PID_c1) %in% names_abs_PID_dif_sig_rank),]
+PID_top_c2 = PID_c2[which(rownames(PID_c2) %in% names_abs_PID_dif_sig_rank),]
+
+PID_top_c1_mean = apply(PID_top_c1, 1, mean)
+PID_top_c2_mean = apply(PID_top_c2, 1, mean)
+```
 
 
 
