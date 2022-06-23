@@ -75,6 +75,7 @@ ggarrange(plotlist = UMAP_output_MMR)
 ```
 
 ```{r kmeans for PID}
+set.seed(69)
 kmeans_PID = vector(mode = "list",33)
 for (i in (1:length(UMAP_PID))){
   for (k in (1:5)) {
@@ -83,6 +84,7 @@ for (i in (1:length(UMAP_PID))){
   }
 }
 names(kmeans_PID) = cancer_abc
+
 
 cluster_PID = vector(mode = "list",33)
 for(i in (1:length(cluster_PID))){
@@ -97,24 +99,35 @@ for(i in (1:length(cluster_PID))){
              )
   }
 }
+
 names(cluster_PID) = cancer_abc
+ggarrange(plotlist = cluster_PID$ACC)
 
 w = c(1:5)
-tot_PID =  list()
+tot_PID = list()
+n = data.frame()
 for (i in (1:length(UMAP_PID))){
   for (k in (1:5)) {
-    n = data.frame(kmeans_PID[[i]][[k]]$tot.withinss)
-    tot_PID[[i]] = ggplot(data = n, aes(x = n, y = c(1:5) ,color = "blue"))+
+     n[k,i]= (kmeans_PID[[i]][[k]]$tot.withinss)
+     tot_PID[[i]] = ggplot(data = n, aes(y = n[,i], x = w ,color = "blue"))+
       geom_point(size =2)+
-      geom_line()+
+      geom_line(group = 1)+
       labs (y = "tot withins",
-        x = "cluster frequenz",
-        title = "elbow plot")
+        x = "cluster frequenz")+
+      ggtitle(cancer_abc[i])
+        
   }
 }
-View(tot_PID)
-tot_PID[[1]]
-ggarrange(plotlist = tot_PID)
+
+names(tot_PID) = cancer_abc
+tot1234 = list(tot_PID$KIRC,tot_PID$KIRP,tot_PID$LUAD,tot_PID$CESC)
+ggarrange(plotlist = tot1234)
+```
+```{r}
+
+
+
+
 
 ```
 
