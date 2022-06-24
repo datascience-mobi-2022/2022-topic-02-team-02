@@ -103,28 +103,54 @@ for(i in (1:length(cluster_PID))){
 names(cluster_PID) = cancer_abc
 ggarrange(plotlist = cluster_PID$ACC)
 
-w = c(1:5)
-tot_PID = list()
+
 n = data.frame()
 for (i in (1:length(UMAP_PID))){
-  for (k in (1:5)) {
-     n[k,i]= (kmeans_PID[[i]][[k]]$tot.withinss)
-     tot_PID[[i]] = ggplot(data = n, aes(y = n[,i], x = w ,color = "blue"))+
-      geom_point(size =2)+
-      geom_line(group = 1)+
+ for (k in (1:5)) {
+     n[k,i] = data.frame(kmeans_PID[[i]][[k]]$tot.withinss)
+ }
+}
+```
+
+
+```{r elbow plot for all}
+tot_PID = list()
+for (i in (1:length(UMAP_PID))){
+    p  = data.frame(n[,i])
+    colnames(p) = "b"
+    t = cbind(p,w)
+    tot_PID[[i]] = ggplot(data = t, aes(y = b, x = w ))+
+      geom_point(size =2, color = "lightblue")+
+      geom_line(group = 1, color = "lightblue")+
       labs (y = "tot withins",
         x = "cluster frequenz")+
       ggtitle(cancer_abc[i])
-        
   }
-}
 
 names(tot_PID) = cancer_abc
-tot1234 = list(tot_PID$KIRC,tot_PID$KIRP,tot_PID$LUAD,tot_PID$CESC)
-ggarrange(plotlist = tot1234)
+tot1234 = list(tot_PID[[1]],tot_PID[[7]],tot_PID[[9]],tot_PID[[10]])
+ggarrange(plotlist = tot_PID)
 ```
-```{r}
 
+
+
+```{r create df for 2 clusters per tumortype}
+#extract cluster information 
+cluster12_PID = list()
+for (i in (1:length(UMAP_PID))){
+     cluster12_PID[i] = data.frame(kmeans_PID[[i]][[2]]$cluster)
+ }
+names(cluster12_PID) = cancer_abc
+
+cluster1_PID = list()
+for (i in (1:length(UMAP_PID))){
+  
+     cluster1_PID[i] = names(cluster12_PID[i][which(cluster12_PID ==1)])
+ }
+ names(cluster1_PID) = cancer_abc
+
+PID_c1_names = names(PID_km[which(PID_km == 1)]) #patient names of cluster1
+PID_c2_names = names(PID_km[which(PID_km == 2)]) # patient names of cluster2
 
 
 
