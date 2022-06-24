@@ -7,17 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
----
-title: "KIRC_KEGG_clustering"
-author: "Anna von Bachmann"
-date: '2022-06-19'
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
 ```
 
 #KEGG pathways
@@ -26,7 +16,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Load data}
 #Load data
 
-set.seed(69)
 tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
 KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
 KIRC_HM = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_hallmark.rds")

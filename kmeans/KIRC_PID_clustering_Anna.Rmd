@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
+set.seed(69)
 ```
 
 
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #PID pathways
 
 ```{r Load data}
-set.seed(69)
+
 #Load data
 tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
 KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
@@ -331,8 +331,17 @@ ggplot(top_PID_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 PID_top_c1 = PID_c1[which(rownames(PID_c1) %in% names_abs_PID_dif_sig_rank),]
 PID_top_c2 = PID_c2[which(rownames(PID_c2) %in% names_abs_PID_dif_sig_rank),]
 
-PID_top_c1_mean = apply(PID_top_c1, 1, mean)
-PID_top_c2_mean = apply(PID_top_c2, 1, mean)
+PID_top_c1_mean = data.frame(apply(PID_top_c1, 1, mean))
+PID_top_c2_mean = data.frame(apply(PID_top_c2, 1, mean))
+colnames(PID_top_c1_mean) = "cluster 1"
+colnames(PID_top_c2_mean) = "cluster 2"
+PID_top_c1_c2_mean = as.matrix(cbind(PID_top_c1_mean, PID_top_c2_mean))
+
+library(reshape)
+PID_top_c1_c2_mean_melted = (melt(PID_top_c1_c2_mean))
+colnames(PID_top_c1_c2_mean_melted) = c("Pathway", "cluster", "NES")
+ggplot(PID_top_c1_c2_mean_melted, aes( fill = Pathway, y=NES, x=cluster)) + 
+    geom_bar(position="dodge", stat="identity")
 ```
 
 
