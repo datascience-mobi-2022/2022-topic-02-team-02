@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r data}
 #load pathway activity matricesd for MMR and PID for all 33 tumortypes
 TCGA_pw_MMR = readRDS("../data/NES_OVERALL_MMR.RDS")
-TCGA_pw_PID =  readRDS("../data/NES_OVERALL_PID.RDS")
+TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
 ```
 
 ```{r packages}
