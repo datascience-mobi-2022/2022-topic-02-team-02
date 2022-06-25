@@ -22,7 +22,6 @@ PVALUES_OVERALL_PID = list()
 NES_OVERALL_PID = list()
 GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
 
-metabolic_genesets_PID = metabolic_genesets_PID[-c(152, 170)] ## only run once, remove problematic ones!
 PID_names = names(metabolic_genesets_PID)
 
 for (j in 1:33) {
