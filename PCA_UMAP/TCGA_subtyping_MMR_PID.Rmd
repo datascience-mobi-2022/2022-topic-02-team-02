@@ -136,15 +136,14 @@ ggarrange(plotlist = tot_PID)
 
 ```{r create df for 2 clusters per tumortype}
 #extract cluster information 
-cluster12_PID = list()
+cluster12_PID = list(list())
 for (i in (1:length(UMAP_PID))){
-     cluster12_PID[i] = data.frame(kmeans_PID[[i]][[2]]$cluster)
+     cluster12_PID[i] = list(kmeans_PID[[i]][[2]][["cluster"]])
  }
 names(cluster12_PID) = cancer_abc
 
 cluster1_PID = list()
 for (i in (1:length(UMAP_PID))){
-  
      cluster1_PID[i] = names(cluster12_PID[i][which(cluster12_PID ==1)])
  }
  names(cluster1_PID) = cancer_abc
