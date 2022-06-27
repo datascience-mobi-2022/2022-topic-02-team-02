@@ -46,10 +46,9 @@ for (i in 1: length(TCGA_pw_PID)) {
     ggtitle (cancer_abc [[i]])
 }
 names(UMAP_output_PID) = cancer_abc
-View(UMAP_output_PID)
-do.call("ggarrange", c(UMAP_output_PID))
-
+plot1234 = list(UMAP_output_PID[[1]],UMAP_output_PID[[2]],UMAP_output_PID[[3]])
 ggarrange(plotlist=UMAP_output_PID)
+ggarrange(plotlist = plot1234)
 ```
 
 ```{r PCA / umap for MMR}
@@ -103,17 +102,24 @@ for(i in (1:length(cluster_PID))){
 names(cluster_PID) = cancer_abc
 ggarrange(plotlist = cluster_PID$ACC)
 
+cluster_PID_k2 = list()
+for (i in (1:length(UMAP_PID))){
+     cluster_PID_k2[[i]] = cluster_PID[[i]][[2]]
+ }
+names(cluster_PID_k2) = cancer_abc 
+ggarrange(plotlist = cluster_PID_k2)
 
+```
+
+
+```{r elbow plot for all}
 n = data.frame()
 for (i in (1:length(UMAP_PID))){
  for (k in (1:5)) {
      n[k,i] = data.frame(kmeans_PID[[i]][[k]]$tot.withinss)
  }
 }
-```
 
-
-```{r elbow plot for all}
 tot_PID = list()
 for (i in (1:length(UMAP_PID))){
     p  = data.frame(n[,i])
@@ -142,16 +148,80 @@ for (i in (1:length(UMAP_PID))){
  }
 names(cluster12_PID) = cancer_abc
 
+#patients in cluster 1
 cluster1_PID = list()
 for (i in (1:length(UMAP_PID))){
-     cluster1_PID[i] = names(cluster12_PID[i][which(cluster12_PID ==1)])
- }
- names(cluster1_PID) = cancer_abc
+  z = cluster12_PID[[i]]
+     cluster1_PID[[i]] = names(z[which(z == 1)])
+}
+names(cluster1_PID) = cancer_abc
+#patients in cluster 2
+cluster2_PID = list()
+for (i in (1:length(UMAP_PID))){
+  z = cluster12_PID[[i]]
+     cluster2_PID[[i]] = names(z[which(z == 2)])
+}
+names(cluster2_PID) = cancer_abc
 
-PID_c1_names = names(PID_km[which(PID_km == 1)]) #patient names of cluster1
-PID_c2_names = names(PID_km[which(PID_km == 2)]) # patient names of cluster2
+#filter for PIDs for cluster 1 patients
+PID_c1_patients = list()
+for (i in (1:length(UMAP_PID))){
+  t = cluster1_PID[[i]]
+  PID_c1_patients[[i]] = TCGA_pw_PID[[i]][,colnames(TCGA_pw_PID[[i]]) %in% t]
+}
+names(PID_c1_patients) = cancer_abc
+
+#filter for cluster 2 patients
+PID_c2_patients = list()
+for (i in (1:length(UMAP_PID))){
+  t = cluster2_PID[[i]]
+  PID_c2_patients[[i]] = TCGA_pw_PID[[i]][,colnames(TCGA_pw_PID[[i]]) %in% t]
+}
+names(PID_c2_patients) = cancer_abc
+```
 
 
+```{r calculate mean for each cluster}
+
+PID_c1_mean = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c1_patients[[i]]
+  PID_c1_mean[[i]] = data.frame(apply(PID_c1_patients[[i]],1,mean))
+  
+}
+names(PID_c1_mean) = cancer_abc
+
+PID_c2_mean = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c2_patients[[i]]
+  PID_c2_mean[[i]] = data.frame(apply(PID_c2_patients[[i]],1,mean))
+  
+}
+names(PID_c2_mean) = cancer_abc
+
+PID_c1_c2_dif = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c1_mean[[i]]
+  u = PID_c2_mean[[i]]
+  PID_c1_c2_dif[[i]] = r - u
+  
+}
+names(PID_c1_c2_dif) = cancer_abc
+
+PID_c1_c2_dif_rank = list()
+for (i in (1:length(UMAP_PID))){
+  p = PID_c1_c2_dif[[i]]
+  PID_c1_c2_dif_rank[[i]] = data.frame(PID_c1_c2_dif[[i]]$apply.PID_c1_patients..i....1..mean.[order(PID_c1_c2_dif[[i]][,1],decreasing = TRUE)])
+}
+names(PID_c1_c2_dif_rank) = cancer_abc
+
+
+PID_c1_c2_dif_rank = data.frame(PID_c1_c2_dif$apply.PID_c1..1..mean.[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+PID_rownames = c(rownames(PID_c1_c2_dif))
+PID_rownames_rank = c(PID_rownames[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+
+PID_c1_c2_dif_rank = as.data.frame(cbind(PID_rownames_rank, PID_c1_c2_dif_rank))
+colnames(PID_c1_c2_dif_rank) = c("Pathway", "diff")
 
 
 ```
