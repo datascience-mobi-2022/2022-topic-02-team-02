@@ -221,7 +221,7 @@ PID_c1_c2_FC[is.nan(PID_c1_c2_FC)]=0
 PID_c1_min = apply(PID_c1, 1, min)
 PID_c1_max = apply(PID_c1, 1, max) 
 PID_c1_constant = c(names(which(PID_c1_min==PID_c1_max)))
-length(PID_c1_constant)#there are 271 pw with constant NES, hence we use wilcoxon test 
+length(PID_c1_constant) #there are 271 pw with constant NES, hence we use wilcoxon test 
 
 
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
@@ -235,9 +235,9 @@ colnames(PID_wilcox_pv)="pvalue"
 #a lot of NaNs--> Maybe because of constant NES??
 
 #Bonferroni-Korrektur
-alpha_PID=0.05/(nrow(PID_wilcox_pv))#0.000255102
+alpha_PID=0.05/(nrow(PID_wilcox_pv))
 #how many pathways have sign different NES??
-length(which(PID_wilcox_pv<alpha_PID))#10
+length(which(PID_wilcox_pv<alpha_PID))
 
 
 PID_wilcox_pv[is.nan(PID_wilcox_pv)] = 1
@@ -254,14 +254,14 @@ PID_wilcox_pv_log =-log10(PID_wilcox_pv)
 colnames(PID_wilcox_pv_log) = "neg_log10_pv"
 PID_wilcox_pv_log [PID_wilcox_pv_log  == Inf] <- 0
 
-#combine FC and pv matrix
+#combine diff and pv matrix
 PID_pv_dif =as.data.frame(cbind(PID_c1_c2_dif,PID_wilcox_pv_log))
 colnames(PID_pv_dif) = c("diff","neg_log10_pv")
 
 
 
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv_PID = -log10(alpha_PID)#=3.593286, cut off later in plot 
+cutoffpv_PID = -log10(alpha_PID) 
 PID_pv_dif_sig = PID_pv_dif[which(PID_pv_dif$neg_log10_pv>cutoffpv_PID),]
 min(PID_pv_dif_sig$neg_log10_pv)
 #upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
