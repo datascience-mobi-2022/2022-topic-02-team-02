@@ -16,6 +16,7 @@ library(vissE)
 library(GeneOverlap)
 ?newGlibrary(dplyr)
 library(ggplot2)
+library(SeqGSEA)
 ```
 
 ```{r}
@@ -174,5 +175,35 @@ heatmap.2(go_KEGG_jaccard, dendrogram = "none", trace = "none", margins = c(11,1
 go_KEGG_jaccard = na.omit(go_KEGG_jaccard)
 KEGG_independent = metabolic_genesets_KEGG[rownames(go_KEGG_jaccard)]
 KEGG_independent = KEGG_independent[names(KEGG_independent) != "KEGG_OLFACTORY_TRANSDUCTION"]
+```
+
+```{r PENG pathways}
+
+Amino_acid = as.data.frame(Amino_acid)
+Amino_acid = substr(Amino_acid$`Genes;`,1, nchar(Amino_acid$`Genes;`)-1)
+Carbohydrates = substr(Carbohydrates$`Genes;`,1, nchar(Carbohydrates$`Genes;`)-1)
+Energy = substr(Energy$`Genes;`,1, nchar(Energy$`Genes;`)-1)
+Lipid = substr(Lipid$`Genes;`,1, nchar(Lipid$`Genes;`)-1)
+Nucleotide = substr(Nucleotide$`Genes;`,1, nchar(Nucleotide$`Genes;`)-1)
+TCA_cycle = substr(TCA_cycle$`Genes;`,1, nchar(TCA_cycle$`Genes;`)-1)
+Vitamin = substr(Vitamin$`Genes;`,1, nchar(Vitamin$`Genes;`)-1)
+peng_pathways = list(Amino_acid, Carbohydrates, Energy, Lipid, Nucleotide, TCA_cycle, Vitamin)
+names(peng_pathways) = c("Amino_acid", "Carbohydrates", "Energy", "Lipid", "Nucleotide", "TCA_cycle", "Vitamin")
+
+#convert PENG gene symbols into ensemble ID
+ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+PENG_pathways = vector(mode = 'list',7)
+
+for (i in 1:length(peng_pathways)){
+  m = getBM(attributes='ensembl_gene_id', 
+      filters = 'hgnc_symbol', 
+      values = peng_pathways[[i]], 
+      mart = ensembl)
+  m = as.vector(m$ensembl_gene_id)
+  PENG_pathways[[i]] = m
+}
+names(PENG_pathways) = names(peng_pathways)
+
+
 ```
 

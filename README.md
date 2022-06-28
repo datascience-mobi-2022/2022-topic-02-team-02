@@ -59,6 +59,6 @@ $\\rightarrow$ "However, the main cause of death in KIRC patients is tumor metas
 
 3. Hsieh, J.J., Le, V.H., Oyama, T., Ricketts, C.J., Ho, T.H., and Cheng, E.H. (2018). Chromosome 3p Loss-Orchestrated VHL, HIF, and Epigenetic Deregulation in Clear Cell Renal Cell Carcinoma. J Clin Oncol 36, JCO2018792549-JCO2018792549. 10.1200/JCO.2018.79.2549.
 
-
+4. Zhang S, Zhang E, Long J, Hu Z, Peng J, Liu L, Tang F, Li L, Ouyang Y, Zeng Z. Immune infiltration in renal cell carcinoma. Cancer Sci. 2019 May;110(5):1564-1572. doi: 10.1111/cas.13996. Epub 2019 Apr 7. PMID: 30861269; PMCID: PMC6501001.
 
 
