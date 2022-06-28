@@ -261,9 +261,32 @@ UMAP_plot_black
 ```{r}
 #UMAP over KEGG pathways
 
-NES_mean_KEGG <- readRDS("~/GitHub/2022-topic-02-team-02/data/NES_mean_KEGG.RDS")
+NES_OVERALL_KEGG_alle <- readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_KEGG_alle.RDS")
 
+PCA_KEGG = RunPCA(as.matrix(NES_OVERALL_KEGG_alle))
+umap_KEGG = umap(PCA_KEGG@cell.embeddings)
+umap_KEGG_layout = umap_KEGG$layout
+plot_KEGG = ggplot (data = data.frame(umap_KEGG_layout), aes (x = X1, y = X2)) +
+  geom_point(size = 0.5  )
+plot_KEGG
 
+UMAP_KEGG_V1 = as.vector(umap_KEGG_layout[,1])
+UMAP_KEGG_V2 = as.vector(umap_KEGG_layout[,2])
+UMAP_KEGG_mat = data.frame (pam_tumor_type, pam_patients, UMAP_KEGG_V1, UMAP_KEGG_V2)
+
+UMAP_KEGG_plot = ggplot(data = data.frame(UMAP_KEGG_mat), aes (x = UMAP_KEGG_V1, y = UMAP_KEGG_V2, color = pam_tumor_type)) + 
+  geom_point(size = 0.5) +
+  ggtitle("UMAP over KEGG pathways")
+UMAP_KEGG_plot
+
+UMAP_KEGG_KIRC = data.frame(UMAP_KEGG_mat[pam_tumor_type == "KIRC",])
+
+UMAP_KEGG_black = ggplot (data = as.data.frame(UMAP_KEGG_mat), 
+                    aes(x = UMAP_KEGG_V1, y= UMAP_KEGG_V2, color = pam_tumor_type))+
+  geom_point(size = 0.5) +
+  geom_point(data= UMAP_KEGG_KIRC , aes(x = UMAP_KEGG_V1, y = UMAP_KEGG_V2), color = "black") + 
+  ggtitle("UMAP over KEGG pathways", "KIRC = black")
+UMAP_KEGG_black
 ```
 
 
@@ -346,8 +369,5 @@ UMAP_NES_PID_right_plot = ggplot (data = data.frame(UMAP_NES_PID_right_l),
 
 
 #einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
-```
-```{r}
-
 ```
 
