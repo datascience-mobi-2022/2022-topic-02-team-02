@@ -5,6 +5,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
 ```
 
 
@@ -135,7 +136,7 @@ for (i in (1:length(UMAP_PID))){
 
 names(tot_PID) = cancer_abc
 tot1234 = list(tot_PID[[1]],tot_PID[[7]],tot_PID[[9]],tot_PID[[10]])
-ggarrange(plotlist = tot_PID)
+ggarrange(plotlist = tot1234)
 ```
 
 
@@ -215,14 +216,209 @@ for (i in (1:length(UMAP_PID))){
 }
 names(PID_c1_c2_dif_rank) = cancer_abc
 
+PID_rownames = c(rownames(PID_c1_c2_dif$ACC))
+PID_rownames_rank = list()
+for (i in (1:length(UMAP_PID))){
+  s = c(PID_c1_c2_dif[[i]][,1])
+  PID_rownames_rank[[i]] = c(PID_rownames[order(s,decreasing = TRUE)])
+}
+names(PID_rownames_rank) = cancer_abc
 
-PID_c1_c2_dif_rank = data.frame(PID_c1_c2_dif$apply.PID_c1..1..mean.[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
-PID_rownames = c(rownames(PID_c1_c2_dif))
-PID_rownames_rank = c(PID_rownames[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+PID_c1_c2_dif_rank_df = list()
+for (i in (1:length(UMAP_PID))){
+  h = PID_c1_c2_dif_rank[[i]]
+  g = PID_rownames_rank [[i]]
+  PID_c1_c2_dif_rank_df[[i]] = as.data.frame(cbind(g,h))
+  colnames(PID_c1_c2_dif_rank_df[[i]]) = c("Pathways", "Difference")
+}
+names(PID_c1_c2_dif_rank_df) = cancer_abc
+```
 
-PID_c1_c2_dif_rank = as.data.frame(cbind(PID_rownames_rank, PID_c1_c2_dif_rank))
-colnames(PID_c1_c2_dif_rank) = c("Pathway", "diff")
+```{r significance filtering: wilcoxon}
+PID_wilcox_pv = list ()
 
+PID_wilcox_pv = list()
+for (i in (1:length(UMAP_PID))){
+  v = as.matrix(PID_c1_patients[[i]])
+  b = as.matrix(PID_c2_patients[[i]])
+  PID_wilcox_pv[[i]] = data.matrix(sapply(1:nrow(v), function(x){
+    wilcox.test(v[x,],b[x,], paired=FALSE)
+  }$p.value))
+  rownames(PID_wilcox_pv[[i]]) = rownames(PID_c1_patients[[i]])
+  colnames(PID_wilcox_pv[[i]]) = "pvalue"
+}
+names(PID_wilcox_pv) = cancer_abc
+View(PID_wilcox_pv)
+
+#Bonferroni-Korrektur 
+alpha_PID=0.05/(nrow(PID_wilcox_pv[[i]]))
+
+#convert NaN to pvalue 1
+for (i in (1:length(UMAP_PID))){
+  PID_wilcox_pv[[i]][is.nan(PID_wilcox_pv[[i]])] = 1
+}
+```
+
+```{r}
+PID_wilcox_pv_log = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_wilcox_pv[[i]]
+  PID_wilcox_pv_log[[i]] = -log10(a)
+  colnames(PID_wilcox_pv_log[[i]]) = "neg_log10_pv"
+}
+names(PID_wilcox_pv_log) = cancer_abc
+View(PID_wilcox_pv_log$BLCA)
+
+## beginning
+
+PID_wilcox_pv_BH = list()
+for (i in (1:length(UMAP_PID))){
+f = c(PID_wilcox_pv[[i]])
+PID_wilcox_pv_BH[[i]] = p.adjust(f, method ="BH" )
+
+}
+names(PID_wilcox_pv_BH) = cancer_abc
+
+PID_pv_dif1 = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_c1_c2_dif[[i]]
+  b = PID_wilcox_pv_BH[[i]]
+  PID_pv_dif1[[i]] = as.data.frame(cbind(a,b))
+  colnames(PID_pv_dif1[[i]]) = c("Difference","neg_log10_pv")
+}
+names(PID_pv_dif1) = cancer_abc
+
+#extracting sign differently expressed genes (pvalue > cutoff) 
+
+PID_pv_dif_sig1 = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_pv_dif1[[i]]
+  PID_pv_dif_sig1[[i]] = a[which(a$neg_log10_pv>0.05),]
+}
+names(PID_pv_dif_sig1) = cancer_abc
+
+
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_pv_dif_sigup1 = list()
+for (i in (1:length(UMAP_PID))){
+ t = PID_pv_dif_sig1[[i]]
+ PID_pv_dif_sigup1[[i]] = t[which(abs(t[,1])>0),]
+}
+names(PID_pv_dif_sigup1) = cancer_abc
+
+PID_dif_sig1 = list()
+for (i in (1:length(UMAP_PID))){
+t = PID_pv_dif_sig1[[i]]$Difference
+PID_dif_sig1[[i]] = data.frame(t)
+}
+names(PID_dif_sig1) = cancer_abc
+
+
+PID_dif_sig_names1 = list()
+for (i in (1:length(UMAP_PID))){
+ t = c(rownames(PID_pv_dif_sig1[[i]]))
+ PID_dif_sig_names1[[i]] = t
+}
+names(PID_dif_sig_names1) = cancer_abc
+
+
+for (i in (1:length(UMAP_PID))){
+ r = PID_dif_sig_names1[[i]]
+ u = PID_dif_sig1[[i]]
+ PID_dif_sig1[[i]] = cbind(r,u)
+ colnames(PID_dif_sig1[[i]]) = c("Pathway", "Difference")
+}
+
+View(PID_dif_sig1)
+
+
+
+## end 
+for (i in (1:length(UMAP_PID))){
+  PID_wilcox_pv_log[[i]][PID_wilcox_pv_log[[i]] == Inf] = 0
+}
+
+#combine FC and pv matrix
+PID_pv_dif = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_c1_c2_dif[[i]]
+  b = PID_wilcox_pv_log[[i]]
+  PID_pv_dif[[i]] = as.data.frame(cbind(a,b))
+  colnames(PID_pv_dif[[i]]) = c("Difference","neg_log10_pv")
+}
+names(PID_pv_dif) = cancer_abc
+
+#extracting sign differently expressed genes (pvalue > cutoff) 
+cutoffpv_PID = -log10(alpha_PID)
+
+PID_pv_dif_sig = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_pv_dif[[i]]
+  PID_pv_dif_sig[[i]] = a[which(a$neg_log10_pv>cutoffpv_PID),]
+}
+names(PID_pv_dif_sig) = cancer_abc
+View(PID_pv_dif_sig$ACC)
+
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_pv_dif_sigup = list()
+for (i in (1:length(UMAP_PID))){
+ t = PID_pv_dif_sig[[i]]
+ PID_pv_dif_sigup[[i]] = t[which(abs(t[,1])>0),]
+}
+names(PID_pv_dif_sigup) = cancer_abc
+
+PID_dif_sig = list()
+for (i in (1:length(UMAP_PID))){
+t = PID_pv_dif_sig[[i]]$Difference
+PID_dif_sig[[i]] = data.frame(t)
+}
+names(PID_dif_sig) = cancer_abc
+View(PID_dif_sig$ACC)
+
+PID_dif_sig_names = list()
+for (i in (1:length(UMAP_PID))){
+ t = c(rownames(PID_pv_dif_sig[[i]]))
+ PID_dif_sig_names [[i]] = t
+}
+names(PID_dif_sig_names) = cancer_abc
+
+
+for (i in (1:length(UMAP_PID))){
+ r = PID_dif_sig_names[[i]]
+ u = PID_dif_sig[[i]]
+ PID_dif_sig[[i]] = cbind(r,u)
+ colnames(PID_dif_sig[[i]]) = c("Pathway", "Difference")
+}
+#sry hab hier per hand gefiltert, ging schneller 
+PID_dif_sig_0 = list(PID_dif_sig$ACC,PID_dif_sig$CHOL,PID_dif_sig$DLBC,PID_dif_sig$KICH,PID_dif_sig$MESO,PID_dif_sig$READ,PID_dif_sig$TGCT,PID_dif_sig$UVM)
+View(PID_dif_sig_0)
+cancer_sig = c("ACC","CHOL","DLBC","KICH","MESO","READ","TGCT","UVM")
+names(PID_dif_sig_0) = cancer_sig
+```
+
+
+```{r plot significant pathways}
+PID_dif_plot = list()
+for (i in (1:length(PID_dif_sig_0))){
+  g = PID_dif_sig_0[[i]]
+  PID_dif_plot[[i]] = ggplot(g, aes(x=reorder(Pathway,Difference), y=Difference)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("PID pw with signif different NES in 2 clusters")+
+  theme(plot.title = element_text(size=10))
+}
+names(PID_dif_plot) = cancer_sig
+ggarrange(plotlist=PID_dif_plot)
+
+plotlist1234 = list(PID_dif_plot$ACC,PID_dif_plot$CHOL,PID_dif_plot$DLBC,PID_dif_plot$KICH)
+ggarrange(plotlist = plotlist1234)
+  
+l = PID_dif_sig$ACC
+ggplot(l, aes(x=reorder(Pathway,Difference), y=Difference)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("PID pw with signif different NES in 2 KIRC clusters")+
+  theme(plot.title = element_text(size=10))
 
 ```
 
