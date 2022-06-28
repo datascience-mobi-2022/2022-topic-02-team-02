@@ -1,0 +1,134 @@
+---
+title: "Logistic regression"
+author: "Maja Glotz"
+date: "6/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r load packages}
+library(immunedeconv)
+library("org.Hs.eg.db")
+library(gplots)
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+```
+
+```{r}
+#check immune infiltration in KIRC tumor dataset
+tcga_KIRC_tumor_cl <- readRDS("../data/tcga_KIRC_tumor_cl.rds")
+#convert ensemble into gene symbol
+ensemblids = rownames(tcga_KIRC_tumor_cl)
+symbols = mapIds(org.Hs.eg.db, keys = ensemblids, keytype = "ENSEMBL", column="SYMBOL")
+rownames(tcga_KIRC_tumor_cl) = symbols
+
+KIRC_tumor = as.matrix(tcga_KIRC_tumor_cl)
+#use package immune deconvolution
+immune_cells = deconvolute(KIRC_tumor, "xcell")
+cell_types = immune_cells$cell_type
+immune_cells = immune_cells[,-1]
+rownames(immune_cells) = cell_types
+
+immune_cells_matrix = as.matrix(immune_cells)
+heatmap.2(immune_cells_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+#reverse log2 operation --> Transcripts per million (TPM)
+KIRC_tumor_tpm = 2^KIRC_tumor
+quantiseq = deconvolute(KIRC_tumor_tpm, "quantiseq", tumor = "true")
+cell_types_2 = quantiseq$cell_type
+quantiseq_matrix = quantiseq[,-1]
+rownames(quantiseq_matrix) = cell_types_2
+
+quantiseq_matrix = as.matrix(quantiseq_matrix)
+quantiseq_matrix = quantiseq_matrix[-c(11),]
+heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+quantiseq_cluster1 = quantiseq[, c("cell_type", PID_c1_names)]
+quantiseq_cluster2 = quantiseq[, c("cell_type",PID_c2_names)]
+
+#barplot of immune infiltration QUANTISEQ
+quantiseq_cluster1_plot = quantiseq_cluster1 %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster1))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+quantiseq_cluster2_plot = quantiseq_cluster2 %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster2))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+ggarrange(quantiseq_cluster1_plot, quantiseq_cluster2_plot, ncol = 1, nrow = 2)
+#PATIENTEN NAMEN NICHT KORREKT ZUGEORDNET
+
+quantiseq_cluster1_CD8 = quantiseq_cluster1[8,]
+quantiseq_cluster2_CD8 = quantiseq_cluster2[8,]
+
+quantiseq_CD8 = cbind(quantiseq_cluster1_CD8, quantiseq_cluster2_CD8)
+quantiseq_CD8 = quantiseq_CD8[, -c(42)]
+
+quantiseq_CD8 %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_CD8))) +
+    theme(axis.text.y = element_text(size = 4)) #irgendwas mit scaling stimmt nicht
+
+
+
+quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster1_CD8))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+quantiseq_cluster2_plot_CD8 = quantiseq_cluster2_CD8 %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster2_CD8))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+ggarrange(quantiseq_cluster1_plot_CD8, quantiseq_cluster2_plot_CD8, ncol = 1, nrow = 2)
+
+tcga_tumor_annotation %>% filter_all(any_vars(. %in% c("TCGA-CW-6087-01"))) #patient with extremely high immune infiltration was tumor FREE in the end!
+
+#MCP --> arbitrary values only for comparison between samples
+mcp_counter = deconvolute(KIRC_tumor_tpm, "mcp_counter")
+mcp_counter_matrix = as.matrix(mcp_counter)
+mcp_counter_matrix = mcp_counter_matrix[-c(11),]
+heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+mcp_counter %>%
+  gather(sample, score, -cell_type) %>%
+  ggplot(aes(x=sample, y=score, color=cell_type)) +
+    geom_point(size=4) +
+    facet_wrap(~cell_type, scales="free_x", ncol=3) +
+    scale_color_brewer(palette="Paired", guide=FALSE) +
+    coord_flip() + 
+    theme_bw() + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+
+```
