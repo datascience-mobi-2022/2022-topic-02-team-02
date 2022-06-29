@@ -17,9 +17,12 @@ library(gplots)
 library(dplyr)
 library(ggplot2)
 library(ggpubr)
+library(rlist)
+library(stats)
 ```
 
 ```{r}
+set.seed(69)
 #check immune infiltration in KIRC tumor dataset
 tcga_KIRC_tumor_cl <- readRDS("../data/tcga_KIRC_tumor_cl.rds")
 #convert ensemble into gene symbol
@@ -73,12 +76,16 @@ quantiseq_cluster2_plot = quantiseq_cluster2 %>%
 ggarrange(quantiseq_cluster1_plot, quantiseq_cluster2_plot, ncol = 1, nrow = 2)
 #PATIENTEN NAMEN NICHT KORREKT ZUGEORDNET
 
+#CD8 only
 quantiseq_cluster1_CD8 = quantiseq_cluster1[8,]
 quantiseq_cluster2_CD8 = quantiseq_cluster2[8,]
-
 quantiseq_CD8 = cbind(quantiseq_cluster1_CD8, quantiseq_cluster2_CD8)
 quantiseq_CD8 = quantiseq_CD8[, -c(42)]
 
+sum(quantiseq_cluster1_CD8[1, 2:41]) #2.008835
+sum(quantiseq_cluster2_CD8[1, 2:33]) #0.3102198 
+
+#plot in one
 quantiseq_CD8 %>%
   gather(sample, fraction, -cell_type) %>%
   ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
@@ -86,10 +93,9 @@ quantiseq_CD8 %>%
     coord_flip() +
     scale_fill_brewer(palette="Paired") + 
     scale_x_discrete(limits = rev(levels(quantiseq_CD8))) +
-    theme(axis.text.y = element_text(size = 4)) #irgendwas mit scaling stimmt nicht
+    theme(axis.text.y = element_text(size = 4)) #Reihenfolge bleibt nicht gleich...
 
-
-
+#plot both separately
 quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
   gather(sample, fraction, -cell_type) %>%
   ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
@@ -112,6 +118,67 @@ ggarrange(quantiseq_cluster1_plot_CD8, quantiseq_cluster2_plot_CD8, ncol = 1, nr
 
 tcga_tumor_annotation %>% filter_all(any_vars(. %in% c("TCGA-CW-6087-01"))) #patient with extremely high immune infiltration was tumor FREE in the end!
 
+#T-reg only:
+quantiseq_cluster1_Treg = quantiseq_cluster1[9,]
+quantiseq_cluster2_Treg = quantiseq_cluster2[9,]
+quantiseq_Treg = cbind(quantiseq_cluster1_CD8, quantiseq_cluster2_CD8)
+quantiseq_Treg = quantiseq_Treg[, -c(42)]
+
+sum(quantiseq_cluster1_Treg[1, 2:41]) #0.2667334
+sum(quantiseq_cluster2_Treg[1, 2:33]) #0.2479281
+
+#plot both separately
+quantiseq_cluster1_plot_Treg = quantiseq_cluster1_Treg %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster1_Treg))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+quantiseq_cluster2_plot_Treg = quantiseq_cluster2_Treg %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster2_Treg))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+ggarrange(quantiseq_cluster1_plot_Treg, quantiseq_cluster2_plot_Treg, ncol = 1, nrow = 2)
+
+#Neutrophils only:
+quantiseq_cluster1_neutro = quantiseq_cluster1[5,]
+quantiseq_cluster2_neutro = quantiseq_cluster2[5,]
+quantiseq_neutro = cbind(quantiseq_cluster1_neutro, quantiseq_cluster2_neutro)
+quantiseq_neutro = quantiseq_neutro[, -c(42)]
+
+sum(quantiseq_cluster1_neutro[1, 2:41]) #4.812149
+sum(quantiseq_cluster2_neutro[1, 2:33]) #3.784561
+
+#plot both separately
+quantiseq_cluster1_plot_neutro = quantiseq_cluster1_neutro %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster1_neutro))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+quantiseq_cluster2_plot_neutro = quantiseq_cluster2_neutro %>%
+  gather(sample, fraction, -cell_type) %>%
+  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+    geom_bar(stat='identity') +
+    coord_flip() +
+    scale_fill_brewer(palette="Paired") + 
+    scale_x_discrete(limits = rev(levels(quantiseq_cluster2_neutro))) +
+    theme(axis.text.y = element_text(size = 4)) 
+
+ggarrange(quantiseq_cluster1_plot_neutro, quantiseq_cluster2_plot_neutro, ncol = 1, nrow = 2)
+
+
 #MCP --> arbitrary values only for comparison between samples
 mcp_counter = deconvolute(KIRC_tumor_tpm, "mcp_counter")
 mcp_counter_matrix = as.matrix(mcp_counter)
@@ -130,5 +197,78 @@ mcp_counter %>%
 ```
 
 ```{r}
+#just based on mean NES top up- and downregulated pathways
+KIRC_PID_mean = as.data.frame(apply(KIRC_PID_cl, 1, mean))
+colnames(KIRC_PID_mean) = "NES"
+KIRC_PID_topup = slice_max(KIRC_PID_mean, order_by = KIRC_PID_mean[,1], n = 10)
+KIRC_PID_topdown = slice_min(KIRC_PID_mean, order_by = KIRC_PID_mean[,1], n = 10)
+KIRC_PID_topdown = KIRC_PID_topdown[order(nrow(KIRC_PID_topdown):1),, drop = FALSE]
+KIRC_PID_top = rbind(KIRC_PID_topup, KIRC_PID_topdown)
 
+#top pathways significantly different NES in KIRC 2 clusters
+PID_sigpw = c("PID_CD8_TCR_PATHWAY", "PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_IL12_2PATHWAY", "PID_TCR_PATHWAY", "PID_IL27_PATHWAY", "PID_IL1_PATHWAY", "PID_CXCR4_PATHWAY", "PID_FOXM1_PATHWAY", "PID_IL8_CXCR2_PATHWAY", "PID_E2F_PATHWAY")
+KIRC_top_pw = KIRC_PID_cl[c(PID_sigpw),]
+
+#add new row according to cluster, if in cluster 1 --> 1, if in cluster 2 --> 0
+cluster_number = vector(mode = 'list',72)
+KIRC_patients = as.data.frame(colnames(KIRC_top_pw))
+for (i in 1:ncol(KIRC_top_pw)){
+  if (KIRC_patients[i,] %in% PID_c1_names){
+    cluster_number[[i]] = 1
+  } else {
+    cluster_number[[i]] = 0
+  }
+}
+
+cluster_numbers = list.cbind(cluster_number)
+colnames(cluster_numbers) = colnames(KIRC_top_pw)
+KIRC_top_pw = rbind(KIRC_top_pw, cluster_numbers)
+rownames(KIRC_top_pw)[rownames(KIRC_top_pw) == "1"] <- "Infiltration"
+KIRC_top_pw_t = as.data.frame(t(KIRC_top_pw))
+
+#try simple logistic test regression
+
+# Null-Modell
+model0 = glm(Infiltration ~ 1, data = KIRC_top_pw_t)
+summary(model0)
+
+# Test-Modell
+model1 = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_TCR_PATHWAY + PID_IL27_PATHWAY + PID_CXCR4_PATHWAY + PID_FOXM1_PATHWAY, data = KIRC_top_pw_t) #nur signifikante pw genommen (Beitrag leisten)
+summary(model1)
+
+#Omnibus-Test
+modelchi = model1$null.deviance - model1$deviance
+chidf = model1$df.null -model1$df.residual
+chisqp = 1 - pchisq(modelchi, chidf) # <0.05 test-Modell leistet signifikanten Erklärungsbeitrag
+
+#Gütemaße
+n = length(model1$residuals)
+R2cs = 1-exp((model1$deviance - model1$null.deviance)/n)
+R2n = R2cs/(1-exp(-(model1$null.deviance/n)))
+
+#Predict
+glm_probs = data.frame(probs = predict(model1, type="response"))
+head(glm_probs)
+
+KIRC_top_pw_predict = rbind(KIRC_top_pw, t(glm_probs))
+
+probabilities <- model1 %>% predict(KIRC_top_pw_t, type = "response")
+predicted.classes <- data.frame(ifelse(probabilities > 0.5, "1", "0"))
+colnames(predicted.classes) = "predicted.classes"
+KIRC_top_pw_predict = rbind(KIRC_top_pw_predict, t(predicted.classes))
+#accuracy? 
+mean(predicted.classes == KIRC_top_pw_t$Infiltration) #0.9583333
+
+
+#Plot
+KIRC_top_pw_t %>%
+  mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+  ggplot(aes(PID_CD8_TCR_PATHWAY, prob)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+  labs(
+    title = "Logistic Regression Model", 
+    x = "PID_CD8_TCR_PATHWAY activity",
+    y = "Probability of immune infiltration"
+    )
 ```
