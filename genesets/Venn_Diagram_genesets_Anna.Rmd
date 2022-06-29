@@ -17,6 +17,7 @@ KIRC_PID_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
 ```
 
 ```{r}
+library(msigdbr)
 ## load KEGG genesets ##
 KEGG = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
 
@@ -39,12 +40,13 @@ names(metabolic_genesets_KEGG) = pathway_names_KEGG
 
 ```{r}
 ##load PID genset##
+PID_genesets <- readRDS("~/GitHub/2022-topic-02-team-02/data/PID_genesets.RDS")
 #work with PID_cl and tcga_Cl
 #Clean PID data
 PID_filtered = c(rownames(KIRC_PID_cl)) #KIRC_PID_cl is data frame without PW with constant NES-->constant NES over all patients is not interesting for clustering
 whichi = which(names(PID_genesets) %in% PID_filtered)
-metabolic_genesets_PID = PID_genesets[c(whichi)] #cleaned PID PW
-length(metabolic_genesets_PID)
+metabolic_genesets_PID_cl = PID_genesets[c(whichi)] #cleaned PID PW
+length(metabolic_genesets_PID_cl)#should be 88
 ```
 
 ```{r}
@@ -54,23 +56,25 @@ hallmarks_gsname = hallmarks$gs_name
 hallmarks_ensembl = hallmarks$ensembl_gene
 hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
 #create a df with names of pathways
-pathway_names = c(unique(hallmarks$hallmarks_gsname))
+hallmarks_pathway_names = c(unique(hallmarks$hallmarks_gsname))
 #create a list in which the pathways will be stored (outout has to be a list)
 hallmark_genesets = list(list())#
 #fill the list with pathways and genes
-for (x in 1:length(pathway_names)){
-  hallmark_genesets[[x]] = pathway_names[x]
-  z = c((hallmarks[which(hallmarks$hallmarks_gsname == pathway_names[x]),2]))
+for (x in 1:length(hallmarks_pathway_names)){
+  hallmark_genesets[[x]] = hallmarks_pathway_names[x]
+  z = c((hallmarks[which(hallmarks$hallmarks_gsname == hallmarks_pathway_names[x]),2]))
   for (k in 1:length(z)){
   hallmark_genesets[[x]][[k]] = z[k]
   }}
-names(hallmark_genesets) = pathway_names
+names(hallmark_genesets) = hallmarks_pathway_names
 ```
 
+#for the genesets we worked with (clenaed data)
 
 ```{r}
-PID_genes=unlist(metabolic_genesets_PID)
-PID_genes=unique(PID_genes)
+
+PID_cl_genes=unlist(metabolic_genesets_PID_cl)
+PID_cl_genes=unique(PID_cl_genes)
 
 KEGG_genes=unlist(metabolic_genesets_KEGG)
 KEGG_genes=unique(KEGG_genes)
@@ -78,51 +82,50 @@ KEGG_genes=unique(KEGG_genes)
 hallmarks_genes=unlist(hallmark_genesets)
 hallmarks_genes=unique(hallmarks_genes)
 
-tcga_genes = rownames(tcga_exp_cleaned)
+tcga_cl_genes = rownames(tcga_exp_cleaned)
 
-tcga_PID_genes_intersect = c(intersect(PID_genes,tcga_genes))
-length(tcga_PID_genes_intersect)
 ```
 
 ```{r}
 #install package if not done yet
-#if (!require(devtools)) install.packages("devtools")
+#if (!require(devtools)) install.packages("devetools")
 #devtools::install_github("yanlinlin82/ggvenn")
 library(ggvenn)
 ```
 
 ```{r}
 #create a list with the genesets that will be compared
-genesets = list(KEGG_genes, PID_genes, tcga_genes, hallmarks_genes)
-names(genesets) = c("KEGG", "PID", "tcga", "hallmarks")
+genesets_cl = list(KEGG_genes, PID_cl_genes, tcga_cl_genes, hallmarks_genes)
+names(genesets_cl) = c("KEGG", "PID_cl", "tcga_cl", "hallmarks")
 ggvenn(
-  genesets, 
+  genesets_cl, 
   fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
   stroke_size = 0.5, set_name_size = 4
   )
 
-genesets_KEGG_PID_tcga = list(KEGG_genes, PID_genes, tcga_genes)#only KEGG, PID, tcga
-names(genesets_KEGG_PID_tcga) = c("KEGG", "PID", "tcga")
+genesets_cl_KEGG_PID_tcga = list(KEGG_genes, PID_cl_genes, tcga_cl_genes)#only KEGG, PID, tcga
+names(genesets_cl_KEGG_PID_tcga) = c("KEGG", "PID_cl", "tcga_cl")
 ggvenn(
-  genesets_KEGG_PID_tcga, 
+  genesets_cl_KEGG_PID_tcga, 
   fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
   stroke_size = 0.5, set_name_size = 4
   )
 
 
-genesets_PID_tcga =list(genesets[[2]], genesets[[3]])
-names(genesets_PID_tcga)=c("PID", "tcga")#only PID, tcga
+genesets_cl_PID_tcga =list(PID_cl_genes, tcga_cl_genes)
+names(genesets_cl_PID_tcga)=c("PID_cl", "tcga_cl")#only PID, tcga
 ggvenn(
-  genesets_PID_tcga,
+  genesets_cl_PID_tcga,
   fill_color = c("lightblue", "lightgrey"),
   stroke_size = 0.5, set_name_size = 4
   )
 
-genesets_KEGG_PID = list(KEGG_genes, PID_genes)#only KEGG, PID
-names(genesets_KEGG_PID) = c("KEGG", "PID")
+genesets_cl_KEGG_PID = list(KEGG_genes, PID_cl_genes)#only KEGG, PID
+names(genesets_cl_KEGG_PID) = c("KEGG", "PID_cl")
 ggvenn(
-  genesets_KEGG_PID, 
+  genesets_cl_KEGG_PID, 
   fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
   stroke_size = 0.5, set_name_size = 4
   )
 ```
+#for the uncleaned data
