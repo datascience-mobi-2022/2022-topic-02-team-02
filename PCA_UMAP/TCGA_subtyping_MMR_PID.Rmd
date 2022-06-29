@@ -13,6 +13,7 @@ set.seed(69)
 #load pathway activity matricesd for MMR and PID for all 33 tumortypes
 TCGA_pw_MMR = readRDS("../data/NES_OVERALL_MMR.RDS")
 TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
+names(TCGA_pw_PID) = cancer_abc
 ```
 
 
@@ -24,6 +25,7 @@ library(gridExtra)
 library(cluster)
 library(ggpubr)
 library(factoextra)
+library(scrime)
 set.seed(69)
 ```
 
@@ -51,6 +53,7 @@ names(UMAP_output_PID) = cancer_abc
 plot1234 = list(UMAP_output_PID[[1]],UMAP_output_PID[[2]],UMAP_output_PID[[3]])
 ggarrange(plotlist=UMAP_output_PID)
 ggarrange(plotlist = plot1234)
+UMAP_output_PID$KIRC
 ```
 
 ```{r PCA / umap for MMR}
@@ -110,6 +113,7 @@ for (i in (1:length(UMAP_PID))){
  }
 names(cluster_PID_k2) = cancer_abc 
 ggarrange(plotlist = cluster_PID_k2)
+cluster_PID_k2$KIRC
 ```
 
 
@@ -168,7 +172,7 @@ names(cluster2_PID) = cancer_abc
 PID_c1_patients = list()
 for (i in (1:length(UMAP_PID))){
   t = cluster1_PID[[i]]
-  PID_c1_patients[[i]] = TCGA_pw_PID[[i]][,colnames(TCGA_pw_PID[[i]]) %in% t]
+  PID_c1_patients[[i]] = TCGA_pw_PID[[i]][,which(colnames(TCGA_pw_PID[[i]]) %in% t)]
 }
 names(PID_c1_patients) = cancer_abc
 
@@ -232,8 +236,30 @@ for (i in (1:length(UMAP_PID))){
 }
 names(PID_c1_c2_dif_rank_df) = cancer_abc
 ```
+```{r Z scaling}
+probek = data.matrix(rowScales(TCGA_pw_PID$KIRC)) 
+remove.dots = function(df){colnames(df) = sub(".","-",colnames(df));df}
+colnames(probek) = colnames(TCGA_pw_PID$KIRC)
+}
+
+PID_c1k = probek[,which(colnames(probek)%in%cluster1_PID$KIRC)]
+PID_c2k = probek[,which(colnames(probek)%in%cluster2_PID$KIRC)]
+
+PID_c1k = PID_c1k[-64,]
+PID_c2k = PID_c2k[-64,]
+View(PID_c1k)
+PID_c2k = probek[,which(colnames(probek)%in%cluster2_PID$KIRC)]
+
+probe_kk = data.matrix(sapply(1:87,function(i){
+  wilcox.test(PID_c1k[i,],PID_c2k[i,],paired = FALSE)
+}$p.value
+))
+View(probe_kk)
+
+```
 
 ```{r significance filtering: wilcoxon}
+
 ##filter constant genes 
 PID_c1_min = list()
 for (i in (1:length(UMAP_PID))){
@@ -268,7 +294,7 @@ View(acute)
  names(z[which(z == 1)])
 
 
-
+ 
 PID_wilcox_pv = list()
 for (i in (1:length(UMAP_PID))){
   v = as.matrix(PID_c1_patients[[i]])
