@@ -15,6 +15,7 @@ TCGA_pw_MMR = readRDS("../data/NES_OVERALL_MMR.RDS")
 TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
 ```
 
+
 ```{r packages}
 library(ggplot2)
 library(tidyverse)
@@ -101,7 +102,7 @@ for(i in (1:length(cluster_PID))){
 }
 
 names(cluster_PID) = cancer_abc
-ggarrange(plotlist = cluster_PID$ACC)
+ggarrange(plotlist = cluster_PID$KIRC)
 
 cluster_PID_k2 = list()
 for (i in (1:length(UMAP_PID))){
@@ -109,7 +110,6 @@ for (i in (1:length(UMAP_PID))){
  }
 names(cluster_PID_k2) = cancer_abc 
 ggarrange(plotlist = cluster_PID_k2)
-
 ```
 
 
@@ -187,15 +187,14 @@ names(PID_c2_patients) = cancer_abc
 PID_c1_mean = list()
 for (i in (1:length(UMAP_PID))){
   r = PID_c1_patients[[i]]
-  PID_c1_mean[[i]] = data.frame(apply(PID_c1_patients[[i]],1,mean))
-  
+  PID_c1_mean[[i]] = data.frame(apply(r,1,mean))
 }
 names(PID_c1_mean) = cancer_abc
 
 PID_c2_mean = list()
 for (i in (1:length(UMAP_PID))){
   r = PID_c2_patients[[i]]
-  PID_c2_mean[[i]] = data.frame(apply(PID_c2_patients[[i]],1,mean))
+  PID_c2_mean[[i]] = data.frame(apply(r,1,mean))
   
 }
 names(PID_c2_mean) = cancer_abc
@@ -235,7 +234,40 @@ names(PID_c1_c2_dif_rank_df) = cancer_abc
 ```
 
 ```{r significance filtering: wilcoxon}
-PID_wilcox_pv = list ()
+##filter constant genes 
+PID_c1_min = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c1_patients[[i]]
+  PID_c1_min[[i]] = data.frame(apply(r,1,min))
+}
+names(PID_c1_min) = cancer_abc
+
+PID_c1_max = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c1_patients[[i]]
+  PID_c1_max[[i]] = data.frame(apply(r,1,max))
+}
+names(PID_c1_max) = cancer_abc
+
+PID_c1_constant = list()
+for (i in (1:length(UMAP_PID))){
+  r = PID_c1_min[[i]]
+  t = PID_c1_max[[i]]
+  PID_c1_constant[[i]] = c(names(which(r == t)))
+}
+names(PID_c1_constant) = cancer_abc
+
+r = PID_c1_min$ACC
+  t = PID_c1_max$ACC
+  PID_c1_constant = c(colnames(which(r == t)))
+aaa = PID_c1_patients$ACC
+acute = aaa[!PID_c1_constant,]
+PID_c1_constant
+dim(aaa)
+View(acute)
+ names(z[which(z == 1)])
+
+
 
 PID_wilcox_pv = list()
 for (i in (1:length(UMAP_PID))){
@@ -248,7 +280,7 @@ for (i in (1:length(UMAP_PID))){
   colnames(PID_wilcox_pv[[i]]) = "pvalue"
 }
 names(PID_wilcox_pv) = cancer_abc
-View(PID_wilcox_pv)
+View(PID_wilcox_pv$KIRC)
 
 #Bonferroni-Korrektur 
 alpha_PID=0.05/(nrow(PID_wilcox_pv[[i]]))
@@ -259,7 +291,7 @@ for (i in (1:length(UMAP_PID))){
 }
 ```
 
-```{r}
+```{r pv cutoff}
 PID_wilcox_pv_log = list()
 for (i in (1:length(UMAP_PID))){
   a = PID_wilcox_pv[[i]]
@@ -267,73 +299,8 @@ for (i in (1:length(UMAP_PID))){
   colnames(PID_wilcox_pv_log[[i]]) = "neg_log10_pv"
 }
 names(PID_wilcox_pv_log) = cancer_abc
-View(PID_wilcox_pv_log$BLCA)
-
-## beginning
-
-PID_wilcox_pv_BH = list()
-for (i in (1:length(UMAP_PID))){
-f = c(PID_wilcox_pv[[i]])
-PID_wilcox_pv_BH[[i]] = p.adjust(f, method ="BH" )
-
-}
-names(PID_wilcox_pv_BH) = cancer_abc
-
-PID_pv_dif1 = list()
-for (i in (1:length(UMAP_PID))){
-  a = PID_c1_c2_dif[[i]]
-  b = PID_wilcox_pv_BH[[i]]
-  PID_pv_dif1[[i]] = as.data.frame(cbind(a,b))
-  colnames(PID_pv_dif1[[i]]) = c("Difference","neg_log10_pv")
-}
-names(PID_pv_dif1) = cancer_abc
-
-#extracting sign differently expressed genes (pvalue > cutoff) 
-
-PID_pv_dif_sig1 = list()
-for (i in (1:length(UMAP_PID))){
-  a = PID_pv_dif1[[i]]
-  PID_pv_dif_sig1[[i]] = a[which(a$neg_log10_pv>0.05),]
-}
-names(PID_pv_dif_sig1) = cancer_abc
 
 
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
-PID_pv_dif_sigup1 = list()
-for (i in (1:length(UMAP_PID))){
- t = PID_pv_dif_sig1[[i]]
- PID_pv_dif_sigup1[[i]] = t[which(abs(t[,1])>0),]
-}
-names(PID_pv_dif_sigup1) = cancer_abc
-
-PID_dif_sig1 = list()
-for (i in (1:length(UMAP_PID))){
-t = PID_pv_dif_sig1[[i]]$Difference
-PID_dif_sig1[[i]] = data.frame(t)
-}
-names(PID_dif_sig1) = cancer_abc
-
-
-PID_dif_sig_names1 = list()
-for (i in (1:length(UMAP_PID))){
- t = c(rownames(PID_pv_dif_sig1[[i]]))
- PID_dif_sig_names1[[i]] = t
-}
-names(PID_dif_sig_names1) = cancer_abc
-
-
-for (i in (1:length(UMAP_PID))){
- r = PID_dif_sig_names1[[i]]
- u = PID_dif_sig1[[i]]
- PID_dif_sig1[[i]] = cbind(r,u)
- colnames(PID_dif_sig1[[i]]) = c("Pathway", "Difference")
-}
-
-View(PID_dif_sig1)
-
-
-
-## end 
 for (i in (1:length(UMAP_PID))){
   PID_wilcox_pv_log[[i]][PID_wilcox_pv_log[[i]] == Inf] = 0
 }
@@ -395,6 +362,74 @@ View(PID_dif_sig_0)
 cancer_sig = c("ACC","CHOL","DLBC","KICH","MESO","READ","TGCT","UVM")
 names(PID_dif_sig_0) = cancer_sig
 ```
+
+```{r try p adjust function}
+## beginning
+
+PID_wilcox_pv_BH = list()
+for (i in (1:length(UMAP_PID))){
+f = c(PID_wilcox_pv[[i]])
+PID_wilcox_pv_BH[[i]] = p.adjust(f, method ="bonferroni", n = length(f))
+}
+names(PID_wilcox_pv_BH) = cancer_abc
+
+PID_pv_dif1 = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_c1_c2_dif[[i]]
+  b = PID_wilcox_pv_BH[[i]]
+  PID_pv_dif1[[i]] = as.data.frame(cbind(a,b))
+  colnames(PID_pv_dif1[[i]]) = c("Difference","neg_log10_pv")
+}
+names(PID_pv_dif1) = cancer_abc
+
+#extracting sign differently expressed genes (pvalue > cutoff) 
+
+PID_pv_dif_sig1 = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_pv_dif1[[i]]
+  PID_pv_dif_sig1[[i]] = a[which(a$neg_log10_pv>0.05),]
+}
+names(PID_pv_dif_sig1) = cancer_abc
+
+
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_pv_dif_sigup1 = list()
+for (i in (1:length(UMAP_PID))){
+ t = PID_pv_dif_sig1[[i]]
+ PID_pv_dif_sigup1[[i]] = t[which(abs(t[,1])>0),]
+}
+names(PID_pv_dif_sigup1) = cancer_abc
+
+
+for (i in (1:length(UMAP_PID))){
+t = PID_pv_dif_sig1[[i]]$Difference
+PID_dif_sig1[[i]] = data.frame(t)
+}
+names(PID_dif_sig1) = cancer_abc
+
+
+PID_dif_sig_names1 = list()
+for (i in (1:length(UMAP_PID))){
+ t = c(rownames(PID_pv_dif_sig1[[i]]))
+ PID_dif_sig_names1[[i]] = t
+}
+names(PID_dif_sig_names1) = cancer_abc
+
+
+for (i in (1:length(UMAP_PID))){
+ r = PID_dif_sig_names1[[i]]
+ u = PID_dif_sig1[[i]]
+ PID_dif_sig1[[i]] = cbind(r,u)
+ colnames(PID_dif_sig1[[i]]) = c("Pathway", "Difference")
+}
+
+View(PID_dif_sig1)
+
+
+## end 
+```
+
+
 
 
 ```{r plot significant pathways}

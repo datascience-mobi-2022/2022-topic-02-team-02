@@ -1,0 +1,40 @@
+---
+title: "Kidney cell types"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r packages}
+library(msigdbr)
+library(fgsea)
+library(tidyverse)
+```
+
+```{r data}
+tumor_norm <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
+tumor = tumor_norm$KIRC$tumor
+norm = tumor_norm$KIRC$normal
+```
+
+
+
+```{r filter for kidney celltype genesets}
+C8 = msigdbr(species = "Homo sapiens", category = "C8")
+
+DESCARTES_FETAL_KIDNEY_ERYTHROBLASTS =C8[C8$gs_id=="M40219",]
+DESCARTES_FETAL_KIDNEY_LYMPHOID_CELLS=C8[C8$gs_id=="M40226",]
+DESCARTES_FETAL_KIDNEY_MEGAKARYOCYTES=C8[C8$gs_id=="M40227",]
+DESCARTES_FETAL_KIDNEY_MESANGIAL_CELLS=C8[C8$gs_id=="M40224",]
+DESCARTES_FETAL_KIDNEY_METANEPHRIC_CELLS=C8[C8$gs_id=="M40223",]
+DESCARTES_FETAL_KIDNEY_MYELOID_CELLS=C8[C8$gs_id=="M40221",]
+DESCARTES_FETAL_KIDNEY_STROMAL_CELLS=C8[C8$gs_id=="M40222",]
+DESCARTES_FETAL_KIDNEY_URETERIC_BUD_CELLS =C8[C8$gs_id=="M40220",]
+DESCARTES_FETAL_KIDNEY_VASCULAR_ENDOTHELIAL_CELLS=C8[C8$gs_id=="M40225",]
+
+
+```
+
