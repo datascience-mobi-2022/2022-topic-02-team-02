@@ -29,8 +29,8 @@ tcga_KIRC_tumor_cl <- readRDS("../data/tcga_KIRC_tumor_cl.rds")
 ensemblids = rownames(tcga_KIRC_tumor_cl)
 symbols = mapIds(org.Hs.eg.db, keys = ensemblids, keytype = "ENSEMBL", column="SYMBOL")
 rownames(tcga_KIRC_tumor_cl) = symbols
-
 KIRC_tumor = as.matrix(tcga_KIRC_tumor_cl)
+
 #use package immune deconvolution
 immune_cells = deconvolute(KIRC_tumor, "xcell")
 cell_types = immune_cells$cell_type
@@ -46,9 +46,9 @@ quantiseq = deconvolute(KIRC_tumor_tpm, "quantiseq", tumor = "true")
 cell_types_2 = quantiseq$cell_type
 quantiseq_matrix = quantiseq[,-1]
 rownames(quantiseq_matrix) = cell_types_2
-
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
+
 heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 
 quantiseq_cluster1 = quantiseq[, c("cell_type", PID_c1_names)]
@@ -272,3 +272,57 @@ KIRC_top_pw_t %>%
     y = "Probability of immune infiltration"
     )
 ```
+
+
+```{r}
+#try to test on KIRC data fro m TCGA (531 samples)
+KIRC_tcga = pathway_activity_matrix %>%
+    select(starts_with('KIRC'))
+KIRC_tcga_PID = KIRC_tcga[PID_sigpw,]
+KIRC_tcga_PID_t = data.frame(t(KIRC_tcga_PID))
+#predict
+probabilities_2 <- model1 %>% predict(KIRC_tcga_PID_t, type = "response")
+predicted.classes_2 <- data.frame(ifelse(probabilities_2 > 0.5, "1", "0"))
+colnames(predicted.classes_2) = "prediction"
+predicted.classes_2 = t(predicted.classes_2)
+sum(as.numeric(predicted.classes_2[1,])) #69 immune infiltrated patients
+
+#create list with all patients who have a 1 in "prediction"
+KIRC_tcga_immune_patients = numeric()
+KIRC_tcga_PID_predict = rbind(KIRC_tcga_PID, predicted.classes_2)
+for (i in 1:ncol(KIRC_tcga_PID_predict)){
+  if (KIRC_tcga_PID_predict[11, i] == "1")
+    KIRC_tcga_immune_patients = append(KIRC_tcga_immune_patients, colnames(KIRC_tcga_PID_predict[i]))
+}
+#remove first letters (KIRC.) from sample ID
+KIRC_tcga_immune_patients = str_sub(KIRC_tcga_immune_patients, 6)
+
+#get annotations
+KIRC_tcga_immunep_annotations = tcga_tumor_annotation %>% filter(sample %in% KIRC_tcga_immune_patients)
+
+#check with immune deconvolution again
+KIRC_tcga_tpm = 2^tcga_exp_KIRC
+ensemblids_tcga_cleaned = rownames(KIRC_tcga_tpm)
+symbols_tcga_cleaned = mapIds(org.Hs.eg.db, keys = ensemblids_tcga_cleaned, keytype = "ENSEMBL", column="SYMBOL")#336 duplicated
+geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= ensemblids_tcga_cleaned, keytype = "GENEID", columns = c("SYMBOL","GENEID")) #only 9775 gene symbols found --> remove missing genes from data frame
+
+#remove duplicated gene symbols (24)
+geneIDs_unique = distinct(geneIDs,SYMBOL, .keep_all= TRUE)
+ensemblid_found = as.vector(geneIDs_unique$GENEID)
+KIRC_tcga_tpm_filtered = KIRC_tcga_tpm %>% filter(rownames(KIRC_tcga_tpm) %in% ensemblid_found)
+rownames(KIRC_tcga_tpm_filtered) = geneIDs_unique$SYMBOL
+KIRC_tcga_tpm_matrix = as.matrix(KIRC_tcga_tpm_filtered)
+
+#immune deconvolution
+quantiseq = deconvolute(KIRC_tcga_tpm_matrix, "quantiseq", tumor = "true")
+
+cell_types_2 = quantiseq$cell_type
+quantiseq_matrix = quantiseq[,-1]
+rownames(quantiseq_matrix) = cell_types_2
+quantiseq_matrix = as.matrix(quantiseq_matrix)
+quantiseq_matrix = quantiseq_matrix[-c(11),]
+heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fontsize = 2))
+
+```
+
