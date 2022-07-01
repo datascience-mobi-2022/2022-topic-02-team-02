@@ -635,6 +635,9 @@ heatmap.2(top_pathways_meandf, dendrogram = "column", hclustfun = hclust, trace 
 #heatmap
 NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
 heatmap.2(NES_matrix_ALLE, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+Heatmap(NES_matrix_ALLE, name = "mat", column_km = 7, column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 2))
+
+
 #create dendrogram 
 alle_dendro_matrix = t(NES_matrix_ALLE)
 alle_dendro = as.dendrogram(hclust(d = dist(x = alle_dendro_matrix)))

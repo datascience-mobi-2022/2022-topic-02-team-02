@@ -209,6 +209,12 @@ KIRC_PID_top = rbind(KIRC_PID_topup, KIRC_PID_topdown)
 PID_sigpw = c("PID_CD8_TCR_PATHWAY", "PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_IL12_2PATHWAY", "PID_TCR_PATHWAY", "PID_IL27_PATHWAY", "PID_IL1_PATHWAY", "PID_CXCR4_PATHWAY", "PID_FOXM1_PATHWAY", "PID_IL8_CXCR2_PATHWAY", "PID_E2F_PATHWAY")
 KIRC_top_pw = KIRC_PID_cl[c(PID_sigpw),]
 
+#compute correlation between NES of PID pathways (rowise) --> need to transpose it first
+KIRC_top_pw_cor_pearson = cor(t(KIRC_top_pw), method = "pearson")
+Heatmap(KIRC_top_pw_cor_pearson, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10))
+KIRC_top_pw_cor_spearman= cor(t(KIRC_top_pw), method = "spearman")
+Heatmap(KIRC_top_pw_cor_spearman, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10))
+
 #add new row according to cluster, if in cluster 1 --> 1, if in cluster 2 --> 0
 cluster_number = vector(mode = 'list',72)
 KIRC_patients = as.data.frame(colnames(KIRC_top_pw))
@@ -322,7 +328,7 @@ rownames(quantiseq_matrix) = cell_types_2
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
 heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
-Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fontsize = 2))
+Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fontsize = 2), width = unit(27, "cm"), height = unit(12, "cm"))
 
 ```
 

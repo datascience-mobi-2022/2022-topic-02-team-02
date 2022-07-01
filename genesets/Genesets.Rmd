@@ -142,7 +142,7 @@ ggplot(melted, aes(variable, variable2, fill = Jaccard)) +
 
 
 ```{r check jaccard index for PID}
-go_PID_matrix = newGOM(metabolic_genesets_PID, metabolic_genesets_PID)
+go_PID_matrix = newGOM(PID_genesets, PID_genesets)
 go_PID_jaccard = getMatrix(go_PID_matrix, "Jaccard")
 diag(go_PID_jaccard) = 0
 heatmap(go_PID_jaccard, Rowv = NA, Colv = NA, margins = c(8,8))
@@ -156,6 +156,21 @@ for (i in 1:nrow(go_PID_jaccard)){
 }
 go_PID_jaccard = na.omit(go_PID_jaccard)
 PID_independent = metabolic_genesets_PID[rownames(go_PID_jaccard)]
+
+#update with new filtered PID pathways:
+go_PID_matrix_new = newGOM(metabolic_genesets_PID_cl, metabolic_genesets_PID_cl)
+go_PID_jaccard_new = getMatrix(go_PID_matrix_new, "Jaccard")
+diag(go_PID_jaccard_new) = 0
+heatmap(go_PID_jaccard_new, Rowv = NA, Colv = NA, margins = c(8,8))
+Heatmap(go_PID_jaccard_new, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5))
+
+#only those for logistic regression
+PID_regression = PID_genesets[PID_sigpw] # 10 sig pathways
+go_PID_matrix_regr = newGOM(PID_regression, PID_regression)
+go_PID_jaccard_regr = getMatrix(go_PID_matrix_regr, "Jaccard")
+diag(go_PID_jaccard_regr) = 0
+heatmap(go_PID_jaccard_regr, Rowv = NA, Colv = NA, margins = c(8,8))
+Heatmap(go_PID_jaccard_regr, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10))
 ```
 
 ```{r check KEGG pathways}
