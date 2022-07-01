@@ -352,21 +352,22 @@ library(patchwork)
 
 ```{r Seurat Plots}
 KIRC_PCA_x1=data.frame(KIRC_PID_pca_x)
-Seurat_PID = CreateSeuratObject(counts= KIRC_PID_cl)
+Seurat_PID = CreateSeuratObject(counts= KIRC_PID_cl)#create a Seurat object wiht the data, this object will be filled by the following commands (PCA;UMAP;clustering...)
 VlnPlot(Seurat_PID, features = c("PID-TCR-PATHWAY"))
 
-all.genes = rownames(Seurat_PID)
-Seurat_PID = ScaleData(Seurat_PID, features = all.genes, verbose = FALSE)#scaling 
-Seurat_PID = FindVariableFeatures(object = Seurat_PID)  #damit PCA läuft, sonst fehler
-Seurat_PID = RunPCA(Seurat_PID, features = VariableFeatures(object = Seurat_PID), approx = FALSE)# approx = F, because: "Hi, this is a warning not an error, just saying that you're running partial SVD but computing most (or all) of the singular values. You can set approx=FALSE to run standard SVD instead."
+all.pathways = rownames(Seurat_PID)
+Seurat_PID = ScaleData(Seurat_PID, features = all.pathways, verbose = FALSE)#scaling 
+Seurat_PID = FindVariableFeatures(object = Seurat_PID)  #to run the PCA, otherwise Error
+Seurat_PID = RunPCA(Seurat_PID, features = VariableFeatures(object = Seurat_PID), approx = FALSE, npcs = 71)# approx = F, because: "Hi, this is a warning not an error, just saying that you're running partial SVD but computing most (or all) of the singular values. You can set approx=FALSE to run standard SVD instead."
 
 print(Seurat_PID[["pca"]], dims = 1:5, nfeatures = 5) #what influences the PCs?
 
 DimPlot(Seurat_PID, reduction = "pca")#plot PCA
 DimHeatmap(Seurat_PID, cells = 300, balance = TRUE) #heatmap for the influence on first PC
 
-Seurat_PID = FindNeighbors(Seurat_PID, dims =1:34)#dims verändern um später unterschieldliche zuornung in UMAP zu haben
+Seurat_PID = FindNeighbors(Seurat_PID, dims =1:7)#patients assign differently to clusters when diffenent number of dims
 Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.2) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
+
 
 #rename the clusters
 cluster.ids = c("cluster1", "cluster2")
@@ -378,19 +379,20 @@ Seurat_PID = RenameIdents(Seurat_PID, cluster.ids)
 Seurat_PID= RunUMAP(Seurat_PID, dims = 1:10) #UMAP
 DimPlot(Seurat_PID, reduction = "umap", label = TRUE, pt.size = 0.5) #umap plot
 
-cluster1.marker = FindMarkers(Seurat_PID, ident.1 = "cluster1", min.pct = 0.25)#find markers --> runs a wilcox beteen clusters to identify markers
+cluster1.marker = FindMarkers(Seurat_PID, ident.1 = "cluster1", min.pct = 0.25)#find markers for cluster 1--> runs a wilcoxon between clusters to identify markers
 VlnPlot(Seurat_PID, features = c(row.names(cluster1.marker)[1:nrow(cluster1.marker)]))#plot the markers
 
 
-Seurat_PID_markers = FindAllMarkers(Seurat_PID, min.pct = 0.25) #fidn markers for all clusters, in our case same as before because we only compare 2 clusters
+Seurat_PID_markers = FindAllMarkers(Seurat_PID, min.pct = 0.25) #find markers for all clusters
 
 Seurat_PID_top_pw = Seurat_PID_markers %>% group_by(cluster) %>% top_n(n =5, wt =avg_log2FC) #top 10 pw that identify clusters (top 5 for each cluster)
-FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with color for pw activity
-
+FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with color for pw activity for top 10
+FeaturePlot(Seurat_PID, features = "PID-CD8-TCR-DOWNSTREAM-PATHWAY")#umap with color for pw activity for one pathway
 
 DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
 
 ```
+
 
 
 
