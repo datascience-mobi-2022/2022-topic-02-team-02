@@ -281,7 +281,7 @@ KIRC_top_pw_t %>%
 
 
 ```{r}
-#try to test on KIRC data fro m TCGA (531 samples)
+#try to test on KIRC data from TCGA (531 samples)
 KIRC_tcga = pathway_activity_matrix %>%
     select(starts_with('KIRC'))
 KIRC_tcga_PID = KIRC_tcga[PID_sigpw,]
@@ -329,6 +329,90 @@ quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
 heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fontsize = 2), width = unit(27, "cm"), height = unit(12, "cm"))
+```
 
+```{r}
+#second logistic regression model based on KIRC TCGA patients
+#KIRC TCGA dataframe with only significant pathways
+PID_sigpw_tcga = c("PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_CD8_TCR_PATHWAY", "PID_IL1_PATHWAY","PID_INTEGRIN_A4B1_PATHWAY","PID_PLK1_PATHWAY", "PID_TCR_PATHWAY")
+
+#extract pathway activity for KIRC TCGA patients for these 6 pathways
+KIRC_tcga_PID_sigpw = KIRC_tcga[PID_sigpw_tcga,]
+
+#add new row according to cluster, if in cluster 1 --> 1, if in cluster 2 --> 0
+cluster_numbers = vector(mode = 'list',ncol(KIRC_tcga_PID_sigpw))
+KIRC_patients_tcga = as.data.frame(colnames(KIRC_tcga_PID_sigpw))
+KIRC_tcga_patients = as.data.frame(str_sub(KIRC_patients_tcga[,1], 6))
+
+for (i in 1:ncol(KIRC_tcga_PID_sigpw)){
+  if (KIRC_tcga_patients[i,] %in% TCGA_c2_KIRC){
+    cluster_numbers[[i]] = 1
+  } else {
+    cluster_numbers[[i]] = 0
+  }
+}
+
+cluster_numbers = list.cbind(cluster_numbers)
+colnames(cluster_numbers) = colnames(KIRC_tcga_PID_sigpw)
+KIRC_tcga_PID_sigpw = rbind(KIRC_tcga_PID_sigpw, cluster_numbers)
+rownames(KIRC_tcga_PID_sigpw)[rownames(KIRC_tcga_PID_sigpw) == "1"] <- "Infiltration"
+#problem: many patients all NES = 0, still in cluster 2, meaning immune infiltrated and "1"
+
+#patients with only zero's for NES
+KIRC_tcga_patients_0 = vector()
+for (i in 1:ncol(KIRC_tcga_PID_sigpw)){
+  if (sum(KIRC_tcga_PID_sigpw[1:6,i]) == 0){
+    KIRC_tcga_patients_0 = append(KIRC_tcga_patients_0, colnames(KIRC_tcga_PID_sigpw)[i])
+  }
+}
+
+KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw))
+
+#try simple logistic test regression
+
+# Null-Modell
+model0_tcga = glm(Infiltration ~ 1, data = KIRC_tcga_PID_sigpw_t)
+summary(model0_tcga)
+
+# Test-Modell
+model1_tcga = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_IL1_PATHWAY + PID_INTEGRIN_A4B1_PATHWAY + PID_PLK1_PATHWAY, data = KIRC_tcga_PID_sigpw_t) #nur signifikante pw genommen (Beitrag leisten)
+summary(model1_tcga)
+
+###Omnibus-Test
+modelchi_tcga = model1_tcga$null.deviance - model1_tcga$deviance
+chidf_tcga = model1_tcga$df.null -model1_tcga$df.residual
+chisqp_tcga = 1 - pchisq(modelchi_tcga, chidf_tcga) # 0.9783 test-Modell leistet keinen signifikanten Erklärungsbeitrag
+
+#noch nicht geändert
+#Gütemaße
+n = length(model1$residuals)
+R2cs = 1-exp((model1$deviance - model1$null.deviance)/n)
+R2n = R2cs/(1-exp(-(model1$null.deviance/n)))
+
+#Predict
+glm_probs = data.frame(probs = predict(model1, type="response"))
+head(glm_probs)
+
+KIRC_top_pw_predict = rbind(KIRC_top_pw, t(glm_probs))
+
+probabilities <- model1 %>% predict(KIRC_top_pw_t, type = "response")
+predicted.classes <- data.frame(ifelse(probabilities > 0.5, "1", "0"))
+colnames(predicted.classes) = "predicted.classes"
+KIRC_top_pw_predict = rbind(KIRC_top_pw_predict, t(predicted.classes))
+#accuracy? 
+mean(predicted.classes == KIRC_top_pw_t$Infiltration) #0.9583333
+
+
+#Plot
+KIRC_top_pw_t %>%
+  mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+  ggplot(aes(PID_CD8_TCR_PATHWAY, prob)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+  labs(
+    title = "Logistic Regression Model", 
+    x = "PID_CD8_TCR_PATHWAY activity",
+    y = "Probability of immune infiltration"
+    )
 ```
 
