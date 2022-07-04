@@ -1,0 +1,32 @@
+---
+title: "KIRC_kidney_pw_Anna"
+author: "Anna von Bachmann"
+date: '2022-07-04'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r}
+#Load data
+kidney_pathways <- readRDS("~/GitHub/2022-topic-02-team-02/data/Kidney_pathways.RDS")
+```
+
+
+```{r}
+kidney_pw_mean = data.frame(apply(kidney_pathways, 1, mean))
+kidney_names = c(rownames(kidney_pathways))
+kidney_pw_mean_names = data.frame(cbind(kidney_names, kidney_pw_mean))
+colnames(kidney_pw_mean_names) = c( "pathway", "mean_NES")
+
+ggplot(kidney_pw_mean_names, aes(x=reorder(pathway, mean_NES), y=mean_NES)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("kidney pathways mean NES")+
+  theme(plot.title = element_text(size=10))
+```
+
+
