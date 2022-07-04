@@ -88,10 +88,15 @@ ggplot (data =KIRC_PID_UMAP,
                     aes(x = X1, y = X2 , color = KIRC_gender_Umap))+
   geom_point(size = 1)
 
+#OS	Overall Survival, 0 = alive, 1 = death from any cause, 
+#(Time (not visualized): overall survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
 KIRC_OS = KIRC_annot$OS
 ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_OS))+
   geom_point(size = 1)
+
+#DSS   Disease-Specific Survival (Approximate for most tumor types, not 100% accurate definition), 0 = alive, 1 =  patient whose vital_status was Dead and tumor_status was WITH TUMOR or If patient died from the disease shown in field of cause_of_death., 
+#(Time (not visualized): disease-specific survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
 
 KIRC_DSS = KIRC_annot$DSS
 ggplot (data =KIRC_PID_UMAP, 
@@ -101,6 +106,20 @@ ggplot (data =KIRC_PID_UMAP,
 KIRC_tumorstage = KIRC_annot$ajcc_pathologic_tumor_stage
 ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_tumorstage))+
+  geom_point(size = 1)
+
+
+#PFI	Progression-Free Interval (Relatively accurate, PFI is preferred over OS due to relatively short follow-up time), 0 = censored otherwise, 1 = patient having new tumor event whether it was a progression of disease, local recurrence, distant metastasis, new primary tumors all sites , or died with the cancer without new tumor event, including cases with a new tumor event whose type is N/A. 
+#Time: progression-free interval time in days, for events, either new_tumor_event_dx_days_to or death_days_to,  whichever is applicable; or for censored cases, either last_contact_days_to or death_days_to, whichever is applicable.
+
+KIRC_PFI_time = KIRC_annot$PFI_time
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_PFI_time))+
+  geom_point(size = 1)
+
+KIRC_PFI = KIRC_annot$PFI
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_PFI))+
   geom_point(size = 1)
 
 KIRC_PID_t = data.frame(t(KIRC_PID_cl))
