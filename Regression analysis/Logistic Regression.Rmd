@@ -336,6 +336,8 @@ Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fo
 #KIRC TCGA dataframe with only significant pathways
 PID_sigpw_tcga = c("PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_CD8_TCR_PATHWAY", "PID_IL1_PATHWAY","PID_INTEGRIN_A4B1_PATHWAY","PID_PLK1_PATHWAY", "PID_TCR_PATHWAY")
 
+PID_immune_pathways
+
 #extract pathway activity for KIRC TCGA patients for these 6 pathways
 KIRC_tcga_PID_sigpw = KIRC_tcga[PID_sigpw_tcga,]
 
@@ -358,15 +360,21 @@ KIRC_tcga_PID_sigpw = rbind(KIRC_tcga_PID_sigpw, cluster_numbers)
 rownames(KIRC_tcga_PID_sigpw)[rownames(KIRC_tcga_PID_sigpw) == "1"] <- "Infiltration"
 #problem: many patients all NES = 0, still in cluster 2, meaning immune infiltrated and "1"
 
+#compare cluster number to prediction with regression model based on small data KIRC (tumor vs normal)
+KIRC_tcga_PID_sigpw_pred = rbind(KIRC_tcga_PID_sigpw, predicted.classes_2)
+#accuracy of model1?
+mean(KIRC_tcga_PID_sigpw_pred[7,] == KIRC_tcga_PID_sigpw_pred[8,]) #38,79 %..
+
 #patients with only zero's for NES
 KIRC_tcga_patients_0 = vector()
 for (i in 1:ncol(KIRC_tcga_PID_sigpw)){
-  if (sum(KIRC_tcga_PID_sigpw[1:6,i]) == 0){
+  if ((sum(KIRC_tcga_PID_sigpw[1:6,i]) == 0) && (KIRC_tcga_PID_sigpw["Infiltration",i] == "1")){
     KIRC_tcga_patients_0 = append(KIRC_tcga_patients_0, colnames(KIRC_tcga_PID_sigpw)[i])
   }
 }
 
-KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw))
+KIRC_tcga_PID_sigpw_cl = KIRC_tcga_PID_sigpw[, !(colnames(KIRC_tcga_PID_sigpw) %in% KIRC_tcga_patients_0)]
+KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw_cl))
 
 #try simple logistic test regression
 
@@ -381,38 +389,40 @@ summary(model1_tcga)
 ###Omnibus-Test
 modelchi_tcga = model1_tcga$null.deviance - model1_tcga$deviance
 chidf_tcga = model1_tcga$df.null -model1_tcga$df.residual
-chisqp_tcga = 1 - pchisq(modelchi_tcga, chidf_tcga) # 0.9783 test-Modell leistet keinen signifikanten Erklärungsbeitrag
-
-#noch nicht geändert
-#Gütemaße
-n = length(model1$residuals)
-R2cs = 1-exp((model1$deviance - model1$null.deviance)/n)
-R2n = R2cs/(1-exp(-(model1$null.deviance/n)))
-
-#Predict
-glm_probs = data.frame(probs = predict(model1, type="response"))
-head(glm_probs)
-
-KIRC_top_pw_predict = rbind(KIRC_top_pw, t(glm_probs))
-
-probabilities <- model1 %>% predict(KIRC_top_pw_t, type = "response")
-predicted.classes <- data.frame(ifelse(probabilities > 0.5, "1", "0"))
-colnames(predicted.classes) = "predicted.classes"
-KIRC_top_pw_predict = rbind(KIRC_top_pw_predict, t(predicted.classes))
-#accuracy? 
-mean(predicted.classes == KIRC_top_pw_t$Infiltration) #0.9583333
-
-
-#Plot
-KIRC_top_pw_t %>%
-  mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
-  ggplot(aes(PID_CD8_TCR_PATHWAY, prob)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(method = "glm", method.args = list(family = "binomial")) +
-  labs(
-    title = "Logistic Regression Model", 
-    x = "PID_CD8_TCR_PATHWAY activity",
-    y = "Probability of immune infiltration"
-    )
+chisqp_tcga = 1 - pchisq(modelchi_tcga, chidf_tcga) # 0.97 test-Modell leistet keinen signifikanten Erklärungsbeitrag
 ```
+
+```{r}
+#try with gene expression?
+PID_CD8_TCR_DOWNSTREAM_GENES = metabolic_genesets_PID_cl[["PID_CD8_TCR_DOWNSTREAM_PATHWAY"]]
+KIRC_tcga_exp_PIDgenes = tcga_exp_KIRC[PID_CD8_TCR_DOWNSTREAM_GENES,] #81 genes
+KIRC_tcga_exp_PIDgenes = na.omit(KIRC_tcga_exp_PIDgenes) #32 genes
+cluster_numbers_tcga = cluster_numbers
+colnames(cluster_numbers_tcga) = colnames(KIRC_tcga_exp_PIDgenes)
+KIRC_tcga_exp_PIDgenes = rbind(KIRC_tcga_exp_PIDgenes, cluster_numbers_tcga)
+rownames(KIRC_tcga_exp_PIDgenes)[rownames(KIRC_tcga_exp_PIDgenes) == "1"] <- "Infiltration"
+
+KIRC_tcga_exp_PIDgenes_t = as.data.frame(t(KIRC_tcga_exp_PIDgenes))
+
+
+#try simple logistic test regression
+
+# Null-Modell
+model0_tcga_genes = glm(Infiltration ~ 1, data = KIRC_tcga_exp_PIDgenes_t)
+summary(model0_tcga_genes)
+
+# Test-Modell
+model1_tcga_genes = glm(Infiltration ~  ENSG00000138378 + ENSG00000049249, data = KIRC_tcga_exp_PIDgenes_t) #nur signifikante pw genommen (Beitrag leisten)
+summary(model1_tcga_genes)
+
+###Omnibus-Test
+modelchi_tcga_genes = model1_tcga_genes$null.deviance - model1_tcga_genes$deviance
+chidf_tcga_genes = model1_tcga_genes$df.null -model1_tcga_genes$df.residual
+chisqp_tcga_genes = 1 - pchisq(modelchi_tcga_genes, chidf_tcga_genes) # 0.53 test-Modell leistet keinen signifikanten Erklärungsbeitrag
+
+
+#sig : (ENSG00000172116, mit dem nicht signifikant), ENSG00000138378 (STAT4 =  increases the Th1 cells differentiation, cytotoxicity and IFNγ production of immune cells), ENSG00000049249(TNF receptor superfamily member 9, for CD8+ T cell activation)
+
+```
+
 
