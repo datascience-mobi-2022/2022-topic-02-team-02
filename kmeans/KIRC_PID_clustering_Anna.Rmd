@@ -75,18 +75,39 @@ ggplot (data = KIRC_PID_UMAP,
                     aes(x = X1, y = X2))+
   geom_point(size = 2)
 
-#plot with colors for gender
-
-KIRC_tumorstatus = KIRC_annot$tumor_status
-KIRC_gender_Umap = KIRC_annot$gender  #vector for coloring 
+#UMAP plot with colors form annotation matrix or pw activity (gender, tumorstatus,...)
 KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
 
+KIRC_tumorstatus = KIRC_annot$tumor_status
 ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_tumorstatus))+
   geom_point(size = 1)
 
+KIRC_gender_Umap = KIRC_annot$gender  
 ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_gender_Umap))+
+  geom_point(size = 1)
+
+KIRC_OS = KIRC_annot$OS
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_OS))+
+  geom_point(size = 1)
+
+KIRC_DSS = KIRC_annot$DSS
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_DSS))+
+  geom_point(size = 1)
+
+KIRC_tumorstage = KIRC_annot$ajcc_pathologic_tumor_stage
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_tumorstage))+
+  geom_point(size = 1)
+
+KIRC_PID_t = data.frame(t(KIRC_PID_cl))
+KIRC_TCR = KIRC_PID_t$PID_TCR_PATHWAY
+KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
   geom_point(size = 1)
 ```
 
