@@ -216,4 +216,19 @@ ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y
   
 #ACC,BLCA,BRCA,CESC,CHOL,COAD,DLBC,ESCA,GBM,HNSC,KICH,KIRC,KIRP,LAML,LGG,LIHC,LUAD,LUSC,MESO,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC,UCS,UVM
 ```
+```{r}
+d = (dist(t(mean_all))
+ggdendrogram(hclust(d, method = "ward.D2"))
+h
+library(ggdendro)
+
+f = as.matrix(mean_all)
+n = RunPCA(f, npcs = 32)
+u =data.frame(uwot::umap(n@cell.embeddings))
+ggplot (data = u,
+  aes (x = X1, y =X2, color = "blue")) + 
+    geom_point(size = 0.5 , color = "blue")
+z = kmeans(u, centers   = 5)
+h = fviz_cluster()
+```
 
