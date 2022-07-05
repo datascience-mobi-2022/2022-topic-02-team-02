@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
 ```
 
 ```{r}
@@ -88,9 +89,24 @@ UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
 UMAP_exp_KIRC = data.frame(UMAP_exp[cancer_types == "KIRC",])
 UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), 
                     aes(x = V1, y= V2, color = cancer_types))+
+  geom_point(size = 2) 
+UMAP_plot
+
+#try out ggrepel 
+library(ggrepel)
+ggplot(data = as.data.frame(UMAP_exp), 
+       aes(x = V1, y= V2, label = cancer_types, color = cancer_types)) +
+  geom_text_repel(max.overlaps = 200) +
+  geom_point() #too many overlaps -> increase max.overlaps?
+
+#plot KIRC in black
+UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
+UMAP_exp_KIRC = data.frame(UMAP_exp[cancer_types == "KIRC",])
+UMAP_plot_black = ggplot (data = as.data.frame(UMAP_exp), 
+                    aes(x = V1, y= V2, color = cancer_types))+
   geom_point(size = 2) +
   geom_point(data= UMAP_exp_KIRC , aes(x = X1, y = X2), color = "black")
-UMAP_plot
+UMAP_plot_black
 
 #kirc in different color
 UMAP_plot_1 = ggplot (data = as.data.frame(UMAP_exp), 
@@ -126,7 +142,7 @@ sapply(1:33, function(i){
 ```
 
 
-```{r}#
+```{r}
 
 #find optimal clusternumber
 library(ggpubr)
@@ -135,6 +151,7 @@ library(factoextra)
 kmeans(UMAP_exp, centers= 20, nstart = 50)##
 # for 4 centers
 km.4 = kmeans(UMAP_exp, centers= 20, nstart = 50)
+km.4
 
 fviz_cluster(km.4, data.frame(UMAP_exp),
              geom = "point",
@@ -148,7 +165,7 @@ tcga_UMAP_kmeans_tw = sapply(1:20, function(k){
   kmeans(x = UMAP_exp , centers = k, nstart = 50 )$tot.withinss})
 
 #elbow plot
-plot(tcga_UMAP_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
+umap_elbow = plot(tcga_UMAP_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
 umap_elbow
 
 
