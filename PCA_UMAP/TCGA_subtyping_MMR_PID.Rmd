@@ -26,6 +26,7 @@ library(cluster)
 library(ggpubr)
 library(factoextra)
 library(scrime)
+library("factoextra")
 set.seed(69)
 ```
 
@@ -240,7 +241,7 @@ names(PID_c1_c2_dif_rank_df) = cancer_abc
 probek = data.matrix(rowScales(TCGA_pw_PID$KIRC)) 
 remove.dots = function(df){colnames(df) = sub(".","-",colnames(df));df}
 colnames(probek) = colnames(TCGA_pw_PID$KIRC)
-}
+
 
 PID_c1k = probek[,which(colnames(probek)%in%cluster1_PID$KIRC)]
 PID_c2k = probek[,which(colnames(probek)%in%cluster2_PID$KIRC)]
@@ -315,7 +316,61 @@ alpha_PID=0.05/(nrow(PID_wilcox_pv[[i]]))
 for (i in (1:length(UMAP_PID))){
   PID_wilcox_pv[[i]][is.nan(PID_wilcox_pv[[i]])] = 1
 }
+
 ```
+
+
+```{r alternative tests}
+##H-test 
+H_prep = data.frame()
+H_total = list()
+H_cluster1 = c()
+H_cluster2 = c()
+H_c1c2 = c()
+for(i in (1:length(UMAP_PID))){
+  H_cluster1 = c(rep(c(1),times = ncol(PID_c1_patients[[i]])))
+  H_cluster2 = c(rep(c(2),times = ncol(PID_c2_patients[[i]])))
+  H_c1c2 = c(H_cluster1,H_cluster2)
+  H_prep = cbind(PID_c1_patients[[i]],PID_c2_patients[[i]])
+  H_total[[i]] = data.frame(rbind(H_prep,H_c1c2))
+  
+}
+View(H_total)
+names(H_total) = cancer_abc
+for (i in 1:length(UMAP_PID)){
+  rownames(H_total[[i]][89,]) = c("Cluster")
+}
+View(H_total$KIRC)
+H_pv = data.frame()
+for(i in (1:nrow(H_total$KIRC)-1)){
+p = as.numeric(H_total$KIRC[i,])
+f = as.numeric(H_total$KIRC[89,])
+H_pv[i,] = kruskal.test(x = p, g =f)}
+
+
+p = as.numeric(H_total$KIRC[87,])
+f = as.numeric(H_total$KIRC[89,])
+y = kruskal.test(x = p, g =f)
+
+#same results as wilcoxon
+
+#try ks test
+PID_ks_pv = list()
+for (i in (1:length(UMAP_PID))){
+  v = as.matrix(PID_c1_patients[[i]])
+  b = as.matrix(PID_c2_patients[[i]])
+  PID_ks_pv[[i]] = data.matrix(sapply(1:nrow(v), function(x){
+    ks.test(v[x,],b[x,], alternative = "two.sided")
+  }$p.value))
+  rownames(PID_ks_pv[[i]]) = rownames(PID_c1_patients[[i]])
+  colnames(PID_ks_pv[[i]]) = "pvalue"
+}
+names(PID_ks_pv) = cancer_abc
+View(PID_ks_pv$KIRC)
+#ks test appears to work!!
+```
+
+
 
 ```{r pv cutoff}
 PID_wilcox_pv_log = list()
@@ -388,71 +443,163 @@ View(PID_dif_sig_0)
 cancer_sig = c("ACC","CHOL","DLBC","KICH","MESO","READ","TGCT","UVM")
 names(PID_dif_sig_0) = cancer_sig
 ```
-
-```{r try p adjust function}
-## beginning
-
-PID_wilcox_pv_BH = list()
+```{r p value cutoff ks test}
+PID_ks_pv_log = list()
 for (i in (1:length(UMAP_PID))){
-f = c(PID_wilcox_pv[[i]])
-PID_wilcox_pv_BH[[i]] = p.adjust(f, method ="bonferroni", n = length(f))
+  a = PID_ks_pv[[i]]
+  PID_ks_pv_log[[i]] = -log10(a)
+  colnames(PID_ks_pv_log[[i]]) = "neg_log10_pv"
 }
-names(PID_wilcox_pv_BH) = cancer_abc
+names(PID_ks_pv_log) = cancer_abc
 
-PID_pv_dif1 = list()
+
+for (i in (1:length(UMAP_PID))){
+  PID_ks_pv_log[[i]][PID_ks_pv_log[[i]] == Inf] = 0
+}
+
+#combine FC and pv matrix
+PID_ks_pv_dif = list()
 for (i in (1:length(UMAP_PID))){
   a = PID_c1_c2_dif[[i]]
-  b = PID_wilcox_pv_BH[[i]]
-  PID_pv_dif1[[i]] = as.data.frame(cbind(a,b))
-  colnames(PID_pv_dif1[[i]]) = c("Difference","neg_log10_pv")
+  b = PID_ks_pv_log[[i]]
+  PID_ks_pv_dif[[i]] = as.data.frame(cbind(a,b))
+  colnames(PID_ks_pv_dif[[i]]) = c("Difference","neg_log10_pv")
 }
-names(PID_pv_dif1) = cancer_abc
+names(PID_ks_pv_dif) = cancer_abc
 
 #extracting sign differently expressed genes (pvalue > cutoff) 
+cutoffpv_PID = -log10(alpha_PID)
 
-PID_pv_dif_sig1 = list()
+PID_ks_pv_dif_sig = list()
 for (i in (1:length(UMAP_PID))){
-  a = PID_pv_dif1[[i]]
-  PID_pv_dif_sig1[[i]] = a[which(a$neg_log10_pv>0.05),]
+  a = PID_ks_pv_dif[[i]]
+  PID_ks_pv_dif_sig[[i]] = a[which(a$neg_log10_pv>cutoffpv_PID),]
 }
-names(PID_pv_dif_sig1) = cancer_abc
-
+names(PID_ks_pv_dif_sig) = cancer_abc
 
 #upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
-PID_pv_dif_sigup1 = list()
+PID_ks_pv_dif_sigup = list()
 for (i in (1:length(UMAP_PID))){
- t = PID_pv_dif_sig1[[i]]
- PID_pv_dif_sigup1[[i]] = t[which(abs(t[,1])>0),]
+ t = PID_ks_pv_dif_sig[[i]]
+ PID_ks_pv_dif_sigup[[i]] = t[which(abs(t[,1])>0),]
 }
-names(PID_pv_dif_sigup1) = cancer_abc
+names(PID_ks_pv_dif_sigup) = cancer_abc
+
+PID_ks_dif_sig = list()
+for (i in (1:length(UMAP_PID))){
+t = PID_ks_pv_dif_sig[[i]]$Difference
+PID_ks_dif_sig[[i]] = data.frame(t)
+}
+names(PID_ks_dif_sig) = cancer_abc
+View(PID_ks_dif_sig$ACC)
+
+PID_ks_dif_sig_names = list()
+for (i in (1:length(UMAP_PID))){
+ t = c(rownames(PID_ks_pv_dif_sig[[i]]))
+ PID_ks_dif_sig_names [[i]] = t
+}
+names(PID_ks_dif_sig_names) = cancer_abc
 
 
 for (i in (1:length(UMAP_PID))){
-t = PID_pv_dif_sig1[[i]]$Difference
-PID_dif_sig1[[i]] = data.frame(t)
+ r = PID_ks_dif_sig_names[[i]]
+ u = PID_ks_dif_sig[[i]]
+ PID_ks_dif_sig[[i]] = cbind(r,u)
+ colnames(PID_ks_dif_sig[[i]]) = c("Pathway", "Difference")
+ View(PID_ks_dif_sig)
 }
-names(PID_dif_sig1) = cancer_abc
+```
 
 
-PID_dif_sig_names1 = list()
+```{r padjust for ks test}
+
+f = as.numeric(PID_ks_pv$KIRC)
+v = p.adjust(f, method = "BH")
+
+PID_ks_pv_BH = list()
 for (i in (1:length(UMAP_PID))){
- t = c(rownames(PID_pv_dif_sig1[[i]]))
- PID_dif_sig_names1[[i]] = t
+f = c(PID_ks_pv[[i]])
+PID_ks_pv_BH[[i]] = p.adjust(f, method ="BH")
 }
-names(PID_dif_sig_names1) = cancer_abc
+names(PID_ks_pv_BH) = cancer_abc
+
+
+names(PID_ks_pv_log) = cancer_abc
+PID_ks_pv_BH_log = list()
+for (i in (1:length(UMAP_PID))){
+  a = as.matrix(PID_ks_pv_BH[[i]])
+  PID_ks_pv_BH_log[[i]] = -log10(a)
+   colnames(PID_ks_pv_BH_log[[i]]) = "neg_log10_pv"
+}
+names(PID_ks_pv_BH_log) = cancer_abc
 
 
 for (i in (1:length(UMAP_PID))){
- r = PID_dif_sig_names1[[i]]
- u = PID_dif_sig1[[i]]
- PID_dif_sig1[[i]] = cbind(r,u)
- colnames(PID_dif_sig1[[i]]) = c("Pathway", "Difference")
+  PID_ks_pv_BH_log[[i]][PID_ks_pv_log[[i]] == Inf] = 0
 }
 
-View(PID_dif_sig1)
+#combine FC and pv matrix
+PID_ks_pv_dif_BH = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_c1_c2_dif[[i]]
+  b = PID_ks_pv_BH_log[[i]]
+  PID_ks_pv_dif_BH[[i]] = as.data.frame(cbind(a,b))
+  colnames(PID_ks_pv_dif_BH[[i]]) = c("Difference","neg_log10_pv")
+}
+names(PID_ks_pv_dif_BH) = cancer_abc
+
+#extracting sign differently expressed genes (pvalue > cutoff) 
+cutoffpv_PID_BH = -log10(0.05)
+
+PID_ks_pv_dif_sig_BH = list()
+for (i in (1:length(UMAP_PID))){
+  a = PID_ks_pv_dif_BH[[i]]
+  PID_ks_pv_dif_sig_BH[[i]] = a[which(a$neg_log10_pv>cutoffpv_PID_BH),]
+}
+names(PID_ks_pv_dif_sig_BH) = cancer_abc
+
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_ks_pv_dif_sigup_BH = list()
+for (i in (1:length(UMAP_PID))){
+ t = PID_ks_pv_dif_sig_BH[[i]]
+ PID_ks_pv_dif_sigup_BH[[i]] = t[which(abs(t[,1])>0),]
+}
+names(PID_ks_pv_dif_sigup_BH) = cancer_abc
+
+PID_ks_dif_sig_BH = list()
+for (i in (1:length(UMAP_PID))){
+t = PID_ks_pv_dif_sig_BH[[i]]$Difference
+PID_ks_dif_sig_BH[[i]] = data.frame(t)
+}
+names(PID_ks_dif_sig_BH) = cancer_abc
+View(PID_ks_dif_sig_BH$KIRC)
+
+PID_ks_dif_sig_names_BH = list()
+for (i in (1:length(UMAP_PID))){
+ t = c(rownames(PID_ks_pv_dif_sig_BH[[i]]))
+ PID_ks_dif_sig_names_BH[[i]] = t
+}
+names(PID_ks_dif_sig_names_BH) = cancer_abc
 
 
-## end 
+for (i in (1:length(UMAP_PID))){
+ r = PID_ks_dif_sig_names_BH[[i]]
+ u = PID_ks_dif_sig_BH[[i]]
+ PID_ks_dif_sig_BH[[i]] = cbind(r,u)
+ colnames(PID_ks_dif_sig_BH[[i]]) = c("Pathway", "Difference")
+}
+
+
+x = list()
+for (i in (1:length(UMAP_PID))){
+x[[i]] = which(nrow(PID_ks_dif_sig_BH[[i]])==0)
+}
+names(x) = cancer_abc
+c = names(which(x == "integer(0)"))
+PID_ks_dif_sig_BH_0 = PID_ks_dif_sig_BH[names(PID_ks_dif_sig_BH)%in%c]
+cancer_sigBH = names(PID_ks_dif_sig_BH_0)
+kirc_names = c((PID_ks_dif_sig_BH_0$KIRC[,1]))
+
 ```
 
 
@@ -471,7 +618,7 @@ for (i in (1:length(PID_dif_sig_0))){
 names(PID_dif_plot) = cancer_sig
 ggarrange(plotlist=PID_dif_plot)
 
-plotlist1234 = list(PID_dif_plot$ACC,PID_dif_plot$CHOL,PID_dif_plot$DLBC,PID_dif_plot$KICH)
+plotlist1234 = list(PID_dif_plot$ACC,PID_dif_plot$CHOL,PID_dif_plot$DLBC,PID_dif_plot$KIRC)
 ggarrange(plotlist = plotlist1234)
   
 l = PID_dif_sig$ACC
@@ -481,5 +628,83 @@ ggplot(l, aes(x=reorder(Pathway,Difference), y=Difference)) +
   ggtitle("PID pw with signif different NES in 2 KIRC clusters")+
   theme(plot.title = element_text(size=10))
 
+```
+
+```{r plot significant pathways (BH)}
+PID_dif_plot_BH = list()
+for (i in (1:length(PID_ks_dif_sig_BH_0))){
+  g = PID_ks_dif_sig_BH_0[[i]]
+  PID_dif_plot_BH[[i]] = ggplot(g, aes(x=reorder(Pathway,Difference), y=Difference)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle(cancer_sigBH[[i]])+
+  theme(plot.title = element_text(size=10))
+}
+names(PID_dif_plot_BH) = cancer_sigBH
+p123 = list(PID_dif_plot_BH$ACC,PID_dif_plot_BH$BLCA,PID_dif_plot_BH$BRCA,PID_dif_plot_BH$CESC,PID_dif_plot_BH$CHOL,PID_dif_plot_BH$COAD,PID_dif_plot_BH$HNSC,PID_dif_plot_BH$KICH,PID_dif_plot_BH$KIRC)
+p345 = list(PID_dif_plot_BH$KIRP,PID_dif_plot_BH$LAML,PID_dif_plot_BH$LGG,PID_dif_plot_BH$LIHC,PID_dif_plot_BH$LUAD,PID_dif_plot_BH$LUSC,PID_dif_plot_BH$MESO,PID_dif_plot_BH$OV)
+p567 = list(PID_dif_plot_BH$PAAD,PID_dif_plot_BH$PCPG,PID_dif_plot_BH$PRAD,PID_dif_plot_BH$READ,PID_dif_plot_BH$SARC,PID_dif_plot_BH$SKCM,PID_dif_plot_BH$STAD,PID_dif_plot_BH$TGCT,PID_dif_plot_BH$THCA,PID_dif_plot_BH$THYM,PID_dif_plot_BH$UCEC)
+ggarrange(plotlist = p567)
+
+
+ggarrange(plotlist=PID_dif_plot_BH,ncol = 4,nrow = 7,widths = c(0.5,0.5),heights = c(0.5,0.5))
+```
+
+
+```{r Seurat}
+KIRC = NES_OVERALL_PID_cl[[12]]
+KIRC_PID_pca = prcomp(t(KIRC))#center = F, scale. = F???
+length(KIRC_PID_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
+
+#dataframe with PCs (resulting from pathways) and patients
+KIRC_PID_pca_x = data.frame(KIRC_PID_pca[["x"]])
+
+library("factoextra")
+KIRC_PID_pca_eigval = get_eigenvalue(KIRC_PID_pca)
+rownames(KIRC_PID_pca_eigval) = colnames (KIRC_PID_pca_x)
+barplot(KIRC_PID_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
+
+KIRC_PCA_x1=data.frame(KIRC_PID_pca_x)
+Seurat_PID = CreateSeuratObject(counts= KIRC)#create a Seurat object wiht the data, this object will be filled by the following commands (PCA;UMAP;clustering...)
+VlnPlot(Seurat_PID, features = c("PID-TCR-PATHWAY"))
+
+all.pathways = rownames(Seurat_PID)
+Seurat_PID = ScaleData(Seurat_PID, features = all.pathways, verbose = FALSE)#scaling 
+Seurat_PID = FindVariableFeatures(object = Seurat_PID)  #to run the PCA, otherwise Error
+Seurat_PID = RunPCA(Seurat_PID, features = VariableFeatures(object = Seurat_PID), approx = FALSE, npcs = 71)# approx = F, because: "Hi, this is a warning not an error, just saying that you're running partial SVD but computing most (or all) of the singular values. You can set approx=FALSE to run standard SVD instead."
+
+print(Seurat_PID[["pca"]], dims = 1:5, nfeatures = 5) #what influences the PCs?
+
+DimPlot(Seurat_PID, reduction = "pca")#plot PCA
+DimHeatmap(Seurat_PID, cells = 300, balance = TRUE) #heatmap for the influence on first PC
+
+Seurat_PID = FindNeighbors(Seurat_PID, dims =1:7)#patients assign differently to clusters when diffenent number of dims
+Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.2) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
+
+
+#rename the clusters
+cluster.ids = c("cluster1", "cluster2")
+names(cluster.ids) = levels(Seurat_PID) 
+Seurat_PID = RenameIdents(Seurat_PID, cluster.ids)
+
+
+
+Seurat_PID= RunUMAP(Seurat_PID, dims = 1:10) #UMAP
+DimPlot(Seurat_PID, reduction = "umap", label = TRUE, pt.size = 0.5) #umap plot
+
+cluster1.marker = FindMarkers(Seurat_PID, ident.1 = "cluster1", min.pct = 0.25)#find markers for cluster 1--> runs a wilcoxon between clusters to identify markers
+VlnPlot(Seurat_PID, features = c(row.names(cluster1.marker)[1:nrow(cluster1.marker)]))#plot the markers
+
+
+Seurat_PID_markers = FindAllMarkers(Seurat_PID, min.pct = 0.25) #find markers for all clusters
+
+Seurat_PID_top_pw = Seurat_PID_markers %>% group_by(cluster) %>% top_n(n =5, wt =avg_log2FC) #top 10 pw that identify clusters (top 5 for each cluster)
+FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with color for pw activity for top 10
+FeaturePlot(Seurat_PID, features = "PID-CD8-TCR-DOWNSTREAM-PATHWAY")#umap with color for pw activity for one pathway
+
+DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
+```
+```{r}
+pie(x = c(5735,2301,1633), col = c("pink","lightblue","orange"),labels = c("Immuninfiltration","Immunsupression","Neutral"))
 ```
 

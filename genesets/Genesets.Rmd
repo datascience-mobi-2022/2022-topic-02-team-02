@@ -218,7 +218,17 @@ for (i in 1:length(peng_pathways)){
   PENG_pathways[[i]] = m
 }
 names(PENG_pathways) = names(peng_pathways)
+```
 
-
+```{r}
+#Jaccard index for ALL used pathways:
+#hallmarks, KEGG, PID, MMR, PENG
+all_genesets = c(metabolic_genesets_H, metabolic_genesets_KEGG, metabolic_genesets_PID_cl, MMR, PENG_pathways)
+#compute jaccard index
+go_matrix_alle = newGOM(all_genesets, all_genesets)
+go_jaccard_alle = getMatrix(go_matrix_alle, "Jaccard")
+diag(go_jaccard_alle) = 0
+heatmap(go_jaccard_alle, Rowv = NA, Colv = NA)
+Heatmap(go_jaccard_alle, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 2))
 ```
 

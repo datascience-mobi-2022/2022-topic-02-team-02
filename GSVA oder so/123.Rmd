@@ -5,7 +5,19 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-set.seed(69)
+```
+
+
+```{r}
+NES_OVERALL_PID1 = list()
+PID_names = colnames(KIRC_GSEA_activity_PID)
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+  NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_PID[[j]][[k]][,6]
+    NES_OVERALL_PID1[[j]][1:length(metabolic_genesets_PID),k] = t
+  }}}
 ```
 
 

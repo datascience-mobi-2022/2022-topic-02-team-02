@@ -128,4 +128,39 @@ ggvenn(
   stroke_size = 0.5, set_name_size = 4
   )
 ```
-#for the uncleaned data
+# for KIRC data set
+```{r KIRC data}
+#load data
+KIRC_tumor_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_KIRC_tumor_cl.rds")
+
+KIRC_cl_genes = rownames(KIRC_tumor_cl)
+
+#create a list with the genesets that will be compared
+KIRC_genesets_cl = list(KEGG_genes, PID_cl_genes, KIRC_cl_genes, hallmarks_genes)
+names(KIRC_genesets_cl) = c("KEGG", "PID_cl", "KIRC_cl", "hallmarks")
+ggvenn(
+  KIRC_genesets_cl, 
+  fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
+  stroke_size = 0.5, set_name_size = 4
+  )
+
+KIRC_genesets_cl_KEGG_PID_tcga = list(KEGG_genes, PID_cl_genes, KIRC_cl_genes)#only KEGG, PID, tcga
+names(KIRC_genesets_cl_KEGG_PID_tcga) = c("KEGG", "PID_cl", "KIRC_cl")
+ggvenn(
+  KIRC_genesets_cl_KEGG_PID_tcga, 
+  fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
+  stroke_size = 0.5, set_name_size = 4
+  )
+
+
+KIRC_genesets_cl_PID_tcga =list(PID_cl_genes, KIRC_cl_genes)
+names(KIRC_genesets_cl_PID_tcga)=c("PID_cl", "KIRC_cl")#only PID, tcga
+ggvenn(
+  KIRC_genesets_cl_PID_tcga,
+  fill_color = c("lightblue", "lightgrey"),
+  stroke_size = 0.5, set_name_size = 4
+  )
+
+
+```
+
