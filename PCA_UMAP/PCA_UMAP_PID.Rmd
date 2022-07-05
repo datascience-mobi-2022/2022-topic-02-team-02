@@ -10,9 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(69)
 ```
 ```{r}
+#load packages
+library(Seurat)
+library(ggplot2)
+library(umap)
 #PCA and UMAP over mean pathway activity matrix for PID 
 
-#NES_mean_PID = readRDS("../data/NES_mean_PID.RDS")
+NES_mean_PID = readRDS("../data/NES_mean_PID.RDS")
 
 PCA_NES_PID_mean = RunPCA(as.matrix(NES_mean_PID), npcs = 32)
 UMAP_NES_PID_mean = uwot::umap(PCA_NES_PID_mean@cell.embeddings)
@@ -226,6 +230,7 @@ UMAP_MMR_black
 #UMAP over PID pathways
 NES_OVERALL_PID_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
 
+library(rlist)
 NES_OVERALL_PID_cl_bound = list.cbind(NES_OVERALL_PID_cl)
 
 mean_nes_PID = rowMeans(NES_OVERALL_PID_cl_bound)
@@ -250,12 +255,6 @@ plot_umap_PID_black = ggplot (data = data.frame(umap_umap_PID_layout),
   geom_point(data = UMAP_PID_KIRC, aes(x = X1, y = X2), color = "black") +
   ggtitle("UMAP over PID pathways", "KIRC = black")
 plot_umap_PID_black
-
-UMAP_plot_black = ggplot (data = as.data.frame(UMAP_exp), 
-                    aes(x = V1, y= V2, color = cancer_types))+
-  geom_point(size = 2) +
-  geom_point(data= UMAP_exp_KIRC , aes(x = X1, y = X2), color = "black") 
-UMAP_plot_black
 ```
 
 ```{r}
@@ -289,10 +288,37 @@ UMAP_KEGG_black = ggplot (data = as.data.frame(UMAP_KEGG_mat),
 UMAP_KEGG_black
 ```
 
+```{r}
+#further investigation of PID clusters
+#find optimal cluster number
+library(ggpubr)
+library(factoextra)
+
+km_PID = kmeans(umap_umap_PID_layout, centers= 2, nstart = 50)
+
+fviz_cluster(km_PID, data.frame(umap_umap_PID_layout),
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+
+km_PID_20 = kmeans (umap_umap_PID_layout, centers = 20, nstart = 50)
+
+#elbow plot
+km_PID_tw = sapply(1:20, function(k){
+  kmeans(x = umap_umap_PID_layout, centers = k, nstart = 50 )$tot.withinss})
+
+km_PID_elbow = plot(km_PID_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
+
+#find the optimal number clusters, silhouette plot (average silhouette width)
+library(cluster)
+fviz_nbclust(umap_umap_PID_layout, kmeans, method='silhouette') #-> opt. cluster = 2
+```
+```
 
 
 
-```#{r}
+```{r}
 #überarbeiten 
 NES_OVERALL_PID_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
 
@@ -369,5 +395,6 @@ UMAP_NES_PID_right_plot = ggplot (data = data.frame(UMAP_NES_PID_right_l),
 
 
 #einfärben: bis inklusive Punkt die Namen der Patienten (rows) entfernen und dann einfärben über Annotationen
+
 ```
 
