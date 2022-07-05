@@ -104,6 +104,7 @@ quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
     scale_fill_brewer(palette="Paired") + 
     scale_x_discrete(limits = rev(levels(quantiseq_cluster1_CD8))) +
     theme(axis.text.y = element_text(size = 4)) 
+    #+ xlim()???
 
 quantiseq_cluster2_plot_CD8 = quantiseq_cluster2_CD8 %>%
   gather(sample, fraction, -cell_type) %>%
@@ -195,6 +196,7 @@ mcp_counter %>%
     theme_bw() + 
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
+
 
 ```{r}
 #just based on mean NES top up- and downregulated pathways
@@ -315,7 +317,7 @@ geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= ensemblids_tcga_cleaned, 
 #remove duplicated gene symbols (24)
 geneIDs_unique = distinct(geneIDs,SYMBOL, .keep_all= TRUE)
 ensemblid_found = as.vector(geneIDs_unique$GENEID)
-KIRC_tcga_tpm_filtered = KIRC_tcga_tpm %>% filter(rownames(KIRC_tcga_tpm) %in% ensemblid_found)
+KIRC_tcga_tpm_filtered = KIRC_tcga_tpm %>% dplyr::filter(rownames(KIRC_tcga_tpm) %in% ensemblid_found)
 rownames(KIRC_tcga_tpm_filtered) = geneIDs_unique$SYMBOL
 KIRC_tcga_tpm_matrix = as.matrix(KIRC_tcga_tpm_filtered)
 
@@ -327,8 +329,8 @@ quantiseq_matrix = quantiseq[,-1]
 rownames(quantiseq_matrix) = cell_types_2
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
-heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
-Heatmap(quantiseq_matrix, name = "mat", column_km = 5, column_names_gp = gpar(fontsize = 2), width = unit(27, "cm"), height = unit(12, "cm"))
+Heatmap_quantiseq_KIRC_tcga = Heatmap(quantiseq_matrix, name = "mat", column_km = 5, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.55, "mm"), height = nrow(quantiseq_matrix)*unit(12, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC TCGA")
+Heatmap_quantiseq_KIRC_tcga
 ```
 
 ```{r}
