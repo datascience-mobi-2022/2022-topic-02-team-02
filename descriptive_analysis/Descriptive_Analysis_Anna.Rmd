@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(reshape2)
 knitr::opts_chunk$set(echo = TRUE)
+tcga_exp_protein_coding = readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tcga_exp_cleaned.RDS")
 tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
 tcga_exp_colnames_new = c(substr(colnames(tcga_exp_protein_coding),1, nchar(colnames(tcga_exp_protein_coding))-3))
 colnames(tcga_exp_protein_coding) = tcga_exp_colnames_new
@@ -217,7 +218,7 @@ ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y
 #ACC,BLCA,BRCA,CESC,CHOL,COAD,DLBC,ESCA,GBM,HNSC,KICH,KIRC,KIRP,LAML,LGG,LIHC,LUAD,LUSC,MESO,OV,PAAD,PCPG,PRAD,READ,SARC,SKCM,STAD,TGCT,THCA,THYM,UCEC,UCS,UVM
 ```
 ```{r}
-d = (dist(t(mean_all))
+d = (dist(t(mean_all)))
 ggdendrogram(hclust(d, method = "ward.D2"))
 h
 library(ggdendro)

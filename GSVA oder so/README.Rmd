@@ -1,0 +1,86 @@
+---
+title: "hir clustering"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r data}
+TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
+names(TCGA_pw_PID) = cancer_abc
+```
+
+```{r}
+library(ComplexHeatmap)
+```
+
+```{r}
+k = TCGA_pw_PID$KIRC
+d = dist(t(TCGA_pw_PID$KIRC))
+h = hclust(d, method = "ward.D2")
+ggdendrogram(h, method = "ward.D2")
+cut = cutree(h, k = 3)
+cutcut = as.numeric(cut)
+ c1 = names(cut[which(cutcut == 1)])
+ c2 = names(cut[which(cutcut == 2)])
+ c3 = names(cut[which(cutcut == 3)])
+
+c1_patients = k[,which(colnames(k)%in%c1)]
+c2_patients = k[,which(colnames(k)%in%c2)]
+c3_patients = k[,which(colnames(k)%in%c3)]
+
+a = Heatmap(c1_patients)
+b = Heatmap(c2_patients)
+c = Heatmap(c3_patients)
+
+hlist = a+b+c
+draw(hlist)
+a
+b
+c
+Heatmap(k, cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(k)*unit(0.45,"mm"),height = nrow(k)*unit(2,"mm"),column_dend_height = unit(15,"mm"),column_km = 3)
+
+Heatmap(k,column_split = 3)
+
+dend = as.dendrogram(hclust(dist(k), method = "ward.D2"))
+Heatmap(k,cluster_rows = dend, column_split = 3)
+
+
+
+```
+
+```{r}
+##H-test 
+H_prep = data.frame()
+H_total = list()
+H_cluster1 = c()
+H_cluster2 = c()
+H_c1c2 = c()
+
+  H_cluster1 = c(rep(c(1),times = ncol(c1_patients)))
+  H_cluster2 = c(rep(c(2),times = ncol(c2_patients)))
+  H_cluster3 = c(rep(c(3),times = ncol(c3_patients)))
+  H_c123 = c(H_cluster1,H_cluster2,H_cluster3)
+  H_prep = cbind(c1_patients,c2_patients,c3_patients)
+  H_total = data.frame(rbind(H_prep,H_c123))
+  
+pid_names = rownames(k)
+pid_names_cluster = c(pid_names,"Cluster")
+rownames(H_total) = pid_names_cluster
+
+ks_pv = c()
+for(i in 1:88){
+v = as.numeric(H_total[i,])
+q = as.numeric(H_total[89,])
+ff[i] = kruskal.test(v,q)$p.value
+}
+ks_pv = as.data.frame(ks_pv)
+rownames(ks_pv) = pid_names
+
+View(ks_pv)
+
+```
+
