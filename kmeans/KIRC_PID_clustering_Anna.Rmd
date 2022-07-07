@@ -79,13 +79,23 @@ ggplot (data = KIRC_PID_UMAP,
 KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
 
 KIRC_tumorstatus = KIRC_annot$tumor_status
+
+#convert "" to "NA"
+KIRC_tumorstatus_updated= c()
+for (i in 1:length(KIRC_tumorstatus)){
+  if (KIRC_tumorstatus[i] == "") {KIRC_tumorstatus_updated[i]= "NA"}
+  else {KIRC_tumorstatus_updated[i]=KIRC_tumorstatus[i]}
+}
 ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_tumorstatus))+
-  geom_point(size = 1)
+                    aes(x = X1, y = X2 , color = KIRC_tumorstatus_updated))+
+  labs(x = "UMAP1", y = "UMAP2", col = "Tumor stage", title = )+
+  geom_point(size = 1.3)
+
+
 
 KIRC_gender_Umap = KIRC_annot$gender  
 ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_gender_Umap))+
+                    aes(x = X1, y = X2 , color = KIRC_gender_Umap))
   geom_point(size = 1)
 
 #OS	Overall Survival, 0 = alive, 1 = death from any cause, 
@@ -126,20 +136,52 @@ KIRC_PID_t = data.frame(t(KIRC_PID_cl))
 
 
 KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
-ggplot (data =KIRC_PID_UMAP, 
+p1=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
-  geom_point(size = 1.3)+
+ geom_point(size = 1.3)+
   scale_color_gradient(low="blue", high="red")+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES PID_CD8_TCR_PATHWAY ")
+  labs(x = "UMAP1", y = "UMAP2", col = "NES ", title = "PID_CD8_TCR_PATHWAY")+
+  theme(plot.title = element_text(size=12))
 
 
 KIRC_TCR_PATHWAY= KIRC_PID_t$PID_TCR_PATHWAY
-ggplot (data =KIRC_PID_UMAP, 
+p2=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_TCR_PATHWAY))+
   geom_point(size = 1.3)+
   scale_color_gradient(low="blue", high="red")+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES PID_TCR_PATHWAY ")
+  labs(x = "UMAP1", y = "UMAP2", col = "NES",title= "PID_TCR_PATHWAY ")+
+   theme(plot.title = element_text(size=12))
 
+color_fun = circlize::colorRamp2(c(common_min,0,common_max), c("blue", "red"))
+
+PID_CD8_TCR =  KIRC_PID_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
+p3=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_CD8_TCR))+
+  geom_point(size = 1.3)+
+  scale_color_gradient(low="blue", high="red")+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_CD8_TCR_DOWNSTREAM_PATHWAY")+
+   theme(plot.title = element_text(size=12))
+
+PID_IL1 =  KIRC_PID_t$PID_IL1_PATHWAY
+p4=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_IL1))+
+   geom_point(size = 1.3)+
+  scale_color_gradient(low="blue", high="red")+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_IL1_PATHWAY")+
+   theme(plot.title = element_text(size=12))
+
+PID_CXCR4 =  KIRC_PID_t$PID_CXCR4_PATHWAY
+p5 = ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_CXCR4))+
+  geom_point(size = 1.3)+
+  scale_color_gradient(low="blue", high="red")+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_CXCR4_PATHWAY")+
+   theme(plot.title = element_text(size=12))
+
+
+plotliste = list(p1,p2,p3,p4,p5)
+
+ggarrange(plotlist = plotliste)
 ```
 
 
@@ -184,7 +226,7 @@ fviz_cluster(km.2, KIRC_PID_UMAP,
              geom = "point",
              ellipse.type = "convex", 
              ggtheme = theme_bw()
-             )
+                         )
 
 # for 3 centers
 km.3 = kmeans(KIRC_PID_UMAP, centers = 3, nstart = 50)
@@ -216,8 +258,11 @@ PID_c2_names = names(PID_km[which(PID_km == 2)]) # patient names of cluster2
 fviz_cluster(PID_km2, KIRC_PID_UMAP,
              palette = c("red", "blue"), 
              geom = "point",
-             ellipse.type = "convex", 
-             ggtheme = theme_bw()
+             ellipse.type = "convex",
+             xlab   = "UMAP1",
+             ylab ="UMAP2",
+             main = FALSE,
+             ggtheme = theme_grey()
              )
 
 
@@ -473,6 +518,31 @@ PIDClusterHeatmap
 ```
 
 
+```{r}
+
+PID_sig_rank = PID_pv_dif_sig[order(PID_pv_dif_sig$neg_log10_pv, decreasing = T),]
+PID_sig_rank_names = c(rownames(PID_sig_rank))
+
+PID_c1_sig = PID_c1[which(rownames(PID_c1) %in% PID_dif_sig_names),]
+PID_c1_sig = cbind(rownames(PID_c1_sig), PID_c1_sig)
+
+PID_c1_sig_ordered = data.matrix(PID_c1_sig[match(PID_sig_rank_names, PID_c1_sig$`rownames(PID_c1_sig)`),])
+PID_c1_sig_ordered =PID_c1_sig_ordered[,-1]#only run once!!
+
+PID_c2_sig = PID_c2[which(rownames(PID_c2) %in% PID_dif_sig_names),]
+PID_c2_sig = cbind(rownames(PID_c2_sig), PID_c2_sig)
+
+PID_c2_sig_ordered = data.matrix(PID_c2_sig[match(PID_sig_rank_names, PID_c2_sig$`rownames(PID_c2_sig)`),])
+PID_c2_sig_ordered =PID_c2_sig_ordered[,-1]#only run once!!
+
+common1_min = min(c(PID_c1_sig_ordered,PID_c2_sig_ordered))
+common1_max = max(c(PID_c1_sig_ordered,PID_c2_sig_ordered))
+col_fun1 = circlize::colorRamp2(c(common1_min,0, common1_max), c("blue","black", "red"))
+
+
+Heatmap(PID_c1_sig_ordered, column_title = "Cluster 1", column_title_gp = gpar(fontsize = 10),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 7),labels_gp = gpar(fontsize = 7)))+
+  Heatmap(PID_c2_sig_ordered, column_title = "Cluster 2", column_title_gp = gpar(fontsize = 10),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE) 
+```
 
 
 

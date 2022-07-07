@@ -177,13 +177,12 @@ library(ggplot2)
 #plotting
 ggplot(tcga_KIRC_cl_pv_FC, aes(KIRC_logfoldchange,neg_log10_pv, color = "non-significant genes"))+
   geom_point( size =0.3)+
-  geom_point(data= tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange, neg_log10_pv, color = "downregulated genes"), size=0.3, color = "orange")+
+  geom_point(data= tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange, neg_log10_pv, color = "downregulated genes"), size=0.3, color = "red")+
   geom_point(data = tcga_KIRC_cl_pv_FC_sigup, aes(KIRC_logfoldchange,neg_log10_pv, color = "upregulated genes"), size=0.3, color = "blue")+
-  ggtitle("gene expression normal vs tumor tissue ")+
   xlab ("log2(FC)")+
   ylab ("-log10(p-value)")+
   scale_color_manual(name="", breaks=c("downregulated genes", "non-significant genes", "upregulated genes"),
-                     values=c("downregulated genes" = "orange", "non-significant genes" = "black", "upregulated genes" = "blue"))+
+                     values=c("downregulated genes" = "red", "non-significant genes" = "black", "upregulated genes" = "blue"))+
   guides(colour = guide_legend(override.aes = list(size=3)))
 
 

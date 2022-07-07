@@ -109,9 +109,12 @@ KEGG_UMAP_viz$PID_cluster = factor(PID_km2$cluster)
 
 ggscatter(
   KEGG_UMAP_viz, x = "X1", y = "X2", 
-  color = "KEGG_cluster", palette = "npg", ellipse = TRUE, ellipse.type = "convex",
-  shape = "PID_cluster", size = 1.5,  legend = "right", ggtheme = theme_bw(),
+  color = "KEGG_cluster", palette = c("red", "blue", "purple"), ellipse = TRUE, ellipse.type = "convex",
+  shape = "PID_cluster", size = 2,  legend = "right", ggtheme = theme_grey(), ylab = "UAMP2", xlab = "UMAP1"
 ) +
-  stat_mean(aes(color = KEGG_cluster), size = 4)
+  stat_mean(aes(color = KEGG_cluster), size = 5)
+
+
+  
 ```
 
