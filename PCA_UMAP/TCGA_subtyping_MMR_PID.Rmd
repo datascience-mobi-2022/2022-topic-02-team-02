@@ -20,7 +20,7 @@ cancer_abc = names(TCGA_pw_MMR)
 ```{r}
 xxx = c("PID_IL4_2PATHWAY","PID_IL6_7_PATHWAY","PID_IL8_CXCR1_PATHWAY","PID_IL8_CXCR2_PATHWAY","PID_INTEGRIN_A4B1_PATHWAY","PID_LYMPH_ANGIOGENESIS_PATHWAY","PID_LYSOPHOSPHOLIPID_PATHWAY","PID_MYC_ACTIV_PATHWAY","PID_NFAT_TFPATHWAY")
 TG = list()
-immune = c(h,Anna_PID,Linda_PID,xxx)
+immune = c(PID_Tim,Anna_PID,Linda_PID,xxx)
 for (i in 1:length(TCGA_pw_PID)){
   TG[[i]] = TCGA_pw_PID[[i]][which(rownames(TCGA_pw_PID[[i]])%in%immune),]
 }
@@ -618,8 +618,6 @@ cancer_sigBH = names(PID_ks_dif_sig_BH_0)
 kirc_names = c((PID_ks_dif_sig_BH_0$KIRC[,1]))
 
 ```
-
-
 
 
 ```{r plot significant pathways}
