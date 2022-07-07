@@ -391,6 +391,7 @@ library(patchwork)
 
 
 ```{r Seurat Plots}
+library(Seurat)
 KIRC_PCA_x1=data.frame(KIRC_PID_pca_x)
 Seurat_PID = CreateSeuratObject(counts= KIRC_PID_cl)#create a Seurat object wiht the data, this object will be filled by the following commands (PCA;UMAP;clustering...)
 VlnPlot(Seurat_PID, features = c("PID-TCR-PATHWAY"))
@@ -406,11 +407,11 @@ DimPlot(Seurat_PID, reduction = "pca")#plot PCA
 DimHeatmap(Seurat_PID, cells = 300, balance = TRUE) #heatmap for the influence on first PC
 
 Seurat_PID = FindNeighbors(Seurat_PID, dims =1:7)#patients assign differently to clusters when diffenent number of dims
-Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.2) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
+Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.3) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
 
 
 #rename the clusters
-cluster.ids = c("cluster1", "cluster2")
+cluster.ids = c("cluster1", "cluster2", "cluster3")
 names(cluster.ids) = levels(Seurat_PID) 
 Seurat_PID = RenameIdents(Seurat_PID, cluster.ids)
 
@@ -433,6 +434,40 @@ DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
 
 ```
 
+```{r}
+library(ComplexHeatmap)
+library(circlize)
+
+#sign different pathways
+PID_sig = KIRC_PID_cl[which(rownames(KIRC_PID_cl) %in% PID_dif_sig_names),]
+#ranked different pathways
+PID_sig_rank = PID_pv_dif_sig[order(PID_pv_dif_sig$neg_log10_pv, decreasing = T),]
+PID_sig_rank_names = c(rownames(PID_sig_rank))
+PID_all_sig = cbind(rownames(PID_sig), PID_sig)
+PID_all_sig_ordered = data.matrix(PID_sig[match(PID_sig_rank_names, PID_all_sig$`rownames(PID_sig)`),])
+
+
+
+library(RColorBrewer)
+pal <- colorRampPalette(brewer.pal(11, "RdYlBu"))
+
+
+
+Heatmap(PID_all_sig_ordered, name = "PID_all_sig_ordered", column_km = 2, cluster_rows = FALSE,  col = pal(50), column_names_gp = gpar(fontsize = 2),row_names_gp = gpar(fontsize = 10))
+
+
+
+PIDClusterHeatmap = Heatmap(PID_all_sig_ordered, name = "PID_all_sig_ordered", column_km = 2, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 4),row_names_gp = gpar(fontsize = 10), col = colorRamp2(c(-2, 0, 2.5), c("blue", "black", "red")), heatmap_legend_param = list(title= "NES"))
+
+PIDClusterHeatmap
+
+#png(filename="your/file/location/name.png")
+#plot(fit)
+#dev.off()
+
+
+#cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.45, “mm”), height = nrow(quantiseq_matrix)*unit(10, “mm”), column_dend_height = unit(15, “mm”), column_title = “Immune cell fractions in KIRC TCGA”
+```
 
 
 

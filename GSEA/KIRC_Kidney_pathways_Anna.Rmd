@@ -13,6 +13,11 @@ set.seed(69)
 ```{r}
 #Load data
 kidney_pathways <- readRDS("~/GitHub/2022-topic-02-team-02/data/Kidney_pathways.RDS")
+
+library(viridis)  
+library(RColorBrewer)
+display.brewer.all()
+display.brewer.pal(n = 8, name = 'PRGn')
 ```
 
 
