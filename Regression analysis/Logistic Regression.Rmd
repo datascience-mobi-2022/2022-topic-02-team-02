@@ -19,6 +19,7 @@ library(ggplot2)
 library(ggpubr)
 library(rlist)
 library(stats)
+library(tidyselect)
 ```
 
 ```{r}
@@ -85,6 +86,8 @@ quantiseq_CD8 = quantiseq_CD8[, -c(42)]
 sum(quantiseq_cluster1_CD8[1, 2:41]) #2.008835
 sum(quantiseq_cluster2_CD8[1, 2:33]) #0.3102198 
 
+#keep order 
+colnames(quantiseq_CD8) <- factor(colnames(quantiseq_CD8), levels = colnames(quantiseq_CD8))
 #plot in one
 quantiseq_CD8 %>%
   gather(sample, fraction, -cell_type) %>%
@@ -101,19 +104,24 @@ quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
   ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
-    scale_fill_brewer(palette="Paired") + 
+    scale_fill_manual(values = "Blue") + 
     scale_x_discrete(limits = rev(levels(quantiseq_cluster1_CD8))) +
     theme(axis.text.y = element_text(size = 4)) 
-    #+ xlim()???
+quantiseq_cluster1_plot_CD8
 
 quantiseq_cluster2_plot_CD8 = quantiseq_cluster2_CD8 %>%
   gather(sample, fraction, -cell_type) %>%
   ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
-    scale_fill_brewer(palette="Paired") + 
+    scale_fill_manual(values = "Blue") + 
     scale_x_discrete(limits = rev(levels(quantiseq_cluster2_CD8))) +
-    theme(axis.text.y = element_text(size = 4)) 
+    theme(axis.text.y = element_text(size = 4)) + 
+    ylim(0,0.55)
+quantiseq_cluster2_plot_CD8
+
+sample1 = quantiseq_cluster1_CD8 %>% gather(sample)
+sample2 = quantiseq_cluster2_CD8 %>% gather(sample)
 
 ggarrange(quantiseq_cluster1_plot_CD8, quantiseq_cluster2_plot_CD8, ncol = 1, nrow = 2)
 
@@ -200,6 +208,9 @@ mcp_counter %>%
 
 ```{r}
 #just based on mean NES top up- and downregulated pathways
+PID_c1_names <- readRDS("../data/PID_c1_names.rds")
+PID_c2_names <- readRDS("../Data Analysis/github/2022-topic-02-team-02/data/PID_c2_names.rds")
+
 KIRC_PID_mean = as.data.frame(apply(KIRC_PID_cl, 1, mean))
 colnames(KIRC_PID_mean) = "NES"
 KIRC_PID_topup = slice_max(KIRC_PID_mean, order_by = KIRC_PID_mean[,1], n = 10)
@@ -227,7 +238,6 @@ for (i in 1:ncol(KIRC_top_pw)){
     cluster_number[[i]] = 0
   }
 }
-
 cluster_numbers = list.cbind(cluster_number)
 colnames(cluster_numbers) = colnames(KIRC_top_pw)
 KIRC_top_pw = rbind(KIRC_top_pw, cluster_numbers)
@@ -241,18 +251,18 @@ model0 = glm(Infiltration ~ 1, data = KIRC_top_pw_t)
 summary(model0)
 
 # Test-Modell
-model1 = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_TCR_PATHWAY + PID_IL27_PATHWAY + PID_CXCR4_PATHWAY + PID_FOXM1_PATHWAY, data = KIRC_top_pw_t) #nur signifikante pw genommen (Beitrag leisten)
+model1 = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_IL27_PATHWAY + PID_FOXM1_PATHWAY, data = KIRC_top_pw_t) #nur signifikante pw genommen (Beitrag leisten)
 summary(model1)
 
 #Omnibus-Test
 modelchi = model1$null.deviance - model1$deviance
 chidf = model1$df.null -model1$df.residual
-chisqp = 1 - pchisq(modelchi, chidf) # <0.05 test-Modell leistet signifikanten Erklärungsbeitrag
+chisqp = 1 - pchisq(modelchi, chidf) #0.0011 <0.05 test-Modell leistet signifikanten Erklärungsbeitrag
 
 #Gütemaße
 n = length(model1$residuals)
 R2cs = 1-exp((model1$deviance - model1$null.deviance)/n)
-R2n = R2cs/(1-exp(-(model1$null.deviance/n)))
+R2n = R2cs/(1-exp(-(model1$null.deviance/n))) #0.91
 
 #Predict
 glm_probs = data.frame(probs = predict(model1, type="response"))
@@ -267,33 +277,58 @@ KIRC_top_pw_predict = rbind(KIRC_top_pw_predict, t(predicted.classes))
 #accuracy? 
 mean(predicted.classes == KIRC_top_pw_t$Infiltration) #0.9583333
 
-
 #Plot
-KIRC_top_pw_t %>%
-  mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
-  ggplot(aes(PID_CD8_TCR_PATHWAY, prob)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth(method = "glm", method.args = list(family = "binomial")) +
-  labs(
-    title = "Logistic Regression Model", 
-    x = "PID_CD8_TCR_PATHWAY activity",
-    y = "Probability of immune infiltration"
-    )
+CD8_regression_plot = KIRC_top_pw_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_CD8_TCR_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_CD8_TCR_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+IL27_regression_plot = KIRC_top_pw_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_IL27_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_IL27_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+FOXM1_regression_plot = KIRC_top_pw_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_FOXM1_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_FOXM1_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+regression_plots = list(CD8_regression_plot, IL27_regression_plot, FOXM1_regression_plot)
+
+ggarrange(plotlist = regression_plots, ncol = 3, nrow = 2)
 ```
 
 
 ```{r}
-#try to test on KIRC data from TCGA (531 samples)
-KIRC_tcga = pathway_activity_matrix %>%
-    select(starts_with('KIRC'))
+#try to test model1 on KIRC data from TCGA (531 samples)
+KIRC_tcga = pathway_activity_matrix %>% dplyr::select(starts_with('KIRC'))
 KIRC_tcga_PID = KIRC_tcga[PID_sigpw,]
 KIRC_tcga_PID_t = data.frame(t(KIRC_tcga_PID))
-#predict
+
+#predict with model1
 probabilities_2 <- model1 %>% predict(KIRC_tcga_PID_t, type = "response")
 predicted.classes_2 <- data.frame(ifelse(probabilities_2 > 0.5, "1", "0"))
 colnames(predicted.classes_2) = "prediction"
 predicted.classes_2 = t(predicted.classes_2)
-sum(as.numeric(predicted.classes_2[1,])) #69 immune infiltrated patients
+sum(as.numeric(predicted.classes_2[1,])) #now 92 immune infiltrated patients
 
 #create list with all patients who have a 1 in "prediction"
 KIRC_tcga_immune_patients = numeric()
@@ -302,8 +337,30 @@ for (i in 1:ncol(KIRC_tcga_PID_predict)){
   if (KIRC_tcga_PID_predict[11, i] == "1")
     KIRC_tcga_immune_patients = append(KIRC_tcga_immune_patients, colnames(KIRC_tcga_PID_predict[i]))
 }
+
 #remove first letters (KIRC.) from sample ID
-KIRC_tcga_immune_patients = str_sub(KIRC_tcga_immune_patients, 6)
+KIRC_tcga_immune_patients_r = str_sub(KIRC_tcga_immune_patients, 6)
+
+immuncluster_dendro = colnames(c1_patients)
+mean(KIRC_tcga_immune_patients_r %in% immuncluster_dendro) #81,5% und 75 treffer
+
+#add new row according to Tims cluster, if in immune cluster --> 1, else --> 0
+cluster_number_tcga = vector(mode = 'list',531)
+KIRC_tcga_patients = as.data.frame(str_sub(colnames(KIRC_tcga_PID_predict), 6))
+for (i in 1:nrow(KIRC_tcga_patients)){
+  if (KIRC_tcga_patients[i,] %in% immuncluster_dendro){
+    cluster_number_tcga[[i]] = 1
+  } else {
+    cluster_number_tcga[[i]] = 0
+  }
+}
+cluster_number_tcga = list.cbind(cluster_number_tcga)
+colnames(cluster_number_tcga) = colnames(KIRC_tcga_PID_predict)
+KIRC_tcga_PID_predict_cluster = rbind(KIRC_tcga_PID_predict, cluster_number_tcga)
+rownames(KIRC_tcga_PID_predict_cluster)[rownames(KIRC_tcga_PID_predict_cluster) == "1"] <- "Infiltration"
+#accuracy? 
+mean(KIRC_tcga_PID_predict_cluster[11,] == KIRC_tcga_PID_predict_cluster[12,]) #90,58%
+
 
 #get annotations
 KIRC_tcga_immunep_annotations = tcga_tumor_annotation %>% filter(sample %in% KIRC_tcga_immune_patients)
@@ -329,54 +386,26 @@ quantiseq_matrix = quantiseq[,-1]
 rownames(quantiseq_matrix) = cell_types_2
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
-Heatmap_quantiseq_KIRC_tcga = Heatmap(quantiseq_matrix, name = "mat", column_km = 5, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.55, "mm"), height = nrow(quantiseq_matrix)*unit(12, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC TCGA")
+Heatmap_quantiseq_KIRC_tcga = Heatmap(quantiseq_matrix, name = "mat", column_km = 3, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.45, "mm"), height = nrow(quantiseq_matrix)*unit(10, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC TCGA")
 Heatmap_quantiseq_KIRC_tcga
 ```
 
 ```{r}
 #second logistic regression model based on KIRC TCGA patients
+#NOCHMAL MACHEN MIT TIMS NEUEN PATHWAYS UND NEUER CLUSTER ZUORDNUNG
 #KIRC TCGA dataframe with only significant pathways
-PID_sigpw_tcga = c("PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_CD8_TCR_PATHWAY", "PID_IL1_PATHWAY","PID_INTEGRIN_A4B1_PATHWAY","PID_PLK1_PATHWAY", "PID_TCR_PATHWAY")
+PID_sigpw_tcga = c("PID_CD8_TCR_PATHWAY", "PID_TCR_PATHWAY", "PID_IL1_PATHWAY", "PID_CD8_TCR_DOWNSTREAM_PATHWAY", "PID_IL27_PATHWAY", "PID_BCR_5PATHWAY", "PID_IL2_1PATHWAY", "PID_CXCR4_PATHWAY","PID_IL2_PI3K_PATHWAY","PID_IL2_STAT5_PATHWAY")
 
-PID_immune_pathways
-
-#extract pathway activity for KIRC TCGA patients for these 6 pathways
+#extract pathway activity for KIRC TCGA patients for these 10 pathways
 KIRC_tcga_PID_sigpw = KIRC_tcga[PID_sigpw_tcga,]
 
 #add new row according to cluster, if in cluster 1 --> 1, if in cluster 2 --> 0
-cluster_numbers = vector(mode = 'list',ncol(KIRC_tcga_PID_sigpw))
-KIRC_patients_tcga = as.data.frame(colnames(KIRC_tcga_PID_sigpw))
-KIRC_tcga_patients = as.data.frame(str_sub(KIRC_patients_tcga[,1], 6))
-
-for (i in 1:ncol(KIRC_tcga_PID_sigpw)){
-  if (KIRC_tcga_patients[i,] %in% TCGA_c2_KIRC){
-    cluster_numbers[[i]] = 1
-  } else {
-    cluster_numbers[[i]] = 0
-  }
-}
-
-cluster_numbers = list.cbind(cluster_numbers)
-colnames(cluster_numbers) = colnames(KIRC_tcga_PID_sigpw)
-KIRC_tcga_PID_sigpw = rbind(KIRC_tcga_PID_sigpw, cluster_numbers)
+KIRC_tcga_PID_sigpw = rbind(KIRC_tcga_PID_sigpw, cluster_number_tcga)
 rownames(KIRC_tcga_PID_sigpw)[rownames(KIRC_tcga_PID_sigpw) == "1"] <- "Infiltration"
-#problem: many patients all NES = 0, still in cluster 2, meaning immune infiltrated and "1"
+#is it still???problem: many patients all NES = 0, still in cluster 2, meaning immune infiltrated and "1"
 
-#compare cluster number to prediction with regression model based on small data KIRC (tumor vs normal)
-KIRC_tcga_PID_sigpw_pred = rbind(KIRC_tcga_PID_sigpw, predicted.classes_2)
-#accuracy of model1?
-mean(KIRC_tcga_PID_sigpw_pred[7,] == KIRC_tcga_PID_sigpw_pred[8,]) #38,79 %..
-
-#patients with only zero's for NES
-KIRC_tcga_patients_0 = vector()
-for (i in 1:ncol(KIRC_tcga_PID_sigpw)){
-  if ((sum(KIRC_tcga_PID_sigpw[1:6,i]) == 0) && (KIRC_tcga_PID_sigpw["Infiltration",i] == "1")){
-    KIRC_tcga_patients_0 = append(KIRC_tcga_patients_0, colnames(KIRC_tcga_PID_sigpw)[i])
-  }
-}
-
-KIRC_tcga_PID_sigpw_cl = KIRC_tcga_PID_sigpw[, !(colnames(KIRC_tcga_PID_sigpw) %in% KIRC_tcga_patients_0)]
-KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw_cl))
+#transpose datafram e for regression
+KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw))
 
 #try simple logistic test regression
 
@@ -384,15 +413,82 @@ KIRC_tcga_PID_sigpw_t = as.data.frame(t(KIRC_tcga_PID_sigpw_cl))
 model0_tcga = glm(Infiltration ~ 1, data = KIRC_tcga_PID_sigpw_t)
 summary(model0_tcga)
 
-# Test-Modell
-model1_tcga = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_IL1_PATHWAY + PID_INTEGRIN_A4B1_PATHWAY + PID_PLK1_PATHWAY, data = KIRC_tcga_PID_sigpw_t) #nur signifikante pw genommen (Beitrag leisten)
+#  1. Test-Modell
+model1_tcga = glm(Infiltration ~ PID_TCR_PATHWAY + PID_IL1_PATHWAY + PID_IL27_PATHWAY, data = KIRC_tcga_PID_sigpw_t) 
+#meist signifikante pw genommen, wenn man alle einsetzen würde
 summary(model1_tcga)
-
 ###Omnibus-Test
 modelchi_tcga = model1_tcga$null.deviance - model1_tcga$deviance
 chidf_tcga = model1_tcga$df.null -model1_tcga$df.residual
-chisqp_tcga = 1 - pchisq(modelchi_tcga, chidf_tcga) # 0.97 test-Modell leistet keinen signifikanten Erklärungsbeitrag
+chisqp_tcga = 1 - pchisq(modelchi_tcga, chidf_tcga) # 2.829e-08 test-Modell leistet signifikanten Erklärungsbeitrag
+
+# 2. Test-Model
+model2_tcga = glm(Infiltration ~ PID_CD8_TCR_PATHWAY + PID_IL1_PATHWAY, data = KIRC_tcga_PID_sigpw_t) 
+#top 2 unkorrelierte pathways
+summary(model2_tcga)
+###Omnibus-Test
+modelchi_tcga_2 = model2_tcga$null.deviance - model2_tcga$deviance
+chidf_tcga_2 = model2_tcga$df.null -model2_tcga$df.residual
+chisqp_tcga_2 = 1 - pchisq(modelchi_tcga_2, chidf_tcga_2) # 1.519e-08 test-Modell leistet signifikanten Erklärungsbeitrag --> besser als erstes
+
+
+# 3. Test-Model, nur PID_TCR_PATHWAY und PID_IL1_PATHWAY
+model3_tcga = glm(Infiltration ~ PID_TCR_PATHWAY+ PID_IL1_PATHWAY, data = KIRC_tcga_PID_sigpw_t) 
+summary(model3_tcga)
+###Omnibus-Test
+modelchi_tcga_3 = model3_tcga$null.deviance - model3_tcga$deviance
+chidf_tcga_3 = model3_tcga$df.null -model3_tcga$df.residual
+chisqp_tcga_3 = 1 - pchisq(modelchi_tcga_3, chidf_tcga_3) # 1.195e-08 test-Modell leistet signifikanten Erklärungsbeitrag --> besser als erstes und zweites
 ```
+
+```{r}
+#predict infiltration with second logistic regression model(3) from TCGA on small KIRC data set
+#KIRC_PID_cl ist pathway activity matrix kleiner KIRC Datensatz mit aktuellen PID pathways
+KIRC_for_model = as.data.frame(t(KIRC_PID_cl))
+
+probabilities <- model3_tcga %>% predict(KIRC_for_model, type = "response")
+predicted.classes <- data.frame(as.numeric(ifelse(probabilities > 0.5, "1", "0")))
+colnames(predicted.classes) = "Prediction"
+rownames(predicted.classes) = colnames(KIRC_PID_cl)
+sum(as.numeric(predicted.classes[,1])) #41 patients
+KIRC_predict = rbind(KIRC_PID_cl, t(predicted.classes), cluster_numbers)
+rownames(KIRC_predict)[rownames(KIRC_predict) == "1"] <- "Infiltration"
+
+#accuracy? 
+mean(KIRC_predict["Prediction",] == KIRC_predict["Infiltration",]) #0.9305556
+KIRC_predict_t = as.data.frame(t(KIRC_predict))
+
+#Plot
+TCR_regression_plot = KIRC_predict_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_TCR_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_TCR_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+TCR_regression_plot
+
+IL1_regression_plot = KIRC_predict_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_IL1_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_IL1_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+IL1_regression_plot
+
+regression_plots_2 = list(TCR_regression_plot, IL1_regression_plot)
+
+ggarrange(plotlist = regression_plots_2, ncol = 2, nrow = 2)
+```
+
 
 ```{r}
 #try with gene expression?

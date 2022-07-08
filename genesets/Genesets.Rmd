@@ -229,6 +229,11 @@ go_matrix_alle = newGOM(all_genesets, all_genesets)
 go_jaccard_alle = getMatrix(go_matrix_alle, "Jaccard")
 diag(go_jaccard_alle) = 0
 heatmap(go_jaccard_alle, Rowv = NA, Colv = NA)
+
 Heatmap(go_jaccard_alle, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 2))
+
+library(RColorBrewer)
+library(circlize)
+pal <- colorRampPalette(brewer.pal(11, "RdYlBu"))
 ```
 

@@ -725,7 +725,6 @@ pathway_activity_matrix = rbind(NES_OVERALL_hallmark_alle, NES_OVERALL_PID_alle,
 #melt Hallmark, KEGG, PID and MMR MEAN pathway activity matrices 
 pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID_cl, NES_mean_MMR) #ACHTUNG mit altem PID noch
 
-
 #find top pathways across all tumor types
 pathway_mean_alle = as.data.frame(apply(pathway_activity_matrix_mean, 1, mean))
 colnames(pathway_mean_alle) = "NES"
@@ -737,18 +736,27 @@ top_pathways_names = c(rownames(top_pathways))
 top_pathways_meandf = as.matrix(pathway_activity_matrix_mean[top_pathways_names, ])
 heatmap.2(top_pathways_meandf, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 
-
 #heatmap
 NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
 heatmap.2(NES_matrix_ALLE, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
 Heatmap(NES_matrix_ALLE, name = "mat", column_km = 7, column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 2))
-
 
 #create dendrogram 
 alle_dendro_matrix = t(NES_matrix_ALLE)
 alle_dendro = as.dendrogram(hclust(d = dist(x = alle_dendro_matrix)))
 dendro_alle =  ggdendrogram(data = alle_dendro, rotate = TRUE)
 print(dendro_alle)
+
+#find top high variance genes from pathway activity matrix across all tumor types
+pathway_activity_var = as.data.frame(apply(pathway_activity_matrix, 1, var))
+pathway_activity_var = pathway_activity_var[order(pathway_activity_var$`apply(pathway_activity_matrix, 1, var)`),, drop = FALSE]
+top30_var_pw = rownames(pathway_activity_var)[298:327]
+
+#Heatmap top 30 variance pathways
+top_var_pw_matrix = as.matrix(pathway_activity_matrix_mean[top30_var_pw, ])
+Heatmap_TopVar_pw = Heatmap(top_var_pw_matrix, name = "NES", cluster_rows = FALSE, column_km = 7, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(25, "mm"), column_dend_height = unit(15, "mm"), column_title = "Top 30 variance pathways TCGA", col = pal(50))
+Heatmap_TopVar_pw
+
 
 # select top 15 UP and DOWN regulated pathways for ACC
 ACC_ordered = pathway_activity_matrix_mean[,1, drop = FALSE]
@@ -778,13 +786,16 @@ KIRC_top = rbind(KIRC_topup, KIRC_topdown)
 KIRC_top = rownames_to_column(KIRC_top)
 top_pathways_KIRC = c(KIRC_top[,1])
 
+blue = c(rep("blue", 30))
 KIRC_top$rowname <- factor(KIRC_top$rowname, levels = KIRC_top$rowname)
-ggplot(KIRC_top, aes(x=rowname, y=KIRC)) + 
+ggplot(KIRC_top, aes(x=rowname, y=KIRC, fill=rowname)) + 
   geom_bar(stat = "identity")+
   coord_flip() +
   labs (y = "NES",
-        x = "pathways",
-        title = "Top up- and downregulated pathways in KIRC")
+        x = "pathways") +
+  ggtitle("Top up- and downregulated pathways in KIRC") + 
+  scale_fill_manual(values= blue)+ 
+  theme(legend.position="none")
 
 # compare enrichment for top 15 up- and downregulated pathways in KIRC with other tumor types:
 KEGG_O_GLYCAN_BIOSYNTHESIS = t(pathway_activity_matrix_mean[rownames(pathway_activity_matrix_mean) == "KEGG_O_GLYCAN_BIOSYNTHESIS",, drop = FALSE])
@@ -838,6 +849,5 @@ Down_DrugMetabolism
 #Neutral --> UV response up
 Neutral_Glycolysis = plotEnrichment(metabolic_genesets_H[["HALLMARK_GLYCOLYSIS"]],KIRC_patient_ranked)
 Neutral_Glycolysis
-
 ```
 
