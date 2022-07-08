@@ -12,11 +12,21 @@ set.seed(69)
 ```{r data}
 #load pathway activity matricesd for MMR and PID for all 33 tumortypes
 #TCGA_pw_MMR = readRDS("../data/NES_OVERALL_MMR.RDS")
-TCGA_pw_MMR = NES_OVERALL_PENG
+TCGA_pw_MMR = readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_MMR.RDS")
 TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
-names(TCGA_pw_PID) = cancer_abc
+cancer_abc = names(TCGA_pw_MMR) 
 ```
 
+```{r}
+xxx = c("PID_IL4_2PATHWAY","PID_IL6_7_PATHWAY","PID_IL8_CXCR1_PATHWAY","PID_IL8_CXCR2_PATHWAY","PID_INTEGRIN_A4B1_PATHWAY","PID_LYMPH_ANGIOGENESIS_PATHWAY","PID_LYSOPHOSPHOLIPID_PATHWAY","PID_MYC_ACTIV_PATHWAY","PID_NFAT_TFPATHWAY")
+TG = list()
+immune = c(PID_Tim,Anna_PID,Linda_PID,xxx)
+for (i in 1:length(TCGA_pw_PID)){
+  TG[[i]] = TCGA_pw_PID[[i]][which(rownames(TCGA_pw_PID[[i]])%in%immune),]
+}
+names(TG) = cancer_abc
+TCGA_pw_PID = TG
+```
 
 ```{r packages}
 library(ggplot2)
@@ -33,7 +43,6 @@ set.seed(69)
 
 ```{r PCA / umap for PID}
 
-cancer_abc = names(TCGA_pw_MMR)
 PCA_PID = lapply (1:length(TCGA_pw_PID), function (i) {
   RunPCA(as.matrix(TCGA_pw_PID[[i]]),npcs = (nrow(TCGA_pw_MMR[[i]])-1)
          )
@@ -53,19 +62,11 @@ for (i in 1: length(TCGA_pw_PID)) {
 }
 names(UMAP_output_PID) = cancer_abc
 plot1234 = list(UMAP_output_PID[[1]],UMAP_output_PID[[2]],UMAP_output_PID[[3]])
-ggarrange(plotlist=UMAP_output_PID)
+ggarrange(plotlist=UMAP_output_PID, widths = c(1,0,1))
 ggarrange(plotlist = plot1234)
-UMAP_output_PID$KIRC
+UMAP_output_PID$ACC
 ```
 
-```{r}
-KIRC_PID_t = data.frame(t(KIRC_PID_cl))
-KIRC_TCR = KIRC_PID_t$PID_TCR_PATHWAY
-KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
-  geom_point(size = 1)
-```
 
 ```{r PCA / umap for MMR}
 PCA_MMR = lapply (1:length(TCGA_pw_MMR), function (i) {
@@ -117,7 +118,7 @@ for(i in (1:length(cluster_PID))){
 }
 
 names(cluster_PID) = cancer_abc
-ggarrange(plotlist = cluster_PID$KIRC)
+
 
 cluster_PID_k2 = list()
 for (i in (1:length(UMAP_PID))){
@@ -136,7 +137,7 @@ for (i in (1:length(UMAP_PID))){
      n[k,i] = data.frame(kmeans_PID[[i]][[k]]$tot.withinss)
  }
 }
-
+w = c(1:5)
 tot_PID = list()
 for (i in (1:length(UMAP_PID))){
     p  = data.frame(n[,i])
@@ -220,18 +221,17 @@ for (i in (1:length(UMAP_PID))){
   r = PID_c1_mean[[i]]
   u = PID_c2_mean[[i]]
   PID_c1_c2_dif[[i]] = r - u
-  
 }
 names(PID_c1_c2_dif) = cancer_abc
 
 PID_c1_c2_dif_rank = list()
 for (i in (1:length(UMAP_PID))){
   p = PID_c1_c2_dif[[i]]
-  PID_c1_c2_dif_rank[[i]] = data.frame(PID_c1_c2_dif[[i]]$apply.PID_c1_patients..i....1..mean.[order(PID_c1_c2_dif[[i]][,1],decreasing = TRUE)])
+  PID_c1_c2_dif_rank[[i]] = data.frame(PID_c1_c2_dif[[i]]$apply.r..1..mean.[order(PID_c1_c2_dif[[i]][,1],decreasing = TRUE)])
 }
 names(PID_c1_c2_dif_rank) = cancer_abc
 
-PID_rownames = c(rownames(PID_c1_c2_dif$ACC))
+PID_rownames = c(rownames(PID_c1_c2_dif[[1]]))
 PID_rownames_rank = list()
 for (i in (1:length(UMAP_PID))){
   s = c(PID_c1_c2_dif[[i]][,1])
@@ -321,7 +321,7 @@ names(PID_wilcox_pv) = cancer_abc
 View(PID_wilcox_pv$KIRC)
 
 #Bonferroni-Korrektur 
-alpha_PID=0.05/(nrow(PID_wilcox_pv[[i]]))
+alpha_PID=0.05/(nrow(TCGA_pw_PID[[1]]))
 
 #convert NaN to pvalue 1
 for (i in (1:length(UMAP_PID))){
@@ -364,7 +364,10 @@ f = as.numeric(H_total$KIRC[89,])
 y = kruskal.test(x = p, g =f)
 
 #same results as wilcoxon
+```
 
+
+```{r alternative tests}
 #try ks test
 PID_ks_pv = list()
 for (i in (1:length(UMAP_PID))){
@@ -454,6 +457,10 @@ View(PID_dif_sig_0)
 cancer_sig = c("ACC","CHOL","DLBC","KICH","MESO","READ","TGCT","UVM")
 names(PID_dif_sig_0) = cancer_sig
 ```
+
+
+
+
 ```{r p value cutoff ks test}
 PID_ks_pv_log = list()
 for (i in (1:length(UMAP_PID))){
@@ -517,7 +524,6 @@ for (i in (1:length(UMAP_PID))){
  u = PID_ks_dif_sig[[i]]
  PID_ks_dif_sig[[i]] = cbind(r,u)
  colnames(PID_ks_dif_sig[[i]]) = c("Pathway", "Difference")
- View(PID_ks_dif_sig)
 }
 ```
 
@@ -614,8 +620,6 @@ kirc_names = c((PID_ks_dif_sig_BH_0$KIRC[,1]))
 ```
 
 
-
-
 ```{r plot significant pathways}
 PID_dif_plot = list()
 for (i in (1:length(PID_dif_sig_0))){
@@ -639,6 +643,7 @@ ggplot(l, aes(x=reorder(Pathway,Difference), y=Difference)) +
   ggtitle("PID pw with signif different NES in 2 KIRC clusters")+
   theme(plot.title = element_text(size=10))
 
+ggarrange(plotlist=UMAP_output_PID, widths = c(1,0,1))
 ```
 
 ```{r plot significant pathways (BH)}
@@ -659,6 +664,7 @@ ggarrange(plotlist = p567)
 
 
 ggarrange(plotlist=PID_dif_plot_BH,ncol = 4,nrow = 7,widths = c(0.5,0.5),heights = c(0.5,0.5))
+PID_dif_plot_BH$KIRC
 ```
 
 
@@ -690,11 +696,11 @@ DimPlot(Seurat_PID, reduction = "pca")#plot PCA
 DimHeatmap(Seurat_PID, cells = 300, balance = TRUE) #heatmap for the influence on first PC
 
 Seurat_PID = FindNeighbors(Seurat_PID, dims =1:7)#patients assign differently to clusters when diffenent number of dims
-Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.2) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
+Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.7) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
 
 
 #rename the clusters
-cluster.ids = c("cluster1", "cluster2")
+cluster.ids = c("cluster1", "cluster2","cluster3")
 names(cluster.ids) = levels(Seurat_PID) 
 Seurat_PID = RenameIdents(Seurat_PID, cluster.ids)
 
@@ -714,8 +720,38 @@ FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with colo
 FeaturePlot(Seurat_PID, features = "PID-CD8-TCR-DOWNSTREAM-PATHWAY")#umap with color for pw activity for one pathway
 
 DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
+
+
 ```
 ```{r}
 pie(x = c(5735,2301,1633), col = c("pink","lightblue","orange"),labels = c("Immuninfiltration","Immunsupression","Neutral"))
 ```
+
+
+```{r}
+TCGA_pw_PID_KIRC_t = data.frame(t(TCGA_pw_PID[[1]]))
+KIRC_TCR = TCGA_pw_PID_KIRC_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
+KIRC_CD8_TCR = TCGA_pw_PID_KIRC_t$PID_CD8_TCR_PATHWAY
+ggplot (data =data.frame(UMAP_PID[[1]]), 
+                    aes(x = X1, y = X2 , color = KIRC_TCR))+
+  geom_point(size = 1)+
+  scale_color_viridis(option = "D")
+
+
+```
+```{r}
+library(dbscan)
+x = kNN(TCGA_pw_PID$KIRC, k = 3)
+y = sNNclust(TCGA_pw_PID$KIRC ,k = 3, eps = 3, minPts = 0.25)
+y$cluster
+
+```
+
+```{r hclust}
+d = dist(t(TCGA_pw_PID$KIRC))
+h = hclust(d, method = "ward.D2")
+ggdendrogram(h, method = "ward.D2")
+
+```
+
 

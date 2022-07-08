@@ -622,3 +622,67 @@ ggscatter(
 ) +
   stat_mean(aes(color = KEGG_cluster), size = 4)
 ```
+
+
+
+```{r H test}
+#H test because 3 cluster
+
+KEGG_H1_cluster = c(rep(c(1),times = ncol(KEGG_c1)))
+KEGG_H2_cluster = c(rep(c(2),times = ncol(KEGG_c2)))
+KEGG_H3_cluster = c(rep(c(3),times = ncol(KEGG_c3)))
+H_cluster = c(KEGG_H1_cluster, KEGG_H2_cluster, KEGG_H3_cluster)
+KEGG_H_all = cbind(KEGG_c1, KEGG_c2, KEGG_c3)
+H_KEGG_cluster = rbind(KEGG_H_all, H_cluster)
+
+
+H_pv = c()
+for (i in 1:186){
+  v = as.numeric(H_KEGG_cluster[i,])
+  q = as.numeric(H_KEGG_cluster[nrow(H_KEGG_cluster),])
+  H_pv[i] = kruskal.test(v,q)$p.value
+}
+H_pv = matrix(H_pv)
+rownames(H_pv) = rownames(H_KEGG_cluster[1:186,])
+H_pv_cl = data.frame(na.omit(H_pv))
+H_pv_ordered = data.frame(H_pv_cl[order(-H_pv_cl$na.omit.H_pv., decreasing = T),,drop = F])
+
+#sign??
+cutoffpv_H = 0.05/186
+H_KEGG_sig = as.matrix(H_pv_ordered[which(H_pv_ordered$na.omit.H_pv.<cutoffpv_H),])
+rownames(H_KEGG_sig) = rownames(H_pv_ordered)[1:nrow(H_KEGG_sig)]
+top25_KEGG_H = c(rownames(H_KEGG_sig)[1:25])
+#get the top 25 pw for each cluster
+KEGG_c1_H_top25 = KEGG_c1[which(rownames(KEGG_c1) %in% top25_KEGG_H), ]
+KEGG_c2_H_top25 = KEGG_c2[which(rownames(KEGG_c2) %in% top25_KEGG_H), ]
+KEGG_c3_H_top25 = KEGG_c3[which(rownames(KEGG_c3) %in% top25_KEGG_H), ]
+
+#order according to pv
+KEGG_c1_H_top25 = cbind(rownames(KEGG_c1_H_top25), KEGG_c1_H_top25)
+KEGG_c1_H_top25_ordered = data.matrix(KEGG_c1_H_top25[match(top25_KEGG_H, KEGG_c1_H_top25$`rownames(KEGG_c1_H_top25)`),])
+KEGG_c1_H_top25_ordered = KEGG_c1_H_top25_ordered[,-1]#only once!!!!
+
+KEGG_c2_H_top25 = cbind(rownames(KEGG_c2_H_top25), KEGG_c2_H_top25)
+KEGG_c2_H_top25_ordered = data.matrix(KEGG_c2_H_top25[match(top25_KEGG_H, KEGG_c2_H_top25$`rownames(KEGG_c2_H_top25)`),])
+KEGG_c2_H_top25_ordered = KEGG_c2_H_top25_ordered[,-1]#only once!!!!
+
+KEGG_c3_H_top25 = cbind(rownames(KEGG_c3_H_top25), KEGG_c3_H_top25)
+KEGG_c3_H_top25_ordered = data.matrix(KEGG_c3_H_top25[match(top25_KEGG_H, KEGG_c3_H_top25$`rownames(KEGG_c3_H_top25)`),])
+KEGG_c3_H_top25_ordered = KEGG_c3_H_top25_ordered[,-1]#only once!!!!
+
+```
+
+```{r Heartmap H test}
+
+common_min = min(c(KEGG_c1_H_top25_ordered, KEGG_c2_H_top25_ordered, KEGG_c3_H_top25_ordered))
+common_max = max(c(KEGG_c1_H_top25_ordered, KEGG_c2_H_top25_ordered, KEGG_c3_H_top25_ordered))
+col_fun = circlize::colorRamp2(c(common_min,0, common_max), c("blue","black", "red"))
+
+
+Heatmap(KEGG_c1_H_top25_ordered, column_title = "Cluster 1", column_title_gp = gpar(fontsize = 10),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 7),labels_gp = gpar(fontsize = 7)))+
+  Heatmap(KEGG_c2_H_top25_ordered, column_title = "Cluster 2", column_title_gp = gpar(fontsize = 10),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),show_heatmap_legend = FALSE) +
+  Heatmap(KEGG_c3_H_top25_ordered,column_title = "Cluster 3", column_title_gp = gpar(fontsize = 10), col = col_fun,cluster_rows = FALSE,cluster_columns =  F, column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),show_heatmap_legend = FALSE)
+
+
+```
+
