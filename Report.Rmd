@@ -105,7 +105,8 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
 
 ### Statistical analysis
 
-#### Shapiro test
+#### Shapiro-Wilks test
+Shapiro-Wilks test is a normality test based on regression and correlation. It tests the null hypothesis that the data follows a normal distribution. Small values of SW test statistic indicate no normality of the data thus the null hypothesis is rejected. SW values of one suggest normality @Shapiro-Yap-2011.
 
 #### Wilcoxon rank-sum and signed-rank test
 Wilcoxon rank-sum test and Wilcoxon signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.  Wilcoxon signed-rank test is used to analyze matched-pair or one-sample data. It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero. The test is based on ranked absolute values of differences @Wilcoxon-Woolson-2007. Wilcoxon rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values. The null hypothesis states that there is no association between the two samples @Wilcoxon-Rey2011. 
