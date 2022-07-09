@@ -22,206 +22,29 @@ library(SeqGSEA)
 ```{r}
 #load data
 genesets = readRDS("../data/hallmarks_genesets.rds")
+PENG_pathways = readRDS("../data/PENG_pathways.rds")
 ```
-
-```{r}
-# Carbohydrates
-Homo_sapiensCPR = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:REACTOME")
-Carbohydrates = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M16864",]
-# Glycolysis
-Homo_sapiensCGP = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CGP")
-Glycolysis = Homo_sapiensCGP[Homo_sapiensCGP$gs_id=="M16111",] #22 genes
-# Amino acid 
-Homo_sapiensC2 = msigdbr(species = "Homo sapiens", category = "C2")
-Amino_Acid = Homo_sapiensC2[Homo_sapiensC2$gs_id=="M39570",] #102 genes
-#Sphingolipid
-Sphingolipid = Homo_sapiensCPR[Homo_sapiensCPR$gs_id=="M14857",]
-#Fatty acid
-Homo_sapiensCPK = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
-Fatty_acid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M699",]
-#Pentose phosphate
-Pentose_phosphate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1386",]
-#Ether lipid
-Ether_lipid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M2130",]
-#Glutathione
-Glutathione = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M1840",]
-#Nitrogen
-Nitrogen = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M4629",]
-#Oxidative phosphorylation
-Oxidative_phosphorylation = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M19540",]
-#Purines
-Purine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14314",]
-#Pyrimidines
-Pyrimidine = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5109",]
-#Pyruvate
-Pyruvate = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M7934",]
-#Steroids
-Steroid = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M5872",]
-#Steroid hormones
-Steroid_hormones = Homo_sapiensCPK[Homo_sapiensCPK$gs_id=="M14933",]
-```
-
-```{r}
-#create GSEA compatible gene set list, ensembl id as characters
-carbohydrates = as.character(Carbohydrates$ensembl_gene)
-glycolysis = as.character(Glycolysis$ensembl_gene)
-amino_acid = as.character(Amino_Acid$ensembl_gene)
-sphingolipid = as.character(Sphingolipid$ensembl_gene)
-fatty_acid = as.character(Fatty_acid$ensembl_gene)
-pentose_phosphate = as.character(Pentose_phosphate$ensembl_gene)
-ether_lipid = as.character(Ether_lipid$ensembl_gene)
-glutathione = as.character(Glutathione$ensembl_gene)
-nitrogen = as.character(Nitrogen$ensembl_gene)
-oxidative_phosphorylation = as.character(Oxidative_phosphorylation$ensembl_gene)
-purine = as.character(Purine$ensembl_gene)
-pyrimidine = as.character(Pyrimidine$ensembl_gene)
-pyruvate = as.character(Pyruvate$ensembl_gene)
-steroid = as.character(Steroid$ensembl_gene)
-steroid_hormones = as.character(Steroid_hormones$ensembl_gene)
-
-metabolic_pathways = list(carbohydrates, glycolysis, amino_acid, sphingolipid, fatty_acid, pentose_phosphate, ether_lipid, glutathione, nitrogen, oxidative_phosphorylation, purine, pyrimidine, pyruvate, steroid, steroid_hormones)
-
-names(metabolic_pathways) = c("M16864_Carbohydrates", "M16111_Glycolysis", "M39570_Amino_acid", "M14857_Sphingolipid", "M699_Fatty_Acid", "M1386_Pentose_phosphate", "M2130_Ether_lipid", "M1840_Glutathione", "M4629_Nitrogen", "M19540_Oxidative_phosphorylation", "M14314_Purine", "M5109_Pyrimidine", "M7934_Pyruvate", "M5872_Steroid", "M14933_Steroid_hormones")
-```
-
-```{r}
-hallmarks = msigdbr(species = "Homo sapiens", category = "H")
-hallmarks_gsname = hallmarks$gs_name
-hallmarks_ensembl = hallmarks$ensembl_gene
-hallmarks = as.data.frame(cbind(hallmarks_gsname, hallmarks_ensembl))
-
-#create a df with names of pathways
-pathway_names = c(unique(hallmarks$hallmarks_gsname))
-#create a list in which the pathways will be stored (outout has to be a list)
-hallmark_genesets = list(list())#
-#fill the list with pathways and genes
-for (x in 1:length(pathway_names)){
-  hallmark_genesets[[x]] = pathway_names[x]
-  z = c((hallmarks[which(hallmarks$hallmarks_gsname == pathway_names[x]),2]))
-  for (k in 1:length(z)){
-  hallmark_genesets[[x]][[k]] = z[k]
-  }}
-names(hallmark_genesets) = pathway_names
-```
-
-```{r}
-#JACCARD INDEX
-# extract all 46 genesets
-all.genesets = as.list(hallmarks_genesets[[1]])
-# create gene overlap matrix for all gene sets on itself
-go.matrix = newGOM(all.genesets, all.genesets)
-#create matrix only for jaccard index
-jaccard.matrix = getMatrix(go.matrix, "Jaccard")
-#order rows and columns alphabetically, so order is the same
-jaccard.matrix = data.matrix(real[order(row.names(real)), ])
-jaccard.matrix = data.matrix(real[, order(colnames(real))])
-
-#create dataframe from jaccard matrix
-jaccard.df = as.data.frame(jaccard.matrix)
-#melt for ggplot
-melted = melt(jaccard.df)
-#create vector with 46 gene set names
-r = rownames(jaccard.matrix)
-#46 times, for melted df --> get two columns with all gene set combinations
-variable2 = rep(r, 46)
-#new column
-melted = cbind(melted, variable2)
-#rename value into Jaccard index
-names(melted)[names(melted) == "value"] <- "Jaccard"
-
-#ggplot Jaccard index as heatmap
-ggplot(melted, aes(variable, variable2, fill = Jaccard)) + 
-  geom_tile(colour = "white") +
-  scale_fill_gradient(low = "white", high = "steelblue") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  xlab(" ") +
-  ylab(" ") +
-  ggtitle("Jaccard index for hallmark gene sets") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
 
 ```{r check jaccard index for PID}
-go_PID_matrix = newGOM(PID_genesets, PID_genesets)
-go_PID_jaccard = getMatrix(go_PID_matrix, "Jaccard")
-diag(go_PID_jaccard) = 0
-heatmap(go_PID_jaccard, Rowv = NA, Colv = NA, margins = c(8,8))
-#reduce geneset to most independent pathways
-for (i in 1:nrow(go_PID_jaccard)){
-  for (j in 1:ncol(go_PID_jaccard)){
-    if (go_PID_jaccard[i,j] > 0.2) {
-    go_PID_jaccard[i,j] = NA
-    }
-  }
-}
-go_PID_jaccard = na.omit(go_PID_jaccard)
-PID_independent = metabolic_genesets_PID[rownames(go_PID_jaccard)]
-
-#update with new filtered PID pathways:
+#create GeneOverlap matrix for PID pathways:
 go_PID_matrix_new = newGOM(metabolic_genesets_PID_cl, metabolic_genesets_PID_cl)
 go_PID_jaccard_new = getMatrix(go_PID_matrix_new, "Jaccard")
 diag(go_PID_jaccard_new) = 0
 heatmap(go_PID_jaccard_new, Rowv = NA, Colv = NA, margins = c(8,8))
 Heatmap(go_PID_jaccard_new, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5))
-
-#only those for logistic regression
-PID_regression = PID_genesets[PID_sigpw] # 10 sig pathways
-go_PID_matrix_regr = newGOM(PID_regression, PID_regression)
-go_PID_jaccard_regr = getMatrix(go_PID_matrix_regr, "Jaccard")
-diag(go_PID_jaccard_regr) = 0
-heatmap(go_PID_jaccard_regr, Rowv = NA, Colv = NA, margins = c(8,8))
-Heatmap(go_PID_jaccard_regr, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10))
 ```
 
-```{r check KEGG pathways}
+```{r check jaccard index for KEGG pathways}
 go_KEGG_matrix = newGOM(metabolic_genesets_KEGG, metabolic_genesets_KEGG)
 go_KEGG_jaccard = getMatrix(go_KEGG_matrix, "Jaccard")
 diag(go_KEGG_jaccard) = 0
+go_KEGG_jaccard = na.omit(go_KEGG_jaccard)
 heatmap(go_KEGG_jaccard, Rowv = NA, Colv = NA, margins = c(14,14))
-#reduce geneset to most independent pathways
-for (i in 1:nrow(go_KEGG_jaccard)){
-  for (j in 1:ncol(go_KEGG_jaccard)){
-    if (go_KEGG_jaccard[i,j] > 0.2) {
-    go_KEGG_jaccard[i,j] = NA
-    }
-  }
-}
 heatmap.2(go_KEGG_jaccard, dendrogram = "none", trace = "none", margins = c(11,11))
 go_KEGG_jaccard = na.omit(go_KEGG_jaccard)
-KEGG_independent = metabolic_genesets_KEGG[rownames(go_KEGG_jaccard)]
-KEGG_independent = KEGG_independent[names(KEGG_independent) != "KEGG_OLFACTORY_TRANSDUCTION"]
 ```
 
-```{r PENG pathways}
-
-Amino_acid = as.data.frame(Amino_acid)
-Amino_acid = substr(Amino_acid$`Genes;`,1, nchar(Amino_acid$`Genes;`)-1)
-Carbohydrates = substr(Carbohydrates$`Genes;`,1, nchar(Carbohydrates$`Genes;`)-1)
-Energy = substr(Energy$`Genes;`,1, nchar(Energy$`Genes;`)-1)
-Lipid = substr(Lipid$`Genes;`,1, nchar(Lipid$`Genes;`)-1)
-Nucleotide = substr(Nucleotide$`Genes;`,1, nchar(Nucleotide$`Genes;`)-1)
-TCA_cycle = substr(TCA_cycle$`Genes;`,1, nchar(TCA_cycle$`Genes;`)-1)
-Vitamin = substr(Vitamin$`Genes;`,1, nchar(Vitamin$`Genes;`)-1)
-peng_pathways = list(Amino_acid, Carbohydrates, Energy, Lipid, Nucleotide, TCA_cycle, Vitamin)
-names(peng_pathways) = c("Amino_acid", "Carbohydrates", "Energy", "Lipid", "Nucleotide", "TCA_cycle", "Vitamin")
-
-#convert PENG gene symbols into ensemble ID
-ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
-PENG_pathways = vector(mode = 'list',7)
-
-for (i in 1:length(peng_pathways)){
-  m = getBM(attributes='ensembl_gene_id', 
-      filters = 'hgnc_symbol', 
-      values = peng_pathways[[i]], 
-      mart = ensembl)
-  m = as.vector(m$ensembl_gene_id)
-  PENG_pathways[[i]] = m
-}
-names(PENG_pathways) = names(peng_pathways)
-```
-
-```{r}
-#Jaccard index for ALL used pathways:
+```{r Jaccard index for ALL used pathways}
 #hallmarks, KEGG, PID, MMR, PENG
 all_genesets = c(metabolic_genesets_H, metabolic_genesets_KEGG, metabolic_genesets_PID_cl, MMR, PENG_pathways)
 #compute jaccard index
@@ -231,9 +54,5 @@ diag(go_jaccard_alle) = 0
 heatmap(go_jaccard_alle, Rowv = NA, Colv = NA)
 
 Heatmap(go_jaccard_alle, name = "mat", cluster_rows = FALSE, cluster_columns = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 2))
-
-library(RColorBrewer)
-library(circlize)
-pal <- colorRampPalette(brewer.pal(11, "RdYlBu"))
 ```
 

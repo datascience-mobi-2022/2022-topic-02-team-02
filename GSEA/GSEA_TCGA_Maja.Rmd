@@ -29,8 +29,8 @@ library(rlist)
 ```
 
 ```{r load data}
-tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
-tcga_exp_cleaned = readRDS("../data/tcga_exp_cleaned.RDS")
+tcga_annot = readRDS("data/tcga_tumor_annotation.RDS")
+tcga_exp_cleaned = readRDS("data/tcga_exp_cleaned.RDS")
 ```
 
 ```{r split annotation dataframe}
@@ -214,11 +214,11 @@ for (j in 1:33){
 colnames(NES_mean) = all_tumortypes_names
 NES_matrix_hallmark = as.matrix(NES_mean)
 
-#heatmap 1, matrix is matrix von NES_mean
+#plot mean enrichment for each tumor type
+#heatmap 1
 Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = FALSE, column_km = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 7), width = ncol(NES_matrix_hallmark)*unit(8, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = FALSE)
 Heatmap_NES_hallmark
 
-#plot mean enrichment for each tumor type
 #heatmap 2
 melted = melt(NES_mean)
 pathwaynames = rep(pathway_names, 33)
@@ -240,9 +240,8 @@ print(dendro_hallmark)
 ```
 
 ```{r GSEA TCGA KEGG}
-#RUNNN TONIGHT
 #final GSEA lapply/for-loop over all tumor types KEGG genesets!
-#only run once    metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)]
+metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)] #only run once
 #ist in der data variable schon gemacht
 
 PVALUES_OVERALL_KEGG = list()
@@ -304,8 +303,6 @@ NES_matrix_KEGG = as.matrix(NES_mean_KEGG)
 Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = FALSE, column_km = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 2), width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets")
 Heatmap_NES_KEGG
 
-##heatmap.2(NES_matrix_KEGG, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
-
 #create dendrogram 
 KEGG_dendro_matrix = t(NES_matrix_KEGG)
 KEGG_dendro = as.dendrogram(hclust(d = dist(x = KEGG_dendro_matrix)))
@@ -324,19 +321,11 @@ for (j in 1:33){
 colnames(NES_sum_KEGG) = all_tumortypes_names
 NES_summatrix_KEGG = as.matrix(NES_sum_KEGG)
 heatmap.2(NES_summatrix_KEGG, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
-
-#GSEA barplot for example patient ACC
-GSEA_firstACC = GSEA_OVERALL_KEGG[["ACC"]][["TCGA-OR-A5K3-01"]]
-GSEA.barplot(GSEA_firstACC, category = "pathway", score = 'NES',
-             pvalue = 'pval', sort = 'NES', decreasing = TRUE)
-GSEA.barplot(GSEA_firstACC, category = "pathway", score = 'NES',
-             pvalue = 'pval', sort = 'NES', decreasing = FALSE)
 ```
 
 ```{r GSEA TCGA PID}
-#von TIM mit richtigen 88 pathways durchgeführt!!!!
 #final GSEA lapply/for-loop over all tumor types PID genesets!
-
+#von TIM mit richtigen 88 pathways durchgeführt!
 
 PVALUES_OVERALL_PID = list()
 NES_OVERALL_PID = list()
@@ -383,7 +372,7 @@ names(GSEA_OVERALL_PID) = all_tumortypes_names
 names(PVALUES_OVERALL_PID) = all_tumortypes_names
 names(NES_OVERALL_PID) = all_tumortypes_names
 
-###mean matrix für richtige PID NES
+#mean matrix für richtige PID NES
 PID_names = rownames(NES_OVERALL_PID_cl[[1]])
 NES_mean_list = list()
 for (i in 1:33){
@@ -396,6 +385,7 @@ for (j in 1:33){
 colnames(NES_mean_PID_cl) = all_tumortypes_names
 
 NES_matrix_PID = as.matrix(NES_mean_PID_cl)
+#plot mean NES
 Heatmap_NES_PID = Heatmap(NES_matrix_PID, name = "NES", cluster_rows = FALSE, column_km = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 4), width = ncol(NES_matrix_PID)*unit(8, "mm"), height = nrow(NES_matrix_PID)*unit(2, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PID gene sets")
 Heatmap_NES_PID
 
@@ -406,10 +396,10 @@ dendro_PID =  ggdendrogram(data = PID_dendro, rotate = TRUE)
 print(dendro_PID)
 ```
 
-```{r}
+```{r GSEA MMR pathways}
 #final GSEA lapply/for-loop over all tumor types MMR genesets!
 #need to remove geneset 2, 3 and 7 from MMR
-#MMR = MMR[-c(2,3,4,7] #only run once; already updated in data file
+MMR = MMR[-c(2,3,4,7)] #only run once; already updated in data file
 
 PVALUES_OVERALL_MMR = list()
 NES_OVERALL_MMR = list()
@@ -455,6 +445,7 @@ names(GSEA_OVERALL_MMR) = all_tumortypes_names
 names(PVALUES_OVERALL_MMR) = all_tumortypes_names
 names(NES_OVERALL_MMR) = all_tumortypes_names
 
+# Compute mean NES for each tumor type
 NES_mean_list = list()
 for (i in 1:33){
   NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_MMR[[i]], 1 , mean))
@@ -476,7 +467,7 @@ dendro_MMR =  ggdendrogram(data = MMR_dendro, rotate = TRUE)
 print(dendro_MMR)
 ```
 
-```{r}
+```{r GSEA PENG pathways}
 #final GSEA over all tumor types PENG pathways!
 
 PVALUES_OVERALL_PENG = list()
@@ -536,8 +527,6 @@ NES_matrix_PENG = as.matrix(NES_mean_PENG)
 Heatmap_NES_PENG = Heatmap(NES_matrix_PENG, name = "NES", cluster_rows = FALSE, column_km = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_PENG)*unit(8, "mm"), height = nrow(NES_matrix_PENG)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PENG gene sets")
 Heatmap_NES_PENG
 
-
-
 #create dendrogram 
 PENG_dendro_matrix = t(NES_matrix_PENG)
 PENG_dendro = as.dendrogram(hclust(d = dist(x = PENG_dendro_matrix)))
@@ -545,185 +534,21 @@ dendro_PENG =  ggdendrogram(data = PENG_dendro, rotate = TRUE)
 print(dendro_PENG)
 ```
 
-```{r Probe loop}
-#Für Proben des for loops, gerade zB. KEGG
-
-ACC = tumorlist_z[["ACC"]][,1:6]
-BLCA =tumorlist_z[["BLCA"]][,1:6]
-BRCA = tumorlist_z[["BRCA"]][,1:6]
-
-probe_liste = list(ACC, BLCA, BRCA)
-tumornames = all_tumortypes_names[1:3]
-names(probe_liste) = tumornames
-
-PVALUES_OVERALL_KEGG = list()
-NES_OVERALL_KEGG = list()
-GSEA_OVERALL_KEGG <- vector(mode = 'list',3)
-
-#ONLY RUN ONCE:  metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)]
-KEGG_names = names(metabolic_genesets_KEGG)
-
-for (j in 1:3) {
-  for (i in 1:(ncol(probe_liste[[j]]))){
-    m = c(probe_liste[[j]][,i])
-    names(m) = rownames(probe_liste[[j]])
-    m = m[order(m), drop = FALSE]
-    GSEA_OVERALL_KEGG[[j]][[i]] = fgsea(pathways = metabolic_genesets_KEGG,
-                               stats = m,
-                               scoreType = "std", 
-                               nproc = 6)
-  }
-  print("GSEA done")
-  names(GSEA_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]])
-  PVALUES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
-  for (h in 1:ncol(probe_liste[[j]])){
-    a = GSEA_OVERALL_KEGG[[j]][[h]][,3]
-    PVALUES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),h] = a
-  }
-  PVALUES_OVERALL_KEGG[[j]][is.na(PVALUES_OVERALL_KEGG[[j]])] = 1
-  colnames(PVALUES_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  print("PVALUE done")
-  NES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
-  for (k in 1:ncol(probe_liste[[j]])){
-    t = GSEA_OVERALL_KEGG[[j]][[k]][,6]
-    NES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),k] = t
-  }
-  colnames(NES_OVERALL_KEGG[[j]]) = colnames(probe_liste[[j]][,1:ncol(probe_liste[[j]])])
-  indexes = which(PVALUES_OVERALL_KEGG[[j]] >= 0.05, arr.ind=TRUE)
-  rows = as.vector(indexes[,1])
-  cols = as.vector(indexes[,2])
-  for (l in 1:length(rows)) {
-    NES_OVERALL_KEGG[[j]][rows[l], cols[l]] = 0
-  }
-  print("NES done")
-}
-names(GSEA_OVERALL_KEGG) = tumornames
-names(PVALUES_OVERALL_KEGG) = tumornames
-names(NES_OVERALL_KEGG) = tumornames
-
-```
-
-```{r tried to plot heatmaps in panel}
-#combine all pathway heatmaps?
-Heatmap_list_pathways = list(Heatmap_NES_hallmark, Heatmap_NES_KEGG, Heatmap_NES_PID, Heatmap_NES_MMR)
-
-library(gridExtra)
-grid.arrange(Heatmap_NES_hallmark, Heatmap_NES_KEGG, Heatmap_NES_PID, Heatmap_NES_MMR, nrow = 2)
-
-pushViewport(viewport(layout = grid.layout(2, 2)))
-vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
-print(Heatmap_NES_hallmark, vp = vplayout(1, 1))
-print(Heatmap_NES_KEGG, vp = vplayout(1, 2))
-print(Heatmap_NES_PID, vp = vplayout(2, 1))
-print(Heatmap_NES_MMR, vp = vplayout(2, 2))
-
-plot_grid(Heatmap_NES_hallmark, Heatmap_NES_KEGG, Heatmap_NES_PID, Heatmap_NES_MMR)
-panel = rbind(Heatmap_NES_hallmark, Heatmap_NES_KEGG)
-panel
-
-par(mfrow=c(2,2))
-Heatmap_NES_hallmark
-Heatmap_NES_KEGG
-Heatmap_NES_PID
-Heatmap_NES_MMR
-
-layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE))
-layout.show(n = 4)
-Heatmap_NES_hallmark
-Heatmap_NES_KEGG
-Heatmap_NES_PID
-Heatmap_NES_MMR
-
-library(circlize)
-
-col_fun = colorRamp2(c(-2, 0, 2), c("blue", "white", "red"))
-
-grid.newpage()
-pushViewport(viewport(layout = grid.layout(nr = 2, nc = 2)))
-pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 1))
-draw(Heatmap_NES_hallmark, newpage = FALSE)
-upViewport()
-
-pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
-draw(Heatmap(mat2, col = col_fun, column_title = "mat2", show_heatmap_legend = FALSE), newpage = FALSE)
-upViewport()
-
-pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 1))
-draw(Heatmap(mat3, col = col_fun, column_title = "mat3", show_heatmap_legend = FALSE), newpage = FALSE)
-upViewport()
-
-lgd = Legend(at = c(-2, -1, 0, 1, 2), col_fun = col_fun, title = "main matrix", title_position = "topleft")
-
-pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 2))
-grid.draw(lgd)
-upViewport()
-
-upViewport()
-##
-
-mat1 = matrix(rnorm(100), 10)
-mat2 = matrix(rnorm(100), 10)
-
-grid.newpage()
-pushViewport(viewport(x = 0.5, y = 1, width = 0.5, height = 0.5, just = c("left", "top")))
-grid.rect(gp = gpar(fill = "#00FF0020"))
-draw(Heatmap_NES_hallmark, newpage = FALSE)
-popViewport()
-
-pushViewport(viewport(x = 0.5, y = 0.5, width = 0.5, height = 0.5, just = c("left", "top")))
-grid.rect(gp = gpar(fill = "#0000FF20"))
-draw(Heatmap(Heatmap_NES_KEGG), newpage = FALSE)
-popViewport()
-
-
-library(multipanelfigure)
-figure1 <- multi_panel_figure(
-  width = 900, height = 900,
-  columns = 2, rows = 2)
-figure1 %<>% fill_panel("../data/Heatmap_PID.png",
-  column = 2,
-  row = 1)
-figure1
-
-figure1 %<>% fill_panel(Heatmap_NES_hallmark, column = 1, row = 1)
-figure1 %<>% fill_panel(Heatmap_NES_KEGG, column = 2, row = 1)
-figure1 %<>% fill_panel(Heatmap_NES_PID, column = 1, row = 2)
-figure1 %<>% fill_panel(Heatmap_NES_PENG, column = 2, row = 2)
-figure1
-
-figure2 = multi_panel_figure(width = c(1000, 1000),height = c(1000, 1000))
-figure2 %<>% fill_panel(Heatmap_NES_hallmark, column = 1, row = 1)
-figure2 %<>% fill_panel(Heatmap_NES_KEGG, column = 2, row = 1)
-figure2 %<>% fill_panel(Heatmap_NES_PID, column = 1, row = 2)
-figure2 %<>% fill_panel(Heatmap_NES_PENG, column = 2, row = 2)
-figure2
-
-```
-
-
-```{r GSEA table plot}
-#GSEA table plot for first ACC patient 
-topPathwaysUp <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES > 0][head(order(pval), n=10), pathway]
-topPathwaysDown <- GSEA_results_ACC[["TCGA-OR-A5K3-01"]][ES < 0][tail(order(pval), n=10), pathway]
-topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
-as_ggplot(plotGseaTable(hallmark_genesets[topPathways], probe, GSEA_results_ACC[["TCGA-OR-A5K3-01"]], gseaParam=0.5, render = FALSE))
-```
-
-
 ```{r pan-cancer analysis}
 #comparison of tumor types
-#--> mean über pathway activity MEAN! matrix und dann top 15 in beide extreme heraussuchen und heatplot machen (30x33)
+#compute mean of mean NES overall tumor types to find top 15 up- and downregulated pathways respectively
+#create pathway activity matrix for all genesets! 1) listcbind with NES matrices and then rbind with hallmark, KEGG, PID, MMR
 NES_OVERALL_hallmark_alle = list.cbind(nes_overall)
 NES_OVERALL_PID_alle = list.cbind(NES_OVERALL_PID_cl) 
 NES_OVERALL_KEGG_alle = list.cbind(NES_OVERALL_KEGG)
 NES_OVERALL_MMR_alle = list.cbind(NES_OVERALL_MMR)
 
 names(NES_OVERALL_PID_alle) = colnames(NES_OVERALL_KEGG_alle)
-# pathway activity matrix über alle erstellen! erst listcbind mit NES und dann rbind über hallmark, KEGG, PID, MMR
+
 pathway_activity_matrix = rbind(NES_OVERALL_hallmark_alle, NES_OVERALL_PID_alle, NES_OVERALL_KEGG_alle, NES_OVERALL_MMR_alle)
 
-#melt Hallmark, KEGG, PID and MMR MEAN pathway activity matrices 
-pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID_cl, NES_mean_MMR) #ACHTUNG mit altem PID noch
+#melt Hallmark, KEGG, PID and MMR MEAN(!) pathway activity matrices 
+pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID_cl, NES_mean_MMR)
 
 #find top pathways across all tumor types
 pathway_mean_alle = as.data.frame(apply(pathway_activity_matrix_mean, 1, mean))
@@ -757,26 +582,6 @@ top_var_pw_matrix = as.matrix(pathway_activity_matrix_mean[top30_var_pw, ])
 Heatmap_TopVar_pw = Heatmap(top_var_pw_matrix, name = "NES", cluster_rows = FALSE, column_km = 7, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(25, "mm"), column_dend_height = unit(15, "mm"), column_title = "Top 30 variance pathways TCGA", col = pal(50))
 Heatmap_TopVar_pw
 
-
-# select top 15 UP and DOWN regulated pathways for ACC
-ACC_ordered = pathway_activity_matrix_mean[,1, drop = FALSE]
-ACC_topup = slice_max(ACC_ordered, order_by = ACC_ordered[,1], n = 15)
-ACC_topdown = slice_min(ACC_ordered, order_by = ACC_ordered[,1], n = 15)
-ACC_topdown = ACC_topdown[order(nrow(ACC_topdown):1),, drop = FALSE]
-ACC_top = rbind(ACC_topup, ACC_topdown)
-ACC_top = rownames_to_column(ACC_top)
-
-ACC_top$rowname <- factor(ACC_top$rowname, levels = ACC_top$rowname)
-ggplot(ACC_top, aes(x=rowname, y=ACC)) + 
-  geom_bar(stat = "identity", fill="lightblue")+
-  coord_flip() +
-  labs (y = "Pathways",
-        x = "NES",
-        title = "Top up- and downregulated pathways in ACC")+ 
-        theme(axis.text.x = element_text(size = 10)) +
-        theme(axis.text.y = element_text(size = 5)) 
-
-
 # select top 15 UP and DOWN regulated pathways for KIRC
 KIRC_ordered = pathway_activity_matrix_mean[,12, drop = FALSE]
 KIRC_topup = slice_max(KIRC_ordered, order_by = KIRC_ordered[,1], n = 15)
@@ -797,7 +602,7 @@ ggplot(KIRC_top, aes(x=rowname, y=KIRC, fill=rowname)) +
   scale_fill_manual(values= blue)+ 
   theme(legend.position="none")
 
-# compare enrichment for top 15 up- and downregulated pathways in KIRC with other tumor types:
+# compare enrichment for most enriched pathway in KIRC with other tumor types:
 KEGG_O_GLYCAN_BIOSYNTHESIS = t(pathway_activity_matrix_mean[rownames(pathway_activity_matrix_mean) == "KEGG_O_GLYCAN_BIOSYNTHESIS",, drop = FALSE])
 KEGG_O_GLYCAN_BIOSYNTHESIS = as.data.frame(KEGG_O_GLYCAN_BIOSYNTHESIS)
 KEGG_O_GLYCAN_BIOSYNTHESIS = rownames_to_column(KEGG_O_GLYCAN_BIOSYNTHESIS)
@@ -813,8 +618,7 @@ ggplot(KEGG_O_GLYCAN_BIOSYNTHESIS, aes(x=rowname, y=KEGG_O_GLYCAN_BIOSYNTHESIS))
         title = "KEGG_O_GLYCAN_BIOSYNTHESIS in all tumor types")
 ```
 
-```{r}
-#result plots
+```{r result plots}
 #GSEA barplot for example patient KIRC
 GSEA_KIRC_patient = GSEA_OVERALL_PID[[12]][["TCGA-B8-5163-01"]]
 GSEA.barplot(GSEA_KIRC_patient, category = "pathway", score = 'NES',
@@ -822,7 +626,7 @@ GSEA.barplot(GSEA_KIRC_patient, category = "pathway", score = 'NES',
 GSEA.barplot(GSEA_KIRC_patient, category = "pathway", score = 'NES',
              pvalue = 'pval', sort = 'NES', decreasing = FALSE)
 
-#GSEA table plot for KIRC patient 2
+#GSEA table plot for KIRC patient
 KIRC_patient_ranked = c(tumorlist_z[["KIRC"]][, "TCGA-B8-5163-01"])
 names(KIRC_patient_ranked) = rownames(tumorlist_z[["KIRC"]])
 KIRC_patient_ranked = KIRC_patient_ranked[order(KIRC_patient_ranked), drop = FALSE]
@@ -832,20 +636,19 @@ topPathwaysDown <- GSEA_KIRC_patient[ES < 0][tail(order(pval), n=10), pathway]
 topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
 as_ggplot(plotGseaTable(metabolic_genesets_PID_cl[topPathways], KIRC_patient_ranked, GSEA_KIRC_patient, gseaParam=0.5, render = FALSE))
 
-NES_KIRC = NES_OVERALL_PID_cl[[12]]
-NES_KIRC_abs = abs(NES_KIRC)
-NES_KIRC_sum = apply(NES_KIRC_abs, 2, sum)
-
 #enrichment plots 
 KIRC_patient_pa = as.data.frame(pathway_activity_matrix[, "KIRC.TCGA-B8-5163-01"])
 rownames(KIRC_patient_pa) = rownames(pathway_activity_matrix)
 colnames(KIRC_patient_pa) = "NES"
+
 #Upregulated --> EMT
 Up_EMT = plotEnrichment(metabolic_genesets_H[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], KIRC_patient_ranked)
 Up_EMT
+
 #Downregulated --> DrugMetabolism
 Down_DrugMetabolism = plotEnrichment(metabolic_genesets_KEGG[["KEGG_DRUG_METABOLISM_CYTOCHROME_P450"]], KIRC_patient_ranked)
 Down_DrugMetabolism
+
 #Neutral --> UV response up
 Neutral_Glycolysis = plotEnrichment(metabolic_genesets_H[["HALLMARK_GLYCOLYSIS"]],KIRC_patient_ranked)
 Neutral_Glycolysis
