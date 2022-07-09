@@ -20,7 +20,11 @@ library(ggpubr)
 library(rlist)
 library(stats)
 library(tidyselect)
+library(cvms)
+library(ROCR)
 ```
+
+
 
 ```{r}
 set.seed(69)
@@ -487,6 +491,26 @@ IL1_regression_plot
 regression_plots_2 = list(TCR_regression_plot, IL1_regression_plot)
 
 ggarrange(plotlist = regression_plots_2, ncol = 2, nrow = 2)
+```
+
+```{r}
+#Confusion table and FDR-plots
+#create dataframe with Infiltration and prediction only
+predict_vs_infiltr = KIRC_predict_t[,89:90]
+PI_table = table(predict_vs_infiltr)
+PI_tibble = as_tibble(PI_table)
+#confusion matrix
+plot_confusion_matrix(PI_tibble, target_col = "Infiltration", 
+                      prediction_col = "Prediction",
+                      counts_col = "n")
+
+#ROC-curve
+pred = prediction(probabilities, KIRC_predict_t$Infiltration)
+roc = performance(pred,"tpr","fpr")
+plot(roc, lwd = 2)
+abline(a = 0, b = 1) 
+auc = performance(pred, measure = "auc")
+print(auc@y.values) #0.9789062
 ```
 
 

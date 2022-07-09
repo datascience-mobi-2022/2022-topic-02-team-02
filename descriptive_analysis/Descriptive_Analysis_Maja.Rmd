@@ -10,45 +10,44 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-#loag vioplot package
+#loa packages
 library(vioplot)
 library(ggplot2)
 library(dplyr)
 library(ggrepel)
 ```
 
+```{r}
+#load variance data frame for TCGA
+tcga_exp = readRDS("../data/tcga_tumor_log2TPM.RDS")
+tcga_exp_cleaned = readRDS("../data/tcga_exp_cleaned.RDS")
+```
+
 
 ```{r}
+#Compute variance for all genes
+tcga_exp_var = apply(tcga_exp, 1, var)
+
 #density plot for tcga_exp_var -> variance across all genes
 plot(density(tcga_exp_var), main = "Density distribution of variance for all genes", xlab = "variance", ylab = "density"); abline(v= quantile(tcga_exp_var,0.5), col = "blue"); text(13, 0.2, "p50-quantile", col = "blue")
 
-```
-
-
-```{r}
 #violin plot for tcga_exp_var
 vioplot(tcga_exp_var, main = "Variance distribution", ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.42,17, "p50-quantile", col = "blue")
-```
 
-```{r}
-#variance density plot for cleaned tcga_exp_clean
+#variance density plot for cleaned TCGA dataset (without lower p50-quantile)
 plot(density(tcga_exp_clean_var)); abline(v = 2.29988)
 plot(density(tcga_exp_clean_var), main = "Variance distribution after high variance filtering", xlab = "variance", ylab = "density")
-```
 
-```{r}
 #variance violin plot for cleaned data
 vioplot(tcga_exp_clean_var, main = "Variance distribution", ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.42,17, "threshold", col = "blue")
-```
 
-
-```{r}
 #try to combine violin plots
 vioplot(tcga_exp_var, tcga_exp_clean_var, main = "Variance distribution", names = c("tcga_exp","tcga_exp_clean"), ylab = "variance"); abline(h = quantile(tcga_exp_var,0.5), col = "blue", lty = "dashed" ); text(1.5,68, "p50-quantile = threshold", col = "blue")
 ```
 
-
 ```{r}
+## is tcga_exp_protein_coding now tcga_exp_cleaned???
+
 #create 3 dataframes for ggplot layering
 #variance and mean with ONLY protein coding genes
 tcga_exp_pc_var = apply(tcga_exp_protein_coding, 1, var)
