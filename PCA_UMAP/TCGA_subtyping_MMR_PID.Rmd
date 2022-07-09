@@ -720,11 +720,6 @@ FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with colo
 FeaturePlot(Seurat_PID, features = "PID-CD8-TCR-DOWNSTREAM-PATHWAY")#umap with color for pw activity for one pathway
 
 DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
-
-
-```
-```{r}
-pie(x = c(5735,2301,1633), col = c("pink","lightblue","orange"),labels = c("Immuninfiltration","Immunsupression","Neutral"))
 ```
 
 
@@ -737,20 +732,6 @@ ggplot (data =data.frame(UMAP_PID[[1]]),
   geom_point(size = 1)+
   scale_color_viridis(option = "D")
 
-
-```
-```{r}
-library(dbscan)
-x = kNN(TCGA_pw_PID$KIRC, k = 3)
-y = sNNclust(TCGA_pw_PID$KIRC ,k = 3, eps = 3, minPts = 0.25)
-y$cluster
-
-```
-
-```{r hclust}
-d = dist(t(TCGA_pw_PID$KIRC))
-h = hclust(d, method = "ward.D2")
-ggdendrogram(h, method = "ward.D2")
 
 ```
 

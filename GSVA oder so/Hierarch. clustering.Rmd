@@ -22,7 +22,8 @@ library(ggplot2)
 library(ggdendro)
 library(dplyr)
 library(reshape2)
-
+library(ggpubr)
+library(gridExtra)
 ```
 
 ```{r}
@@ -251,21 +252,21 @@ Heatmap(am, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=
 
 
 ```{r identify cluster for all 33 tumortypes}
-sig_kirc_20 = rownames(ks_sig$PAAD[1:20,])
-sig_kirc = ks_sig$PRAD[1:20,]
+sig_kirc_20 = rownames(ks_sig$KIRC[1:25,])
+sig_kirc = ks_sig$KIRC[1:25,]
 
 
-sig_patient1= c1_patients[[21]][which(rownames(c1_patients[[21]])%in%sig_kirc_20),]
+sig_patient1= c1_patients[[12]][which(rownames(c1_patients[[12]])%in%sig_kirc_20),]
 sig_patient1_df = cbind(rownames(sig_patient1),sig_patient1)
 sig_patient1_order = data.matrix(sig_patient1[match(sig_kirc_20,sig_patient1_df$`rownames(sig_patient1)`),])
 
 
-sig_patient2= c2_patients[[21]][which(rownames(c2_patients[[21]])%in%sig_kirc_20),]
+sig_patient2= c2_patients[[12]][which(rownames(c2_patients[[12]])%in%sig_kirc_20),]
 sig_patient2_df = cbind(rownames(sig_patient2),sig_patient2)
 sig_patient2_order = data.matrix(sig_patient2[match(sig_kirc_20,sig_patient2_df$`rownames(sig_patient2)`),])
 
 
-sig_patient3= c3_patients[[21]][which(rownames(c3_patients[[21]])%in%sig_kirc_20),]
+sig_patient3= c3_patients[[12]][which(rownames(c3_patients[[12]])%in%sig_kirc_20),]
 sig_patient3_df = cbind(rownames(sig_patient3),sig_patient3)
 sig_patient3_order = data.matrix(sig_patient3[match(sig_kirc_20,sig_patient3_df$`rownames(sig_patient3)`),])
 
@@ -338,19 +339,59 @@ Immune_value_bind = as.numeric(z[,3])
 class(Immune_value_bind)  
 
 Immune_ready = data.frame(cancer_type_bind,Immune_value_bind,Immune_type_bind)
-colnames(Immune_ready) = c("Cancertype","Frequency","Immunetype")
+colnames(Immune_ready) = c("Cancertype","Ratio","Immunetype")
 
 
-ggplot(Immune_ready, aes(fill = Immunetype, y = Frequency, x = Cancertype))+
+peng_plot = ggplot(Immune_ready, aes(fill = Immunetype, y = Ratio, x = Cancertype))+
   geom_bar(position="fill", stat="identity", aes(group = Cancertype)) + 
-  scale_fill_manual(values = c("red","grey","blue")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-panel.background = element_blank(), axis.line = element_line(colour = "black"))
+  scale_fill_manual(values = c("red","white","blue")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"))+
+labs(x = "Cancer type")
 
 
+peng_plot
+
+Neutral = Immune_ready[which(Immune_ready$Immunetype == "Neutral"),]
+Neutral_sum = sum(Neutral$Ratio)
+Infiltrated = Immune_ready[which(Immune_ready$Immunetype == "Immune infiltrated"),]
+Infiltrated_sum = sum(Infiltrated$Ratio)
+Suppresive = Immune_ready[which(Immune_ready$Immunetype == "Not immune infiltrated"),]
+Suppresive_sum = sum(Suppresive$Ratio)
+
+pie_prep = data.frame(c(Neutral_sum,Infiltrated_sum,Suppresive_sum),c("Neutral","Infiltrated","Not infiltrated"))
+colnames(pie_prep) = c("Ratio","Immunetype")
+
+ggplot(pie_prep, aes(x="", y=Ratio, fill=Immunetype)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0)+
+  scale_fill_manual(values = c("red","#D3D3D3","blue")) + 
+   theme_void()
 
 
+data = pie_prep
 
+data <- data %>% 
+  arrange(desc(Immunetype)) %>%
+  mutate(prop = Ratio / sum(data$Ratio) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
 
+# Basic piechart
+pie = ggplot(data, aes(x="", y=prop, fill=Immunetype)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void() + 
+  theme(legend.position="none") +
+  
+  geom_text(aes(y = ypos, label = Immunetype), color = "white", size=6) +
+  scale_fill_manual(values = c("red","#D3D3D3","blue")) 
+
+pie_ratio = c(pie_prep$Ratio)
+pie(pie_ratio, labels = c("Neutral","Infiltrated","Not infiltrated"),col = c("#D3D3D3","red","blue"), border = "white", cex = 1.3)
+
+print(peng_plot)
+peng_plot
+peng = list(pie, peng_plot)
+ggarrange(plotlist = peng, widths = c(2,8))
 
 
 Immune_prep = list()
@@ -358,8 +399,5 @@ for (i in 1:length(TCGA_pw_PID)){
   Immune_prep[[i]] = cbind(cancer_type[[i]],Immune_value[[i]],Immune_type[[i]])
   colnames(Immune_prep[[i]]) = c("Cancertype","Frequency","Immunetype")
 }
-
-
-
 ```
 
