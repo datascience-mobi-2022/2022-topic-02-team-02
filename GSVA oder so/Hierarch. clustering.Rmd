@@ -9,23 +9,20 @@ set.seed(69)
 ```
 
 ```{r data}
+TCGA_pw_MMR = readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_MMR.RDS")
 TCGA_pw_PID =  readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/NES_OVERALL_PID_cl.RDS")
-names(TCGA_pw_PID) = cancer_abc
-```
-
-
-```{r data}
-names(TCGA_pw_PID) = cancer_abc
-for (i in 1:length(TCGA_pw_PID)){
-  TG[[i]] = TCGA_pw_PID[[i]][which(rownames(TCGA_pw_PID[[i]])%in%immune),]
-}
-names(TG) = cancer_abc
-TCGA_pw_PID = TG
-View(TCGA_pw_PID)
+cancer_abc = names(TCGA_pw_MMR) 
+pid_names = rownames(TCGA_pw_PID[[1]])
 ```
 
 ```{r packages}
 library(ComplexHeatmap)
+library(grid)
+library(ggplot2)
+library(ggdendro)
+library(dplyr)
+library(reshape2)
+
 ```
 
 ```{r}
@@ -132,6 +129,7 @@ u = c3_patients[[i]]
 H_prep[[i]] = cbind(l,p,u)
 }
 
+pid_names_cluster = c(pid_names,"Cluster")
 H_tot = list()
 for (i in 1:length(TCGA_pw_PID)){
 t = H_prep[[i]]
@@ -139,6 +137,7 @@ h = H123[[i]]
 H_tot[[i]] = data.frame(rbind(t,h))
 row.names(H_tot[[i]]) = pid_names_cluster
 }
+
 
 ks_pvlist = list()
 ks = c()
@@ -203,62 +202,164 @@ for (i in 1:length(TCGA_pw_PID)){
 }
 names(ks_sig) = cancer_abc
 View(ks_sig$KIRC)
+sig_kirc_20 = rownames(ks_sig$KIRC[1:20,])
+sig_kirc = ks_sig$KIRC[1:20,]
 
 ```
 
 
-```{r}
-colorRamp(c(-2,0,5))
+```{r plot prep}
+
 a = Heatmap(c1_patients[[12]])
 b = Heatmap(c2_patients[[12]])
 c = Heatmap(c3_patients[[12]])
 
-am = as.matrix(c1_patients[[12]])
-bm = as.matrix(c2_patients[[12]])
-cm = as.matrix(c3_patients[[12]])
 
-common_min = min(c(am,bm,cm))
-common_max = max(c(am,bm,cm))
-col_fun = circlize::colorRamp2(c(common_min,0, common_max), c("blue","black", "red"))
-Heatmap(am, col = col_fun,) + Heatmap(bm, col = col_fun) +Heatmap(cm, col = col_fun)
+sig_patient1= c1_patients[[12]][which(rownames(c1_patients[[12]])%in%sig_kirc_20),]
+sig_patient1_df = cbind(rownames(sig_patient1),sig_patient1)
+sig_patient1_order = data.matrix(sig_patient1[match(sig_kirc_20,sig_patient1_df$`rownames(sig_patient1)`),])
 
-Heatmap(am, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm")) + Heatmap(bm, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm")) +Heatmap(cm, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm"))
+sig_patient2= c2_patients[[12]][which(rownames(c2_patients[[12]])%in%sig_kirc_20),]
+sig_patient2_df = cbind(rownames(sig_patient2),sig_patient2)
+sig_patient2_order = data.matrix(sig_patient2[match(sig_kirc_20,sig_patient2_df$`rownames(sig_patient2)`),])
 
 
-
-Heatmap(k, cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(k)*unit(0.45,"mm"),height = nrow(k)*unit(2,"mm"),column_dend_height = unit(15,"mm"),column_km = 3)
-
-Heatmap(k,column_split = 3)
-
-dend = as.dendrogram(hclust(dist(k), method = "ward.D2"))
-Heatmap(k,cluster_rows = dend, column_split = 3)
-
+sig_patient3= c3_patients[[12]][which(rownames(c3_patients[[12]])%in%sig_kirc_20),]
+sig_patient3_df = cbind(rownames(sig_patient3),sig_patient3)
+sig_patient3_order = data.matrix(sig_patient3[match(sig_kirc_20,sig_patient3_df$`rownames(sig_patient3)`),])
 
 
 ```
 
 
-```{r}
-kirc_sig =  k[which(rownames(k)%in%rownames(ks_sig)),]
-View(kirc_sig)
+```{r plot}
 
-Heatmap(k, cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(k)*unit(0.45,"mm"),height = nrow(k)*unit(2,"mm"),column_dend_height = unit(15,"mm"),column_split  = 3)
+common_min = min(c(sig_patient1_order,sig_patient2_order,sig_patient3_order))
+common_max = max(c(sig_patient1_order,sig_patient2_order,sig_patient3_order))
+col_fun = circlize::colorRamp2(c(common_min,0, common_max), c("blue","black", "red"))
 
-c1_patients1 = kirc_sig[,which(colnames(kirc_sig)%in%c1)]
-c2_patients1 = kirc_sig[,which(colnames(kirc_sig)%in%c2)]
-c3_patients1 = kirc_sig[,which(colnames(kirc_sig)%in%c3)]
-
-f = Heatmap(as.matrix(c1_patients1))
-g = Heatmap(as.matrix(c2_patients1))
-h = Heatmap(as.matrix(c3_patients1))
-
-f
-g
-h
+Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "Cluster 1",cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Cluster 2", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Cluster 3", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
 
 
-klist = f+g+h
-draw(klist)
+
+
+Heatmap(am, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm")) + Heatmap(bm, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm")) +Heatmap(cm, col = col_fun,cluster_rows = FALSE, column_names_gp = gpar(fontsize=2),width = ncol(am)*unit(0.45,"mm"),height = nrow(am)*unit(2,"mm"),column_dend_height = unit(15,"mm"))
+
+
+```
+
+
+
+```{r identify cluster for all 33 tumortypes}
+sig_kirc_20 = rownames(ks_sig$PAAD[1:20,])
+sig_kirc = ks_sig$PRAD[1:20,]
+
+
+sig_patient1= c1_patients[[21]][which(rownames(c1_patients[[21]])%in%sig_kirc_20),]
+sig_patient1_df = cbind(rownames(sig_patient1),sig_patient1)
+sig_patient1_order = data.matrix(sig_patient1[match(sig_kirc_20,sig_patient1_df$`rownames(sig_patient1)`),])
+
+
+sig_patient2= c2_patients[[21]][which(rownames(c2_patients[[21]])%in%sig_kirc_20),]
+sig_patient2_df = cbind(rownames(sig_patient2),sig_patient2)
+sig_patient2_order = data.matrix(sig_patient2[match(sig_kirc_20,sig_patient2_df$`rownames(sig_patient2)`),])
+
+
+sig_patient3= c3_patients[[21]][which(rownames(c3_patients[[21]])%in%sig_kirc_20),]
+sig_patient3_df = cbind(rownames(sig_patient3),sig_patient3)
+sig_patient3_order = data.matrix(sig_patient3[match(sig_kirc_20,sig_patient3_df$`rownames(sig_patient3)`),])
+
+
+
+Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "Cluster 1",cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Cluster 2", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Cluster 3", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
+
+
+
+```
+
+```{r peng plot}
+cancer_type = list()
+for (i in 1:length(TCGA_pw_PID)){
+  cancer_type[[i]] = c(rep(c(cancer_abc[i]),3))
+}
+cancer_type = do.call("cbind", cancer_type)
+View(cancer_type)
+y = melt(cancer_type)
+cancer_type_bind = y[,3]
+
+
+Immune_type = list()
+for (i in 1:length(TCGA_pw_PID)){
+  Immune_type[[i]] = c("Immune infiltrated","Not immune infiltrated","Neutral")
+}
+Immune_type = do.call("cbind", Immune_type)
+View(Immune_type)
+x = melt(Immune_type)
+Immune_type_bind = x[,3]
+
+Immune_value = list(c(0,0,0),
+                    c(ncol(c3_patients[[2]]),ncol(c2_patients[[2]]),ncol(c1_patients[[2]])),
+                    c(ncol(c2_patients[[3]]),ncol(c3_patients[[3]]),ncol(c1_patients[[3]])),
+                    c(ncol(c3_patients[[4]]),ncol(c1_patients[[4]]),ncol(c2_patients[[4]])),
+                    c(ncol(c3_patients[[5]]),ncol(c1_patients[[5]]),ncol(c2_patients[[5]])),
+                    c(ncol(c2_patients[[6]]),ncol(c3_patients[[6]]),ncol(c1_patients[[6]])),
+                    c(0,0,0),
+                    c(ncol(c3_patients[[8]]),ncol(c2_patients[[8]]),ncol(c1_patients[[8]])),
+                    c(0,0,0),
+                    c(ncol(c3_patients[[10]]),ncol(c2_patients[[10]]),ncol(c1_patients[[10]])),
+                    c(0,0,0),
+                    c(ncol(c1_patients[[12]]),ncol(c3_patients[[12]]),ncol(c2_patients[[12]])),
+                    c(ncol(c3_patients[[13]]),ncol(c2_patients[[13]]),ncol(c1_patients[[13]])),
+                    c(ncol(c3_patients[[14]]),ncol(c1_patients[[14]]),ncol(c2_patients[[14]])),
+                    c(0,0,0),
+                    c(0,0,0),
+                    c(ncol(c1_patients[[17]]),ncol(c2_patients[[17]]),ncol(c3_patients[[17]])),
+                    c(ncol(c3_patients[[18]]),ncol(c2_patients[[18]]),ncol(c1_patients[[18]])),
+                    c(0,0,0),
+                    c(ncol(c3_patients[[20]]),ncol(c2_patients[[20]]),ncol(c1_patients[[20]])),
+                    c(ncol(c2_patients[[21]]),ncol(c1_patients[[21]]),ncol(c3_patients[[21]])),
+                    c(0,0,0),
+                    c(ncol(c2_patients[[23]]),ncol(c3_patients[[23]]),ncol(c1_patients[[23]])),
+                    c(ncol(c3_patients[[24]]),ncol(c2_patients[[24]]),ncol(c1_patients[[24]])),
+                    c(ncol(c1_patients[[25]]),ncol(c3_patients[[25]]),ncol(c2_patients[[25]])),
+                    c(ncol(c2_patients[[26]]),ncol(c3_patients[[26]]),ncol(c1_patients[[26]])),  
+                    c(0,0,0),
+                    c(ncol(c3_patients[[28]]),ncol(c1_patients[[28]]),ncol(c2_patients[[28]])),
+                    c(ncol(c2_patients[[29]]),ncol(c3_patients[[29]]),ncol(c1_patients[[29]])),
+                    c(ncol(c3_patients[[30]]),ncol(c1_patients[[30]]),ncol(c2_patients[[30]])),
+                    c(ncol(c3_patients[[31]]),ncol(c2_patients[[31]]),ncol(c1_patients[[31]])),
+                    c(ncol(c3_patients[[32]]),ncol(c2_patients[[32]]),ncol(c1_patients[[32]])),
+                    c(ncol(c3_patients[[33]]),ncol(c2_patients[[33]]),ncol(c1_patients[[33]])))
+                    
+             
+Immune_value = do.call("cbind", Immune_value)
+z = melt(Immune_value)
+Immune_value_bind = as.numeric(z[,3])
+class(Immune_value_bind)  
+
+Immune_ready = data.frame(cancer_type_bind,Immune_value_bind,Immune_type_bind)
+colnames(Immune_ready) = c("Cancertype","Frequency","Immunetype")
+
+
+ggplot(Immune_ready, aes(fill = Immunetype, y = Frequency, x = Cancertype))+
+  geom_bar(position="fill", stat="identity", aes(group = Cancertype)) + 
+  scale_fill_manual(values = c("red","grey","blue")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+
+
+
+
+
+
+
+Immune_prep = list()
+for (i in 1:length(TCGA_pw_PID)){
+  Immune_prep[[i]] = cbind(cancer_type[[i]],Immune_value[[i]],Immune_type[[i]])
+  colnames(Immune_prep[[i]]) = c("Cancertype","Frequency","Immunetype")
+}
+
+
 
 ```
 
