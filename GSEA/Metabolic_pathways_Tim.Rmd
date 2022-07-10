@@ -470,8 +470,8 @@ heatmap.2(as.matrix(KIRC_GSEA_NES_PID),dendrogram = "column", hclustfun = hclust
 ```{r complex heatmap}
 col_fun = circlize::colorRamp2(c(-3,0,3), c("blue","black", "red"))
 as.matrix(KIRC_GSEA_activity)
-Heatmap(KIRC_GSEA_activity, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 1.5), column_split = 2, row_split = 3,row_gap = unit(c(1,2), "mm"),
- column_gap = unit(c(1,2), "mm"), col = col_fun)
+Heatmap(KIRC_GSEA_activity, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 1.5), column_split = 2, row_split = 3,row_gap = unit(c(2,2), "mm"),
+ column_gap = unit(c(2,2), "mm"), col = col_fun)
 
 PID_filtered = c(rownames(KIRC_PID_cl))
 KIRC_GSEA_activity_PID = KIRC_GSEA_activity_PID[which(rownames(KIRC_GSEA_activity_PID) %in% PID_filtered),]
@@ -481,10 +481,10 @@ tcga_KIRC_norm_min = apply(KIRC_GSEA_activity_KEGG, 1, min)
 tcga_KIRC_norm_max= apply(KIRC_GSEA_activity_KEGG, 1, max) #for normal cell data set
 tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_norm_max==tcga_KIRC_norm_min)))
 KIRC_GSEA_activity_KEGG1 = KIRC_GSEA_activity_KEGG[-which(rownames(KIRC_GSEA_activity_KEGG) %in% tcga_KIRC_tumor_constant),]
-Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun, column_km = 3,column_gap = unit(c(1,2), "mm"))
+Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun, column_km = 3,column_gap = unit(c(2,2), "mm"))
 
 Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 6),col = col_fun, column_km = 2,
- column_gap = unit(c(1,2), "mm"))
+ column_gap = unit(c(2,2), "mm"))
 
 
 ```
