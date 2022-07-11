@@ -395,8 +395,9 @@ KIRC_GSEA_activity_sum_top10 = KIRC_GSEA_activity_mean_prep[sum_larger_0$Pathway
   lims(y=c(-3.2,3.2))+
   coord_flip()+
   labs (y = "Normalized enrichment score (NES)",
-        x = "Gene set",
-        title = "GSEA mean expression top 10 sum")
+        x = "Pathway",
+        title = "Top 10 most frequently enriched pathways")+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ```{r filter top 10 mean}
@@ -504,8 +505,8 @@ tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_norm_max==tcga_KIRC_norm_min)
 KIRC_GSEA_activity_KEGG1 = KIRC_GSEA_activity_KEGG[-which(rownames(KIRC_GSEA_activity_KEGG) %in% tcga_KIRC_tumor_constant),]
 Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun,heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES KEGG genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
 
-Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 6),col = col_fun, row_split = 3,
- row_gap = unit(c(2,2), "mm"),heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES Hallmark genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
+Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 6),col = col_fun, row_split = 3,column_split = 2,
+ row_gap = unit(c(0.2,0.2), "mm"),column_gap = unit(c(0.2,0.2), "mm"),heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES Hallmark genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
 
 
 ```
