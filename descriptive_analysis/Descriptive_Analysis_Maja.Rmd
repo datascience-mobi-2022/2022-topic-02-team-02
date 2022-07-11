@@ -46,11 +46,9 @@ vioplot(tcga_exp_var, tcga_exp_clean_var, main = "Variance distribution", names 
 ```
 
 ```{r}
-## is tcga_exp_protein_coding now tcga_exp_cleaned???
-
 #create 3 dataframes for ggplot layering
 
-#variance and mean with ONLY protein coding genes
+#variance and mean with ONLY protein coding genes (before variance filtering)
 tcga_exp_pc_var = apply(tcga_exp_protein_coding, 1, var)
 tcga_exp_pc_mean = apply(tcga_exp_protein_coding, 1, mean)
 #first layer(black): data frame with all mean/var
