@@ -261,7 +261,7 @@ rownamos = rownames(KIRC_GSEA_activity_mean)
 KIRC_GSEA_activity_mean_prep = cbind(rownamos,KIRC_GSEA_activity_mean)
 colnames(KIRC_GSEA_activity_mean_prep) = c("pathway","NES")
 data.frame(KIRC_GSEA_activity_mean_prep)
-KIRC_GSEA_activity_mean_prep = KIRC_GSEA_activity_mean_prep[!rownames(KIRC_GSEA_activity_mean_prep)%in%irrelevant,]
+#KIRC_GSEA_activity_mean_prep = #KIRC_GSEA_activity_mean_prep[!rownames(KIRC_GSEA_activity_mean_prep)%in%irrelevant,]
 
 KIRC_GSEA_activity_mean_prep %>%
   filter(NES != 0) %>%
@@ -349,7 +349,7 @@ Testp1 %>%
 ## compute the sum of enriched pathways 
 KIRC_GSEA_sum = c()
 for (i in 1:nrow(KIRC_GSEA_activity)) {
-  KIRC_GSEA_sum[i] = length(which(KIRC_GSEA_activity[i,] > 0))
+  KIRC_GSEA_sum[i] = length(which(abs(KIRC_GSEA_activity)[i,] > 0))
 }
 KIRC_GSEA_activity_sum = as.data.frame(KIRC_GSEA_sum) 
 rownames(KIRC_GSEA_activity_sum) = rownames(KIRC_GSEA_activity)
@@ -390,7 +390,7 @@ KIRC_GSEA_activity_sum_top10 = KIRC_GSEA_activity_mean_prep[sum_larger_0$Pathway
   pathway = gsub("_"," ",pathway)) %>%
   
   ggplot(aes(x=reorder(pathway,NES), y=NES)) +
-  geom_col (fill = "lightblue")+
+  geom_col (fill = "blue")+
   theme_classic()+
   lims(y=c(-3.2,3.2))+
   coord_flip()+
@@ -401,33 +401,55 @@ KIRC_GSEA_activity_sum_top10 = KIRC_GSEA_activity_mean_prep[sum_larger_0$Pathway
 
 ```{r filter top 10 mean}
 ##compute top 10 mean (absolute values)
-KIRC_GSEA_activity_mean_order = KIRC_GSEA_activity_mean_prep$NES[order(abs(KIRC_GSEA_activity_mean_prep$NES), decreasing = TRUE)]
+KIRC_GSEA_activity_mean_order = KIRC_GSEA_activity_mean_prep$NES[order(KIRC_GSEA_activity_mean_prep$NES, decreasing = TRUE)]
 
-pathways_ordered = KIRC_GSEA_activity_mean_prep$pathway[order(abs(KIRC_GSEA_activity_mean_prep$NES), decreasing = TRUE)]
+pathways_ordered = KIRC_GSEA_activity_mean_prep$pathway[order(KIRC_GSEA_activity_mean_prep$NES, decreasing = TRUE)]
 
 activity_mean_rank = cbind(pathways_ordered,KIRC_GSEA_activity_mean_order)
 colnames(activity_mean_rank) = c("Pathway","NES")
-which_mean_unqeual_0 = which(activity_mean_rank[,2]!= 0)
-mean_unequal_0 = data.frame(activity_mean_rank[which_mean_larger_0,])
+which_mean_unequal_0 = which(activity_mean_rank[,2]!= 0)
+mean_unequal_0 = data.frame(activity_mean_rank[which_mean_unequal_0,])
 ```
 
 
 ```{r plot top 10 mean}
-KIRC_GSEA_activity_mean_top10 = KIRC_GSEA_activity_mean_prep[activity_mean_rank[1:10],]
+KIRC_GSEA_activity_mean_top10 = KIRC_GSEA_activity_mean_prep[activity_mean_rank[1:15],]
+KIRC_GSEA_activity_mean_top10d = KIRC_GSEA_activity_mean_prep[activity_mean_rank[418:432],]
+KIRC_GSEA_activity_top30 = rbind(KIRC_GSEA_activity_mean_top10d,KIRC_GSEA_activity_mean_top10)
+up = rep(c("up"),15)
+down = rep(c("down"),15)
+updown = c(down,up)
+KIRC_GSEA_activity_top30 = cbind(KIRC_GSEA_activity_top30,updown)
+KIRC_GSEA_activity_top30$pathway = factor(KIRC_GSEA_activity_top30$pathway, level = KIRC_GSEA_activity_top30$pathway)
+
+ggplot(KIRC_GSEA_activity_top30, aes(x=pathway,y = NES, fill=pathway))+
+  geom_bar(stat = "identity")+
+ theme_classic()+
+  lims(y=c(-3.2,3.2))+
+  coord_flip()+
+  labs (y = "Normalized enrichment score (NES)",
+        x = "Pathway",
+        title = "GSEA mean expression top 10 mean")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  guides(fill=guide_legend(title="", reverse = TRUE))
 
 
-KIRC_GSEA_activity_mean_top10%>%
+
+KIRC_GSEA_activity_top30%>%
   mutate(met.pathways = gsub ("metabolic pathways","",pathway),
   pathway = gsub("_"," ",pathway)) %>%
   
-  ggplot(aes(x=reorder(pathway,NES), y=NES)) +
+  ggplot(aes(x=reorder(pathway,NES), y=NES, fill = updown)) +
   geom_col ()+
   theme_classic()+
   lims(y=c(-3.2,3.2))+
   coord_flip()+
   labs (y = "Normalized enrichment score (NES)",
-        x = "Gene set",
-        title = "GSEA mean expression top 10 mean")
+        x = "Pathway",
+        title = "GSEA mean expression top 30 mean")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  scale_fill_manual(values = c("blue","red"))+
+  guides(fill=guide_legend(title="", reverse = TRUE))
 
 ```
 
@@ -469,22 +491,21 @@ heatmap.2(as.matrix(KIRC_GSEA_NES_PID),dendrogram = "column", hclustfun = hclust
 ```
 ```{r complex heatmap}
 col_fun = circlize::colorRamp2(c(-3,0,3), c("blue","black", "red"))
-as.matrix(KIRC_GSEA_activity)
-Heatmap(KIRC_GSEA_activity, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 1.5), column_split = 2, row_split = 3,row_gap = unit(c(2,2), "mm"),
- column_gap = unit(c(2,2), "mm"), col = col_fun)
+Heatmap(KIRC_GSEA_activity, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 1.5)
+, col = col_fun, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)), column_title = "NES for KIRC DS", column_title_gp = gpar(fontsize = 9) )
 
 PID_filtered = c(rownames(KIRC_PID_cl))
 KIRC_GSEA_activity_PID = KIRC_GSEA_activity_PID[which(rownames(KIRC_GSEA_activity_PID) %in% PID_filtered),]
-Heatmap(KIRC_GSEA_activity_PID, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),column_split = 2,col = col_fun)
+Heatmap(KIRC_GSEA_activity_PID, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun,heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES PID genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
 
 tcga_KIRC_norm_min = apply(KIRC_GSEA_activity_KEGG, 1, min)
 tcga_KIRC_norm_max= apply(KIRC_GSEA_activity_KEGG, 1, max) #for normal cell data set
 tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_norm_max==tcga_KIRC_norm_min)))
 KIRC_GSEA_activity_KEGG1 = KIRC_GSEA_activity_KEGG[-which(rownames(KIRC_GSEA_activity_KEGG) %in% tcga_KIRC_tumor_constant),]
-Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun, column_km = 3,column_gap = unit(c(2,2), "mm"))
+Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun,heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES KEGG genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
 
-Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 6),col = col_fun, column_km = 2,
- column_gap = unit(c(2,2), "mm"))
+Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 6),col = col_fun, row_split = 3,
+ row_gap = unit(c(2,2), "mm"),heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 7)),column_title = "NES Hallmark genesets for KIRC DS", column_title_gp = gpar(fontsize = 9))
 
 
 ```
