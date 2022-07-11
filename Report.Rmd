@@ -123,6 +123,9 @@ Multiple statistical testing results in an increased false positive rate (type I
 
 #### Hierarchial clustering
 
+### Immune deconvolution
+
+The immune deconvolution package @immunedeconv-merotto-2022 is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM). The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types. An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$. The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively. The output using the “quanTIseq” method is a matrix containing the immune cell fractions for each sample that have been re-normalized to sum up to one @Immune-deconvolution-Finotello-2018.
 
 ### GSEA
 
