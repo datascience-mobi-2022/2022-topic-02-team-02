@@ -41,7 +41,7 @@ c1_patients <- readRDS("/data/c1_patients.RDS")
 ensemblids = rownames(tcga_KIRC_tumor_cl)
 symbols = mapIds(org.Hs.eg.db, keys = ensemblids, keytype = "ENSEMBL", column="SYMBOL")
 rownames(tcga_KIRC_tumor_cl) = symbols
-KIRC_tumor = as.matrix(tcga_KIRC_tumor_cl)
+KIRC_tumor = as.matrix(tcga_KIRC_tumor_cl) #18645, all genes
 
 #use immune deconvolution package
 #xcell method 
@@ -63,8 +63,8 @@ rownames(quantiseq_matrix) = cell_types_2
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
 #plot immune cell fractions
-heatmap.2(quantiseq_matrix, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
-
+Heatmap_quantiseq_KIRC = Heatmap(quantiseq_matrix, name = "mat", column_split = 4, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 5.5), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(3.5, "mm"), height = nrow(quantiseq_matrix)*unit(11, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC tumor", col = colorRamp2(c(0, 0.2), c("black", "red")))
+Heatmap_quantiseq_KIRC
 #split quantiseq matrix according to PID clustering (PCA, UMAP, k-means)
 quantiseq_cluster1 = quantiseq[, c("cell_type", PID_c1_names)]
 quantiseq_cluster2 = quantiseq[, c("cell_type",PID_c2_names)]

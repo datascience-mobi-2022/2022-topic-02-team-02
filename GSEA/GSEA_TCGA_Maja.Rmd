@@ -217,7 +217,7 @@ NES_matrix_hallmark = as.matrix(NES_mean)
 
 #plot mean enrichment for each tumor type
 #heatmap 1
-Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = FALSE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 7), width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE)
+Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 7), width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE)
 Heatmap_NES_hallmark
 
 #heatmap 2
