@@ -374,8 +374,8 @@ quantiseq_matrix = as.matrix(quantiseq_matrix)
 #remove unknown cell types, so that heatmap shows better colour scaling
 quantiseq_matrix = quantiseq_matrix[-c(11),]
 
-#plot immune deconvolution small KIRC
-Heatmap_quantiseq_KIRC_tcga = Heatmap(quantiseq_matrix, name = "mat", column_km = 3, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.45, "mm"), height = nrow(quantiseq_matrix)*unit(10, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC TCGA")
+#plot immune deconvolution big KIRC
+Heatmap_quantiseq_KIRC_tcga = Heatmap(quantiseq_matrix, name = "mat", column_split = 4, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 2), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(0.5, "mm"), height = nrow(quantiseq_matrix)*unit(11, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC TCGA", col = colorRamp2(c(0, 0.8), c("black", "red")))
 Heatmap_quantiseq_KIRC_tcga
 ```
 
