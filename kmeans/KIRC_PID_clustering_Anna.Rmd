@@ -142,7 +142,7 @@ KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
 p1=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
  geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red")+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
   labs(x = "UMAP1", y = "UMAP2", col = "NES ", title = "PID_CD8_TCR_PATHWAY")+
   theme(plot.title = element_text(size=10))
 
@@ -151,7 +151,7 @@ KIRC_TCR_PATHWAY= KIRC_PID_t$PID_TCR_PATHWAY
 p2=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_TCR_PATHWAY))+
   geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red")+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
   labs(x = "UMAP1", y = "UMAP2", col = "NES",title= "PID_TCR_PATHWAY ")+
    theme(plot.title = element_text(size=10))
 
@@ -161,7 +161,7 @@ PID_CD8_TCR =  KIRC_PID_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
 p3=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = PID_CD8_TCR))+
   geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red")+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_CD8_TCR_DOWNSTREAM_PATHWAY")+
    theme(plot.title = element_text(size=10))
 
@@ -169,20 +169,27 @@ PID_IL1 =  KIRC_PID_t$PID_IL1_PATHWAY
 p4=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = PID_IL1))+
    geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red")+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_IL1_PATHWAY")+
    theme(plot.title = element_text(size=10))
 
 PID_CXCR4 =  KIRC_PID_t$PID_CXCR4_PATHWAY
 p5 = ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = PID_CXCR4))+
+                    aes(x = X1, y = X2 , color = PID_CXCR4 ))+
   geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red")+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_CXCR4_PATHWAY")+
    theme(plot.title = element_text(size=10))
 
+PID_IL27 =  KIRC_PID_t$PID_IL27_PATHWAY
+p6 = ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_IL27))+
+  geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_IL27_PATHWAY")+
+   theme(plot.title = element_text(size=10))
 
-plotliste = list(p1,p2,p3,p4,p5)
+plotliste = list(p1,p2,p3,p4,p5,p6)
 
 ggarrange(plotlist = plotliste)
 
