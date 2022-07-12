@@ -138,8 +138,8 @@ The immune deconvolution package @immunedeconv-merotto-2022 is used to obtain im
 
 ## Data cleaning
 
-The analysis was focused on two data sets. Pan-cancer analysis was performed on gene expression data of 9783 patients of 33 tumor types (Pan-cancer data set (DS)). Focused analysis was based on gene expression data of normal and tumor tissue of 72 KIRC patients (KIRC DS). The data obtained was already normalized by $log2$(Transcripts per million).
-Both data sets were filtered for protein-coding genes using biomaRt package. This reduced gene expression data in pan cancer DS from 60 498 to 19 624 genes and in KIRC DS from 19624 to 19186 genes. In the pan-cancer DS, variance was computed for each gene over all samples and the lower p50-quantile was subsequently removed. Furthermore, constantly expressed genes only were removed in KIRC DS, resulting in gene expression data of 18 645 genes.
+The analysis was focused on two data sets. Pan-cancer analysis was performed on gene expression data of 9783 patients of 33 tumor types (Pan-cancer data set (DS1)). Focused analysis was based on gene expression data of normal and tumor tissue of 72 KIRC patients (DS2). The data obtained was already normalized by $log2$(Transcripts per million).
+Both data sets were filtered for protein-coding genes using biomaRt package. This reduced gene expression data in DS1 from 60 498 to 19 624 genes and in DS2 from 19624 to 19186 genes. In DS1, variance was computed for each gene over all samples and the lower p50-quantile was subsequently removed. Furthermore, constantly expressed genes only were removed in DS2, resulting in gene expression data of 18 645 genes.
 
 ## TCGA pan-cancer analysis
 
