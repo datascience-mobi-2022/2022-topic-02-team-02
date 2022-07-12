@@ -291,7 +291,7 @@ cancer_type_bind = y[,3]
 
 Immune_type = list()
 for (i in 1:length(TCGA_pw_PID)){
-  Immune_type[[i]] = c("High","Neutral","Low")
+  Immune_type[[i]] = c("High","Low","Neutral")
 }
 Immune_type = do.call("cbind", Immune_type)
 View(Immune_type)
@@ -344,7 +344,7 @@ colnames(Immune_ready) = c("Cancertype","Ratio","Immunetype")
 
 peng_plot = ggplot(Immune_ready, aes(fill = Immunetype, y = Ratio, x = Cancertype))+
   geom_bar(position="fill", stat="identity", aes(group = Cancertype)) + 
-  scale_fill_manual(values = c("red","white","blue")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+  scale_fill_manual(values = c("red","blue","white")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"))+
 labs(x = "Cancer type")
 
@@ -364,7 +364,7 @@ colnames(pie_prep) = c("Ratio","Immunetype")
 ggplot(pie_prep, aes(x="", y=Ratio, fill=Immunetype)) +
   geom_bar(stat="identity", width=1) +
   coord_polar("y", start=0)+
-  scale_fill_manual(values = c("red","#D3D3D3","blue")) + 
+  scale_fill_manual(values = c("red","blue","#D3D3D3")) + 
    theme_void()
 
 
@@ -381,9 +381,8 @@ pie = ggplot(data, aes(x="", y=prop, fill=Immunetype)) +
   coord_polar("y", start=0) +
   theme_void() + 
   theme(legend.position="none") +
-  
   geom_text(aes(y = ypos, label = Immunetype), color = "white", size=6) +
-  scale_fill_manual(values = c("red","#D3D3D3","blue")) 
+  scale_fill_manual(values = c("#D3D3D3","red","blue")) 
 
 pie_ratio = c(pie_prep$Ratio)
 pie(pie_ratio, labels = c("Neutral","Infiltrated","Not infiltrated"),col = c("#D3D3D3","red","blue"), border = "white", cex = 1.3)

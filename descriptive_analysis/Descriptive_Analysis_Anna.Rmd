@@ -7,6 +7,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(reshape2)
+library(ggplot2)
+library(ggdendro)
+```
+
+
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 tcga_exp_protein_coding = readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tcga_exp_cleaned.RDS")
 tcga_annot = readRDS("../data/tcga_tumor_annotation.RDS")
@@ -125,31 +131,6 @@ tcga_exp_c_UVM = tcga_exp_protein_coding[, names(tcga_exp_protein_coding) %in% t
 
 
 ```{r}
-#plotting mean values for breast cancer types
-#boxplot(apply(tcga_exp_c_BLCA,1, mean),apply(tcga_exp_c_BRCA,1, mean), xlab="cancer type", ylab = "Average gene expression", names=c("BLCA","BRCA"), main = "General Gene Expression")
-
-```
-```{r}
-#Mean/variance plot for each gene of BLCA
-#plot(rowMeans(tcga_exp_c_BLCA), apply(tcga_exp_c_BLCA, 1, var),xlab="Average Expression", ylab="Variance", pch=20, cex= .3, main="Mean/Variance plot BLCA")
-
-```
-
-```{r}
-#tcga_exp_BLCA =  tcga_exp[, names(tcga_exp) %in% tcga_annot_BLCA$PATIENT]
-```
-
-```{r}
-#Mean/variance plot for each gene of KIRC
-#plot(rowMeans(tcga_exp_c_KIRC), apply(tcga_exp_c_KIRC, 1, var),xlab="Average Expression", ylab="Variance", pch=20, cex= .4, main="Mean/Variance plot KIRC")
-```
-```{r}
-
-library(ggplot2)
-
-```
-
-```{r}
 tcga_exp_dataframes_complete = list(tcga_exp_clean_ACC,tcga_exp_c_BLCA,tcga_exp_c_BRCA,tcga_exp_c_CESC,tcga_exp_c_CHOL,tcga_exp_c_COAD,tcga_exp_c_DLBC,tcga_exp_c_ESCA,tcga_exp_c_GBM,tcga_exp_c_HNSC,tcga_exp_c_KICH,tcga_exp_c_KIRC,tcga_exp_c_KIRP,tcga_exp_c_LAML,tcga_exp_c_LGG,tcga_exp_c_LIHC,tcga_exp_c_LUAD,tcga_exp_c_LUSC,tcga_exp_c_MESO,tcga_exp_c_OV,tcga_exp_c_PAAD,tcga_exp_c_PCPG,tcga_exp_c_PRAD,tcga_exp_c_READ,tcga_exp_c_SARC,tcga_exp_c_SKCM,tcga_exp_c_STAD,tcga_exp_c_TGCT,tcga_exp_c_THCA,tcga_exp_c_THYM,tcga_exp_c_UCEC,tcga_exp_c_UCS,tcga_exp_c_UVM)
 
 ACC_mean = apply(tcga_exp_clean_ACC,1, mean)
@@ -221,7 +202,7 @@ ggplot(data = melt(mean_all), aes(x = reorder(variable, -value, FUN = median), y
 d = (dist(t(mean_all)))
 ggdendrogram(hclust(d, method = "ward.D2"))
 h
-library(ggdendro)
+
 
 f = as.matrix(mean_all)
 n = RunPCA(f, npcs = 32)
