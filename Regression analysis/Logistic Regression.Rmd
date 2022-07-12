@@ -111,18 +111,18 @@ quantiseq_CD8 %>%
 
 #plot both separately
 quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
-  gather(sample, fraction, -cell_type) %>%
-  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+  gather(cluster_1, fraction, -cell_type) %>%
+  ggplot(aes(x=cluster_1, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
     scale_fill_manual(values = "Blue") + 
     scale_x_discrete(limits = rev(levels(quantiseq_cluster1_CD8))) +
-    theme(axis.text.y = element_text(size = 4)) 
+    theme(axis.text.y = element_text(size = 4))
 quantiseq_cluster1_plot_CD8
 
 quantiseq_cluster2_plot_CD8 = quantiseq_cluster2_CD8 %>%
-  gather(sample, fraction, -cell_type) %>%
-  ggplot(aes(x=sample, y=fraction, fill=cell_type)) +
+  gather(cluster_2, fraction, -cell_type) %>%
+  ggplot(aes(x=cluster_2, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
     scale_fill_manual(values = "Blue") + 

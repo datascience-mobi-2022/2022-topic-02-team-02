@@ -160,6 +160,21 @@ Pathways that were crucial for this clustering and were significantly different 
 
 ## KIRC specific analysis
 
+## Logistic regression 
+
+\begin{tabular}{ |p{4.5cm}||p{3cm}|p{3cm}|p{3cm}|  }
+ \hline
+ \multicolumn{4}{|c|}{Logistic regression model results} \\
+ \hline
+  & \textbf{Estimate} & \textbf{Standard error} & \textbf{p-value}\\
+ \hline
+ Intercept   &  $0.18303$  & $0.01336$ &   $<2e-16$\\
+ PID\_TCR\_PATHWAY &   $0.09727$  & $0.01844$   & $1.95e-07$\\
+ PID\_IL1\_PATHWAY & $0.12211$ & $0.01801$ &  $3.23e-11$\\
+\hline
+\end{tabular}
+
+
 <!-- Discussion -->
 # Discussion
 
