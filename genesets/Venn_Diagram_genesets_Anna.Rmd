@@ -11,13 +11,16 @@ set.seed(69)
 ```
 
 ```{r}
+#packages 
+library(ggvenn)
+library(msigdbr)
 #load data
 tcga_exp_cleaned <- readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_exp_cleaned.RDS")
 KIRC_PID_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
 ```
 
 ```{r}
-library(msigdbr)
+
 ## load KEGG genesets ##
 KEGG = msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:KEGG")
 
@@ -69,9 +72,19 @@ for (x in 1:length(hallmarks_pathway_names)){
 names(hallmark_genesets) = hallmarks_pathway_names
 ```
 
-#for the genesets we worked with (clenaed data)
+```{r}
+#load PENG pathways
+PENG_pathways <- readRDS("~/GitHub/2022-topic-02-team-02/data/PENG_pathways.RDS")
+#load MMR
+MMR_pathways <- readRDS("~/GitHub/2022-topic-02-team-02/data/MMR.RDS")
+```
+
+
+#for the genesets we worked with (cleaned data)
 
 ```{r}
+PENG_genes = unlist(PENG_pathways)
+PENG_genes = unique(PENG_genes)
 
 PID_cl_genes=unlist(metabolic_genesets_PID_cl)
 PID_cl_genes=unique(PID_cl_genes)
@@ -84,22 +97,25 @@ hallmarks_genes=unique(hallmarks_genes)
 
 tcga_cl_genes = rownames(tcga_exp_cleaned)
 
+MMR_genes = unlist(MMR_pahtways)
+MMR_genes = unique(MMR_genes)
+
+
 ```
 
-```{r}
-#install package if not done yet
-#if (!require(devtools)) install.packages("devetools")
-#devtools::install_github("yanlinlin82/ggvenn")
-library(ggvenn)
-```
+
+
+
+
 
 ```{r}
 #create a list with the genesets that will be compared
-genesets_cl = list(KEGG_genes, PID_cl_genes, tcga_cl_genes, hallmarks_genes)
-names(genesets_cl) = c("KEGG", "PID_cl", "tcga_cl", "hallmarks")
+genesets_cl = list(KEGG_genes, PID_cl_genes, tcga_cl_genes, hallmarks_genes, PENG_genes, MMR_pathways)
+names(genesets_cl) = c("KEGG", "PID_cl", "tcga_cl", "hallmarks", "PENG", "MMR")
+
 ggvenn(
   genesets_cl, 
-  fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
+  fill_color = c("orange", "lightblue", "lightgrey", "lightgreen", "red", "purple"),
   stroke_size = 0.5, set_name_size = 4
   )
 
@@ -126,6 +142,17 @@ ggvenn(
   genesets_cl_KEGG_PID, 
   fill_color = c("orange", "lightblue", "lightgrey", "lightgreen"),
   stroke_size = 0.5, set_name_size = 4
+  )
+
+
+#tcga vs all genesets
+all_pathways_genes = unique(c(hallmarks_genes, PID_cl_genes, KEGG_genes, PENG_genes, MMR_genes))
+geneset_all = list(tcga_cl_genes, all_pathways_genes)
+names(geneset_all) = c("DS1 cleaned", "All genesets")
+ggvenn(
+  geneset_all, 
+  fill_color = c("indianred1", "lightsteelblue2"),
+  stroke_size = 0.5, set_name_size =5
   )
 ```
 # for KIRC data set
