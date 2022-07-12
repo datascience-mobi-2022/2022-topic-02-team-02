@@ -217,7 +217,7 @@ NES_matrix_hallmark = as.matrix(NES_mean)
 
 #plot mean enrichment for each tumor type
 #heatmap 1
-Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 7), width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE)
+Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 4, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE, col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
 Heatmap_NES_hallmark
 
 #heatmap 2
@@ -301,7 +301,7 @@ colnames(NES_mean_KEGG) = all_tumortypes_names
 
 #plot as heatmap
 NES_matrix_KEGG = as.matrix(NES_mean_KEGG)
-Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = FALSE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 2), width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets")
+Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 4, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
 Heatmap_NES_KEGG
 
 #create dendrogram 
@@ -387,7 +387,7 @@ colnames(NES_mean_PID_cl) = all_tumortypes_names
 
 NES_matrix_PID = as.matrix(NES_mean_PID_cl)
 #plot mean NES
-Heatmap_NES_PID = Heatmap(NES_matrix_PID, name = "NES", cluster_rows = FALSE, column_split = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 4), width = ncol(NES_matrix_PID)*unit(8, "mm"), height = nrow(NES_matrix_PID)*unit(2, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PID gene sets")
+Heatmap_NES_PID = Heatmap(NES_matrix_PID, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 5, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_PID)*unit(8, "mm"), height = nrow(NES_matrix_PID)*unit(2, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PID gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
 Heatmap_NES_PID
 
 #create dendrogram 
@@ -458,7 +458,7 @@ for (j in 1:33){
 colnames(NES_mean_MMR) = all_tumortypes_names
 
 NES_matrix_MMR = as.matrix(NES_mean_MMR[-4,])
-Heatmap_NES_MMR = Heatmap(NES_matrix_MMR, name = "NES", cluster_rows = FALSE, column_split = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA MMR gene sets", col = colorRamp2(c(-0.08, 0, 0.02), c("blue", "white", "red")))
+Heatmap_NES_MMR = Heatmap(NES_matrix_MMR, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA MMR gene sets", col = colorRamp2(c(-0.08, 0, 0.02), c("blue", "black", "red")))
 Heatmap_NES_MMR
 
 #create dendrogram 
@@ -525,7 +525,7 @@ for (j in 1:33){
 }
 colnames(NES_mean_PENG) = all_tumortypes_names
 NES_matrix_PENG = as.matrix(NES_mean_PENG)
-Heatmap_NES_PENG = Heatmap(NES_matrix_PENG, name = "NES", cluster_rows = FALSE, column_split = 7, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_PENG)*unit(8, "mm"), height = nrow(NES_matrix_PENG)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PENG gene sets")
+Heatmap_NES_PENG = Heatmap(NES_matrix_PENG, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 7, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_PENG)*unit(8, "mm"), height = nrow(NES_matrix_PENG)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PENG gene sets", col = colorRamp2(c(-0.1, 0, 0.1), c("blue", "black", "red")))
 Heatmap_NES_PENG
 
 #create dendrogram 
@@ -580,8 +580,10 @@ top30_var_pw = rownames(pathway_activity_var)[298:327]
 
 #Heatmap top 30 variance pathways
 top_var_pw_matrix = as.matrix(pathway_activity_matrix_mean[top30_var_pw, ])
-Heatmap_TopVar_pw = Heatmap(top_var_pw_matrix, name = "NES", cluster_rows = FALSE, column_split = 6, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(25, "mm"), column_dend_height = unit(15, "mm"), column_title = "Top 30 variance pathways TCGA")
+Heatmap_TopVar_pw = Heatmap(top_var_pw_matrix, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 6, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(25, "mm"), column_dend_height = unit(15, "mm"), column_title = "Top 30 variance pathways TCGA", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
 Heatmap_TopVar_pw
+
+Heatmap_NES_PID = Heatmap(NES_matrix_PID, name = "NES", cluster_rows = TRUE, row_dend_width = unit(0, "cm"), column_split = 5, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_PID)*unit(8, "mm"), height = nrow(NES_matrix_PID)*unit(2, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PID gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
 
 # select top 15 UP and DOWN regulated pathways for KIRC
 KIRC_ordered = pathway_activity_matrix_mean[,12, drop = FALSE]
