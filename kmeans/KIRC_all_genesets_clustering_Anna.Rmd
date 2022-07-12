@@ -1,5 +1,5 @@
 ---
-title: "KIRC_Pathway_activity_PCA_Anna"
+title: "KIRC_all_genesets_clustering_Anna"
 author: "Anna von Bachmann"
 date: '2022-06-14'
 output: html_document
@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(69)
 ```
 
+#Identifying Clusters in KIRC based on all analyzed genesets 
 
 ```{r Load data}
 #Load data
@@ -18,7 +19,17 @@ tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal
 KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
 
 KIRC_pa =  readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity.rds") #PA for Pathway activity (all data)
+```
 
+
+```{r Load packages}
+#packages
+library(cluster)
+library(ggpubr)
+library(factoextra)
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
 ```
 
 # for all datasets combined (KIRC_pa)
@@ -32,7 +43,7 @@ length(KIRC_pa_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = nu
 KIRC_pa_pca_x = data.frame(KIRC_pa_pca[["x"]])
 
 #get the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
-library("factoextra")
+
 KIRC_pa_pca_eigval = get_eigenvalue(KIRC_pa_pca)
 rownames(KIRC_pa_pca_eigval) = colnames (KIRC_pa_pca_x)
 barplot(KIRC_pa_pca_eigval$variance.percent,ylab='Proportion of variance in percent', xlab = "Principal Components")
@@ -61,6 +72,8 @@ ggplot(KIRC_pa_pca_x, aes(PC1, PC3))+
   geom_point( size =2, color = KIRC_gender)+
    ggtitle("PCA with regard to gender ")
 ```
+
+
 ```{r UMAP}
 #UMAP for better clusterin/visualization, running on PCA result
 library(uwot)
@@ -88,7 +101,7 @@ ggplot (data =KIRC_pa_UMAP,
 
 
 ```{r Kmeans }
-library(cluster)
+
 #perform kmeans with 2:5 centers on UMAP results
 KIRC_UMAP_kmeans = sapply(2:5, function(k){
   kmeans(x = KIRC_pa_UMAP , centers = k, nstart = 50 )})
@@ -116,10 +129,10 @@ sapply(1:6, function(x){
 #find the optimal number clusters, silhouette plot (average silhouette width)
 fviz_nbclust(KIRC_pa_UMAP, kmeans, method='silhouette')
 ```
+
 ```{r Kmeans Plot}
 # visualize the clusters in plot
-library(ggpubr)
-library(factoextra)
+
 #for 2 centers
 km.2 = kmeans(KIRC_pa_UMAP, centers = 2, nstart = 100)
 fviz_cluster(km.2, KIRC_pa_UMAP,
@@ -151,7 +164,7 @@ fviz_cluster(km.4, KIRC_pa_UMAP,
 
 
 
-```{r KEGG culsters}
+```{r identify culsters}
 #for all pathways: optimal number of cluster: 3 
 PA_km3 =kmeans(KIRC_pa_UMAP, 3 ,nstart = 200)
 fviz_cluster(PA_km3, KIRC_pa_UMAP,
@@ -163,9 +176,9 @@ fviz_cluster(PA_km3, KIRC_pa_UMAP,
 PA_km = PA_km3$cluster
 
 #assign the patients to corresponding cluster
-PA_c1_names = names(PA_km[which(PA_km == 1)]) #patient names of cluster1 #22 patients
-PA_c2_names = names(PA_km[which(PA_km == 2)])#23 patients
-PA_c3_names = names(PA_km[which(PA_km == 3)])#27 patients
+PA_c1_names = names(PA_km[which(PA_km == 1)]) #patient names of cluster1
+PA_c2_names = names(PA_km[which(PA_km == 2)])s
+PA_c3_names = names(PA_km[which(PA_km == 3)])
 
 PA_c1 = KIRC_pa[,colnames(KIRC_pa) %in% PA_c1_names] # df with patients of cluster1
 PA_c2 = KIRC_pa[,colnames(KIRC_pa) %in% PA_c2_names]
@@ -199,7 +212,7 @@ colnames(PA_c1_c23_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 PA_c1_m = as.matrix(PA_c1) #matrix needed for wilcoxon
 PA_c23_m = as.matrix(PA_c23)
-#clsuer 1 compared to the other clusters --> named as KEGG_1_...
+#cluster 1 compared to the other clusters
 PA_1_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c1_m),function (x) {
   wilcox.test(PA_c1_m[x,],PA_c23_m[x,],paired=FALSE)
 }$p.value))
@@ -208,7 +221,7 @@ colnames(PA_1_wilcox_pv)="pvalue"
 #a lot of NaNs--> Maybe because of constant NES??
 
 #Bonferroni-Korrektur
-alpha_PA=0.05/(nrow(PA_1_wilcox_pv))#0.0001157407
+alpha_PA=0.05/(nrow(PA_1_wilcox_pv))
 #how many pathways have sign different NES??
 length(which(PA_1_wilcox_pv<alpha_PA))
 
@@ -220,15 +233,11 @@ PA_1_wilcox_pv[is.nan(PA_1_wilcox_pv)] = 1
 ```{r Volcano Cluster 1 vs 2+3}
 #data preparation for Volcano Plot
 
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
-
 #calculate -log10 of p-value for plotting
 PA_1_wilcox_pv_log =-log10(PA_1_wilcox_pv)
 colnames(PA_1_wilcox_pv_log) = "neg_log10_pv"
 
-#combine differnece and pv matrix
+#combine difference and pv matrix
 PA_1_pv_dif =as.data.frame(cbind(PA_c1_c23_dif,PA_1_wilcox_pv_log))
 colnames(PA_1_pv_dif) = c("diff","neg_log10_pv")
 
@@ -238,12 +247,9 @@ colnames(PA_1_pv_dif) = c("diff","neg_log10_pv")
 cutoffpv_PA = -log10(alpha_PA) 
 PA_1_pv_dif_sig = PA_1_pv_dif[which(PA_1_pv_dif$neg_log10_pv>cutoffpv_PA),]
 min(PA_1_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes (diff >0) of the sig diff expressed genes (blue in plot)
 PA_1_pv_dif_sigup = PA_1_pv_dif_sig[which(PA_1_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
 #plotting
 ggplot(PA_1_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -274,7 +280,7 @@ ggplot(PA_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 
 ```{r top ten diff pw Cluster 1 vs 2+3}
 #top ten pathways
-library(dplyr)
+
 abs_PA_1_dif_sig<- PA_1_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values
@@ -323,7 +329,7 @@ colnames(PA_c2_c13_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 PA_c2_m = as.matrix(PA_c2) #matrix needed for wilcoxon
 PA_c13_m = as.matrix(PA_c13)
-#clsuer 2 compared to the other clusters --> named as KEGG_2_...
+#cluster 2 compared to the other clusters
 PA_2_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c2_m),function (x) {
   wilcox.test(PA_c2_m[x,],PA_c13_m[x,],paired=FALSE)
 }$p.value))
@@ -332,9 +338,9 @@ colnames(PA_2_wilcox_pv)="pvalue"
 #a lot of NaNs--> Maybe because of constant NES??
 
 #Bonferroni-Korrektur
-alpha_PA=0.05/(nrow(PA_2_wilcox_pv))#0.0001157407
+alpha_PA=0.05/(nrow(PA_2_wilcox_pv))
 #how many pathways have sign different NES??
-length(which(PA_2_wilcox_pv<alpha_PA))#66
+length(which(PA_2_wilcox_pv<alpha_PA))
 
 
 PA_2_wilcox_pv[is.nan(PA_2_wilcox_pv)] = 1
@@ -344,10 +350,6 @@ PA_2_wilcox_pv[is.nan(PA_2_wilcox_pv)] = 1
 ```{r Volcano Cluster 2 vs 1+3}
 #data preparation for Volcano Plot
 
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
-
 #calculate -log10 of p-value for plotting
 PA_2_wilcox_pv_log =-log10(PA_2_wilcox_pv)
 colnames(PA_2_wilcox_pv_log) = "neg_log10_pv"
@@ -356,18 +358,13 @@ colnames(PA_2_wilcox_pv_log) = "neg_log10_pv"
 PA_2_pv_dif =as.data.frame(cbind(PA_c2_c13_dif,PA_2_wilcox_pv_log))
 colnames(PA_2_pv_dif) = c("diff","neg_log10_pv")
 
-
-
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv_PA = -log10(alpha_PA)#=3.593286, cut off later in plot 
+cutoffpv_PA = -log10(alpha_PA) 
 PA_2_pv_dif_sig = PA_2_pv_dif[which(PA_2_pv_dif$neg_log10_pv>cutoffpv_PA),]
 min(PA_2_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes (diff>0) of the sig diff expressed genes (blue in plot)
 PA_2_pv_dif_sigup = PA_2_pv_dif_sig[which(PA_2_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
 #plotting
 ggplot(PA_2_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -380,6 +377,8 @@ ggplot(PA_2_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
                      values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
   guides(colour = guide_legend(override.aes = list(size=3)))
+
+
 
 #which Pathways are sign different??
 PA_2_dif_sig = data.frame(PA_2_pv_dif_sig$diff)
@@ -395,7 +394,6 @@ ggplot(PA_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 ```
 ```{r top ten diff pw Cluster 2 vs 1+3}
 #top ten pathways
-library(dplyr)
 abs_PA_2_dif_sig<- PA_2_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values
@@ -444,7 +442,7 @@ colnames(PA_c3_c12_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 PA_c3_m = as.matrix(PA_c3) #matrix needed for wilcoxon
 PA_c12_m = as.matrix(PA_c12)
-#clsuer 2 compared to the other clusters --> named as KEGG_2_...
+#clsuer 2 compared to the other clusters
 PA_3_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c3_m),function (x) {
   wilcox.test(PA_c3_m[x,],PA_c12_m[x,],paired=FALSE)
 }$p.value))
@@ -453,7 +451,7 @@ colnames(PA_3_wilcox_pv)="pvalue"
 #a lot of NaNs--> Maybe because of constant NES??
 
 #Bonferroni-Korrektur
-alpha_PA=0.05/(nrow(PA_3_wilcox_pv))#0.0001157407
+alpha_PA=0.05/(nrow(PA_3_wilcox_pv))
 #how many pathways have sign different NES??
 length(which(PA_3_wilcox_pv<alpha_PA))
 
@@ -464,10 +462,6 @@ PA_3_wilcox_pv[is.nan(PA_3_wilcox_pv)] = 1
 
 ```{r Volcano Cluster 3 vs 1+2}
 #data preparation for Volcano Plot
-
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
 
 #calculate -log10 of p-value for plotting
 PA_3_wilcox_pv_log =-log10(PA_3_wilcox_pv)
@@ -480,15 +474,13 @@ colnames(PA_3_pv_dif) = c("diff","neg_log10_pv")
 
 
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv_PA = -log10(alpha_PA)#=3.593286, cut off later in plot 
+cutoffpv_PA = -log10(alpha_PA) 
 PA_3_pv_dif_sig = PA_3_pv_dif[which(PA_3_pv_dif$neg_log10_pv>cutoffpv_PA),]
 min(PA_3_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes (diff >0) of the sig diff expressed genes (blue in plot)
 PA_3_pv_dif_sigup =PA_3_pv_dif_sig[which(PA_3_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
+
 #plotting
 ggplot(PA_3_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -518,7 +510,7 @@ ggplot(PA_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 
 ```{r top ten diff pw Cluster 3 vs 1+2}
 #top ten pathways
-library(dplyr)
+
 abs_PA_3_dif_sig<- PA_3_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values

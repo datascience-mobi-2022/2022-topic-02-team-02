@@ -10,18 +10,16 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(69)
 ```
 
+Which Kidney specific (fetal) pathways show enriched NES in KIRC data? 
+
 ```{r}
 #Load data
 kidney_pathways <- readRDS("~/GitHub/2022-topic-02-team-02/data/Kidney_pathways.RDS")
-
-library(viridis)  
-library(RColorBrewer)
-display.brewer.all()
-display.brewer.pal(n = 8, name = 'PRGn')
 ```
 
 
 ```{r}
+#determine Pathways with most different NES
 kidney_pw_mean = data.frame(apply(kidney_pathways, 1, mean))
 kidney_names = c(rownames(kidney_pathways))
 kidney_pw_mean_names = data.frame(cbind(kidney_names, kidney_pw_mean))

@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Create a function to save genesets in the right format for GSEA
+
 ```{r}
 library(msigdbr)
 ```
@@ -103,7 +105,7 @@ metabolic_pathways = list(
   )
 ```
 
-```{r}
+```{r  function}
 #load metabolic genesets
 hallmarks = msigdbr(species = "Homo sapiens", category = "H")
 #create a df with metabolic pathways and genes as columns 

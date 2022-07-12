@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(69)
 ```
 
+```{r Packages}
+library(stringr)
+```
 
 
 #PID pathways
@@ -74,124 +77,6 @@ KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
 ggplot (data = KIRC_PID_UMAP, 
                     aes(x = X1, y = X2))+
   geom_point(size = 2)
-
-#UMAP plot with colors form annotation matrix or pw activity (gender, tumorstatus,...)
-KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
-
-KIRC_tumorstatus = KIRC_annot$tumor_status
-
-#convert "" to "NA"
-KIRC_tumorstatus_updated= c()
-for (i in 1:length(KIRC_tumorstatus)){
-  if (KIRC_tumorstatus[i] == "") {KIRC_tumorstatus_updated[i]= "NA"}
-  else {KIRC_tumorstatus_updated[i]=KIRC_tumorstatus[i]}
-}
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_tumorstatus_updated))+
-  scale_color_manual(values = c("WITH TUMOR" = "red",
-                                "TUMOR FREE"="blue",
-                                "NA" = "purple"))+
-  labs(x = "UMAP1", y = "UMAP2", col = "Tumor stage", title = "PID pathways" )+
-  geom_point(size = 1.3)
-
-
-
-KIRC_gender_Umap = KIRC_annot$gender  
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_gender_Umap))
-  geom_point(size = 1)
-
-#OS	Overall Survival, 0 = alive, 1 = death from any cause, 
-#(Time (not visualized): overall survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
-KIRC_OS = KIRC_annot$OS
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_OS))+
-  geom_point(size = 1)
-
-#DSS   Disease-Specific Survival (Approximate for most tumor types, not 100% accurate definition), 0 = alive, 1 =  patient whose vital_status was Dead and tumor_status was WITH TUMOR or If patient died from the disease shown in field of cause_of_death., 
-#(Time (not visualized): disease-specific survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
-
-KIRC_DSS = KIRC_annot$DSS
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_DSS))+
-  geom_point(size = 1)
-
-KIRC_tumorstage = KIRC_annot$ajcc_pathologic_tumor_stage
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_tumorstage))+
-  geom_point(size = 1)
-
-
-#PFI	Progression-Free Interval (Relatively accurate, PFI is preferred over OS due to relatively short follow-up time), 0 = censored otherwise, 1 = patient having new tumor event whether it was a progression of disease, local recurrence, distant metastasis, new primary tumors all sites , or died with the cancer without new tumor event, including cases with a new tumor event whose type is N/A. 
-#Time: progression-free interval time in days, for events, either new_tumor_event_dx_days_to or death_days_to,  whichever is applicable; or for censored cases, either last_contact_days_to or death_days_to, whichever is applicable.
-
-KIRC_PFI_time = KIRC_annot$PFI_time
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_PFI_time))+
-  geom_point(size = 1)
-
-KIRC_PFI = KIRC_annot$PFI
-ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_PFI))+
-  geom_point(size = 1)
-
-KIRC_PID_t = data.frame(t(KIRC_PID_cl))
-
-
-KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
-p1=ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
- geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES ", title = "PID_CD8_TCR_PATHWAY")+
-  theme(plot.title = element_text(size=10))
-
-
-KIRC_TCR_PATHWAY= KIRC_PID_t$PID_TCR_PATHWAY
-p2=ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = KIRC_TCR_PATHWAY))+
-  geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES",title= "PID_TCR_PATHWAY ")+
-   theme(plot.title = element_text(size=10))
-
-color_fun = circlize::colorRamp2(c(common_min,0,common_max), c("blue", "red"))
-
-PID_CD8_TCR =  KIRC_PID_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
-p3=ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = PID_CD8_TCR))+
-  geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_CD8_TCR_DOWNSTREAM_PATHWAY")+
-   theme(plot.title = element_text(size=10))
-
-PID_IL1 =  KIRC_PID_t$PID_IL1_PATHWAY
-p4=ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = PID_IL1))+
-   geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_IL1_PATHWAY")+
-   theme(plot.title = element_text(size=10))
-
-PID_CXCR4 =  KIRC_PID_t$PID_CXCR4_PATHWAY
-p5 = ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = PID_CXCR4 ))+
-  geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_CXCR4_PATHWAY")+
-   theme(plot.title = element_text(size=10))
-
-PID_IL27 =  KIRC_PID_t$PID_IL27_PATHWAY
-p6 = ggplot (data =KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2 , color = PID_IL27))+
-  geom_point(size = 0.5)+
-  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
-  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_IL27_PATHWAY")+
-   theme(plot.title = element_text(size=10))
-
-plotliste = list(p1,p2,p3,p4,p5,p6)
-
-ggarrange(plotlist = plotliste)
 
 ```
 
@@ -558,8 +443,137 @@ Heatmap(PID_c1_sig_ordered, column_title = "Cluster 1", column_title_gp = gpar(f
 
 
 
+```{r annotation UMAPs}
+#UMAP plot with colors form annotation matrix or pw activity (gender, tumorstatus,...)
+KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
+
+KIRC_tumorstatus = KIRC_annot$tumor_status
+
+#convert "" to "NA"
+KIRC_tumorstatus_updated= c()
+for (i in 1:length(KIRC_tumorstatus)){
+  if (KIRC_tumorstatus[i] == "") {KIRC_tumorstatus_updated[i]= "NA"}
+  else {KIRC_tumorstatus_updated[i]=KIRC_tumorstatus[i]}
+}
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_tumorstatus_updated))+
+  scale_color_manual(values = c("WITH TUMOR" = "red",
+                                "TUMOR FREE"="blue",
+                                "NA" = "purple"))+
+  labs(x = "UMAP1", y = "UMAP2", col = "Tumor stage", title = "PID pathways" )+
+  geom_point(size = 1.3)
 
 
+#correlation of tumor stage and PID cluster ???
+
+KIRC_tumorfree = c(KIRC_annot$PATIENT[which(KIRC_annot$tumor_status== "TUMOR FREE")])
+PID_c1_names_rmv = str_sub(PID_c1_names,1,nchar(PID_c1_names)-3)
+PID_c1_tumorfree = (intersect(PID_c1_names_rmv, KIRC_tumorfree ))
+length(PID_c1_tumorfree)/length(PID_c1) #=0.7
+
+PID_c2_names_rmv = str_sub(PID_c2_names,1,nchar(PID_c2_names)-3)
+PID_c2_tumorfree = (intersect(PID_c2_names_rmv, KIRC_tumorfree ))
+length(PID_c2_tumorfree)/length(PID_c2) #=0.28125
+
+
+KIRC_gender_Umap = KIRC_annot$gender  
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_gender_Umap))
+  geom_point(size = 1)
+
+#OS	Overall Survival, 0 = alive, 1 = death from any cause, 
+#(Time (not visualized): overall survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
+KIRC_OS = KIRC_annot$OS
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_OS))+
+  geom_point(size = 1)
+
+#DSS   Disease-Specific Survival (Approximate for most tumor types, not 100% accurate definition), 0 = alive, 1 =  patient whose vital_status was Dead and tumor_status was WITH TUMOR or If patient died from the disease shown in field of cause_of_death., 
+#(Time (not visualized): disease-specific survival time in days, last_contact_days_to or death_days_to, whichever is larger.)
+
+KIRC_DSS = KIRC_annot$DSS
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_DSS))+
+  geom_point(size = 1)
+
+KIRC_tumorstage = KIRC_annot$ajcc_pathologic_tumor_stage
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_tumorstage))+
+  geom_point(size = 1)
+
+
+#PFI	Progression-Free Interval (Relatively accurate, PFI is preferred over OS due to relatively short follow-up time), 0 = censored otherwise, 1 = patient having new tumor event whether it was a progression of disease, local recurrence, distant metastasis, new primary tumors all sites , or died with the cancer without new tumor event, including cases with a new tumor event whose type is N/A. 
+#Time: progression-free interval time in days, for events, either new_tumor_event_dx_days_to or death_days_to,  whichever is applicable; or for censored cases, either last_contact_days_to or death_days_to, whichever is applicable.
+
+KIRC_PFI_time = KIRC_annot$PFI_time
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_PFI_time))+
+  geom_point(size = 1)
+
+KIRC_PFI = KIRC_annot$PFI
+ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_PFI))+
+  geom_point(size = 1)
+
+KIRC_PID_t = data.frame(t(KIRC_PID_cl))
+
+
+KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
+p1=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
+ geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES ", title = "PID_CD8_TCR_PATHWAY")+
+  theme(plot.title = element_text(size=10))
+
+
+KIRC_TCR_PATHWAY= KIRC_PID_t$PID_TCR_PATHWAY
+p2=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_TCR_PATHWAY))+
+  geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES",title= "PID_TCR_PATHWAY ")+
+   theme(plot.title = element_text(size=10))
+
+color_fun = circlize::colorRamp2(c(common_min,0,common_max), c("blue", "red"))
+
+PID_CD8_TCR =  KIRC_PID_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
+p3=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_CD8_TCR))+
+  geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_CD8_TCR_DOWNSTREAM_PATHWAY")+
+   theme(plot.title = element_text(size=10))
+
+PID_IL1 =  KIRC_PID_t$PID_IL1_PATHWAY
+p4=ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_IL1))+
+   geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_IL1_PATHWAY")+
+   theme(plot.title = element_text(size=10))
+
+PID_CXCR4 =  KIRC_PID_t$PID_CXCR4_PATHWAY
+p5 = ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_CXCR4 ))+
+  geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_CXCR4_PATHWAY")+
+   theme(plot.title = element_text(size=10))
+
+PID_IL27 =  KIRC_PID_t$PID_IL27_PATHWAY
+p6 = ggplot (data =KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2 , color = PID_IL27))+
+  geom_point(size = 0.5)+
+  scale_color_gradient(low="blue", high="red", limits=c(0,2.5))+
+  labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_IL27_PATHWAY")+
+   theme(plot.title = element_text(size=10))
+
+plotliste = list(p1,p2,p3,p4,p5,p6)
+
+ggarrange(plotlist = plotliste)
+
+```
 
 
 
