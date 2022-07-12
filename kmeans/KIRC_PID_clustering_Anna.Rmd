@@ -88,7 +88,10 @@ for (i in 1:length(KIRC_tumorstatus)){
 }
 ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_tumorstatus_updated))+
-  labs(x = "UMAP1", y = "UMAP2", col = "Tumor stage", title = )+
+  scale_color_manual(values = c("WITH TUMOR" = "red",
+                                "TUMOR FREE"="blue",
+                                "NA" = "purple"))+
+  labs(x = "UMAP1", y = "UMAP2", col = "Tumor stage", title = "PID pathways" )+
   geom_point(size = 1.3)
 
 
@@ -138,50 +141,51 @@ KIRC_PID_t = data.frame(t(KIRC_PID_cl))
 KIRC_CD8_TCR = KIRC_PID_t$PID_CD8_TCR_PATHWAY
 p1=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_CD8_TCR))+
- geom_point(size = 1.3)+
+ geom_point(size = 0.5)+
   scale_color_gradient(low="blue", high="red")+
   labs(x = "UMAP1", y = "UMAP2", col = "NES ", title = "PID_CD8_TCR_PATHWAY")+
-  theme(plot.title = element_text(size=12))
+  theme(plot.title = element_text(size=10))
 
 
 KIRC_TCR_PATHWAY= KIRC_PID_t$PID_TCR_PATHWAY
 p2=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = KIRC_TCR_PATHWAY))+
-  geom_point(size = 1.3)+
+  geom_point(size = 0.5)+
   scale_color_gradient(low="blue", high="red")+
   labs(x = "UMAP1", y = "UMAP2", col = "NES",title= "PID_TCR_PATHWAY ")+
-   theme(plot.title = element_text(size=12))
+   theme(plot.title = element_text(size=10))
 
 color_fun = circlize::colorRamp2(c(common_min,0,common_max), c("blue", "red"))
 
 PID_CD8_TCR =  KIRC_PID_t$PID_CD8_TCR_DOWNSTREAM_PATHWAY
 p3=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = PID_CD8_TCR))+
-  geom_point(size = 1.3)+
+  geom_point(size = 0.5)+
   scale_color_gradient(low="blue", high="red")+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_CD8_TCR_DOWNSTREAM_PATHWAY")+
-   theme(plot.title = element_text(size=12))
+   theme(plot.title = element_text(size=10))
 
 PID_IL1 =  KIRC_PID_t$PID_IL1_PATHWAY
 p4=ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = PID_IL1))+
-   geom_point(size = 1.3)+
+   geom_point(size = 0.5)+
   scale_color_gradient(low="blue", high="red")+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title = "PID_IL1_PATHWAY")+
-   theme(plot.title = element_text(size=12))
+   theme(plot.title = element_text(size=10))
 
 PID_CXCR4 =  KIRC_PID_t$PID_CXCR4_PATHWAY
 p5 = ggplot (data =KIRC_PID_UMAP, 
                     aes(x = X1, y = X2 , color = PID_CXCR4))+
-  geom_point(size = 1.3)+
+  geom_point(size = 0.5)+
   scale_color_gradient(low="blue", high="red")+
   labs(x = "UMAP1", y = "UMAP2", col = "NES", title =  "PID_CXCR4_PATHWAY")+
-   theme(plot.title = element_text(size=12))
+   theme(plot.title = element_text(size=10))
 
 
 plotliste = list(p1,p2,p3,p4,p5)
 
 ggarrange(plotlist = plotliste)
+
 ```
 
 
@@ -225,7 +229,8 @@ fviz_cluster(km.2, KIRC_PID_UMAP,
              palette = c("orange", "blue"), 
              geom = "point",
              ellipse.type = "convex", 
-             ggtheme = theme_bw()
+             ggtheme = theme_bw(),
+             title = "PID clusters"
                          )
 
 # for 3 centers
@@ -261,7 +266,7 @@ fviz_cluster(PID_km2, KIRC_PID_UMAP,
              ellipse.type = "convex",
              xlab   = "UMAP1",
              ylab ="UMAP2",
-             main = FALSE,
+             main = "PID clusters",
              ggtheme = theme_grey()
              )
 

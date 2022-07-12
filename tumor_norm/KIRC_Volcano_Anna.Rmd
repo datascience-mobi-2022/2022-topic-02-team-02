@@ -83,7 +83,7 @@ tcga_KIRC_both_constant = c(tcga_KIRC_norm_constant,tcga_KIRC_tumor_constant)
 length(tcga_KIRC_both_constant)#combine constant expressed gene names from normal and tumor data set as these genes have to be removed from both data sets
 #remove the constant expressed genes from both data sets (cl for clean)
 tcga_KIRC_norm_cl = tcga_KIRC_norm_protein_coding[!rownames(tcga_KIRC_norm_protein_coding) %in% tcga_KIRC_both_constant,]
-dim(tcga_KIRC_norm_cl)#18941 genes left
+dim(tcga_KIRC_norm_cl)#18645 genes left
 tcga_KIRC_tumor_cl = tcga_KIRC_tumor_protein_coding[!rownames(tcga_KIRC_tumor_protein_coding) %in% tcga_KIRC_both_constant,]
 dim(tcga_KIRC_tumor_cl)
 
