@@ -291,7 +291,7 @@ cancer_type_bind = y[,3]
 
 Immune_type = list()
 for (i in 1:length(TCGA_pw_PID)){
-  Immune_type[[i]] = c("Immune infiltrated","Not immune infiltrated","Neutral")
+  Immune_type[[i]] = c("High","Neutral","Low")
 }
 Immune_type = do.call("cbind", Immune_type)
 View(Immune_type)
@@ -353,12 +353,12 @@ peng_plot
 
 Neutral = Immune_ready[which(Immune_ready$Immunetype == "Neutral"),]
 Neutral_sum = sum(Neutral$Ratio)
-Infiltrated = Immune_ready[which(Immune_ready$Immunetype == "Immune infiltrated"),]
+Infiltrated = Immune_ready[which(Immune_ready$Immunetype == "High"),]
 Infiltrated_sum = sum(Infiltrated$Ratio)
-Suppresive = Immune_ready[which(Immune_ready$Immunetype == "Not immune infiltrated"),]
+Suppresive = Immune_ready[which(Immune_ready$Immunetype == "Low"),]
 Suppresive_sum = sum(Suppresive$Ratio)
 
-pie_prep = data.frame(c(Neutral_sum,Infiltrated_sum,Suppresive_sum),c("Neutral","Infiltrated","Not infiltrated"))
+pie_prep = data.frame(c(Neutral_sum,Infiltrated_sum,Suppresive_sum),c("Neutral","High","Low"))
 colnames(pie_prep) = c("Ratio","Immunetype")
 
 ggplot(pie_prep, aes(x="", y=Ratio, fill=Immunetype)) +
