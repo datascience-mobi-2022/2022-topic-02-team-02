@@ -134,7 +134,7 @@ The immune deconvolution package (@immunedeconv-merotto-2022) is used to obtain 
 
 Binary logistic regression is a statistical method used to predict a dichotomous dependent variable from one or several independent variables. In contrast to linear regression, logistic regression does not require a linear relationship between the independent and the dependent variable. 
 
-A logistic regression model is created by training on one dataset and testing it on another independent one. First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is computed as follows:
+A logistic regression model is created by training on one dataset and testing it on another independent one. First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is calculated using the logit function:
 
 $log(odds)=log(\frac{p}{1-p})$
 
@@ -162,6 +162,9 @@ Both data sets were filtered for protein-coding genes using biomaRt package. Thi
 For focused analysis, KIRC was examined in more detail. The analysis was based on DS2. Data cleaning was performed as described above.  
 First, differential gene expression in tumor tissue compared to normal tissue was analyzed by calculation of Foldchange $FC =(mean condition 1) / (mean condition 2)$ for each gene, where condition one represents gene expression of tumor tissue and condition two gene expression of normal tissue. Statistical significance was determined using Wilcoxon signed-rank test with Bonferroni correction, as Shapiro-Wilks test indicated no normality of the data.  
 The second part of this analysis was focused on differential pathway activity. Pathway activity matrices were determined using GSEA, where genes were ranked based on their foldchange. Pathways with an adjusted $p$-value $>0.05$ were considered as non-significant, hence their NES was set to zero. Hallmark-pathways, KEGG-pathways and PID-pathways were analyzed. Patients were compared based on their pathway activity. Subclusters of patients were visualized for each geneset by UMAP calculated on PCA-results and subsequently identified by k-means clustering. Optimal number of clusters was determined using elbow method and silhouette method. Pathways that were crucial for this clustering and were significantly different between those clusters were detected by Wilcoxon rank-sum test for two clusters and Kruksal-Wallis test for three clusters, both with Bonferroni correction.
+
+## Predicting immune infiltration with logistic regression
+A binary logistic regression model was created based on the pathway activity of KIRC samples from DS1 and tested on DS2. The dependent variable to be predicted was the “Immune infiltration” of samples. The independent variables were pathways chosen from the most differentially significantly expressed PID pathways between the three clusters that have emerged in the PID clustering of KIRC patients in DS1. All patients of the cluster with highest pathway activity were marked as immune infiltrated with a “$1$” and all other patients with a “$0$”. The logistic regression was performed to predict the immune infiltration in the samples of DS2.
 
 ## Packages
 
