@@ -11,10 +11,7 @@ set.seed(69)
 ```
 
 ```{r}
-#load data = run Biotypes.Rmd 
-```
-
-```{r}
+# run Biotypes.Rmd to load data needed for this markdown
 # work with tcga_exp_prc_clean -> w/o low variable under p50
 #dim (tcga_exp_prc_clean)
 #tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
@@ -25,25 +22,15 @@ set.seed(69)
 #tcga_exp_pca$sdev
 ```
 
-```{r}
-#attempt to save data from environment
-#saveRDS(tcga_exp_prc_clean, file = "exp_prc_clean.Rds")
-#tcga_exp_prc_clean_copy = readRDS(file = "exp_prc_clean.Rds")
-```
-
-```{r}
-# tcga_exp_pca2 = PCA(tcga_exp_prc_clean)
-
-```
-
-```{r}
+```{r load packages}
 library(Seurat)
 library(ggplot2)
 library(tidyverse)
+library(cluster)
 ```
 
-```{r}
-#Run PCA 
+```{r PCA and data exploration}
+#tcga_exp_prc_clean is the "big data set", only protein coding genes and without low variance genes (p50-Quantile cut off)
 PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
 #create data frame with PCs and respective genes
 PCA_exp_PCs = PCA_exp@cell.embeddings
@@ -75,29 +62,19 @@ PCA_exp_gender = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y= PC_
 PCA_exp_gender
 ```
 
-```{r}
-#run UMAP
-
-library(tidyverse)
+```{r UMAP}
 
 cancer_types = tcga_annot$cancer_type_abbreviation
 data_kirc = which(cancer_types == "KIRC")
 
 #calculate UMAP on PCA 
-dim(UMAP_exp)
 UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
+colnames(UMAP_exp) = c("UMAP1", "UMAP2")
 UMAP_exp_KIRC = data.frame(UMAP_exp[cancer_types == "KIRC",])
 UMAP_plot = ggplot (data = as.data.frame(UMAP_exp), 
-                    aes(x = V1, y= V2, color = cancer_types))+
+                    aes(x = UMAP1, y= UMAP2, color = cancer_types))+
   geom_point(size = 2) 
 UMAP_plot
-
-#try out ggrepel 
-library(ggrepel)
-ggplot(data = as.data.frame(UMAP_exp), 
-       aes(x = V1, y= V2, label = cancer_types, color = cancer_types)) +
-  geom_text_repel(max.overlaps = 200) +
-  geom_point() #too many overlaps -> increase max.overlaps?
 
 #plot KIRC in black
 UMAP_exp= uwot::umap(PCA_exp@cell.embeddings)
@@ -130,20 +107,16 @@ UMAP_output[[1]]
 cancer = c(which(cancer_types == cancer_names[1]))
 names(UMAP_output) = cancer_names
 
-#use UMAP_output$"cancer name" to acces individual Umap plots
-
+#plot of UMAP for KIRC
 UMAP_output$KIRC
 
 #plot Umaps for all 33 cancer types
 sapply(1:33, function(i){
   plot(UMAP_output[[i]])
   })
-
 ```
 
-
-```{r}
-
+```{r clustering}
 #find optimal clusternumber
 library(ggpubr)
 library(factoextra)
@@ -168,15 +141,11 @@ tcga_UMAP_kmeans_tw = sapply(1:20, function(k){
 umap_elbow = plot(tcga_UMAP_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
 umap_elbow
 
-
 fviz_nbclust(UMAP_exp, kmeans, method='silhouette')
 
 #extract cluster values for silhouette plot
 tcga_UMAP_kmeans_c = sapply(2:20, function(k){
   kmeans(x = UMAP_exp , centers = k, nstart = 50 )$cluster})
-
-library(cluster)
-
 
 #silhouette plot
 sapply(1:19, function(x){
@@ -276,6 +245,7 @@ UMAP_DLBC_plot
 
 ```{r}
 #PCA over all tumor types in one 
+#set number of PCs to number of patients (-1 is because of RunPCA)
 
 PCA_tumorlist_33 = lapply (1:length(tumorlist), function (i) {
   RunPCA(as.matrix(tumorlist[[i]]), npcs = (ncol(tumorlist[[i]]))-1)
@@ -309,10 +279,7 @@ for (i in 1: length(UMAP_output_33)) {
                          aes (x = X1, y = X2, color = cancer_types)) +
     geom_point(size = 0.5)
 }
-umap_plot_33 #wie loop schreiben, dass alle Tumortypen zusammen geplottet werden?? 
-# wie Daten mergen? Muss das überhaupt passieren? jetzt alle in Liste UMAP_tumorlist_33
-
-cancer = c(which(cancer_types == cancer_names[1]))
+umap_plot_33
 ```
 
 

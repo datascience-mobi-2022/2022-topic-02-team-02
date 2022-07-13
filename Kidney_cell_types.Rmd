@@ -1,0 +1,105 @@
+---
+title: "Kidney cell types"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r packages}
+library(msigdbr)
+library(fgsea)
+library(tidyverse)
+```
+
+```{r data}
+tcga_KIRC_tumor_cl <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tcga_KIRC_tumor_cl.rds")
+tcga_KIRC_norm_cl <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tcga_KIRC_norm_cl.rds")
+```
+
+
+
+```{r filter for kidney celltype genesets}
+C8 = msigdbr(species = "Homo sapiens", category = "C8")
+
+DESCARTES_FETAL_KIDNEY_ERYTHROBLASTS =C8[C8$gs_id=="M40219",]
+DESCARTES_FETAL_KIDNEY_LYMPHOID_CELLS=C8[C8$gs_id=="M40226",]
+DESCARTES_FETAL_KIDNEY_MEGAKARYOCYTES=C8[C8$gs_id=="M40227",]
+DESCARTES_FETAL_KIDNEY_MESANGIAL_CELLS=C8[C8$gs_id=="M40224",]
+DESCARTES_FETAL_KIDNEY_METANEPHRIC_CELLS=C8[C8$gs_id=="M40223",]
+DESCARTES_FETAL_KIDNEY_MYELOID_CELLS=C8[C8$gs_id=="M40221",]
+DESCARTES_FETAL_KIDNEY_STROMAL_CELLS=C8[C8$gs_id=="M40222",]
+DESCARTES_FETAL_KIDNEY_URETERIC_BUD_CELLS =C8[C8$gs_id=="M40220",]
+DESCARTES_FETAL_KIDNEY_VASCULAR_ENDOTHELIAL_CELLS=C8[C8$gs_id=="M40225",]
+
+kidney = list(DESCARTES_FETAL_KIDNEY_ERYTHROBLASTS,DESCARTES_FETAL_KIDNEY_LYMPHOID_CELLS,DESCARTES_FETAL_KIDNEY_MEGAKARYOCYTES,DESCARTES_FETAL_KIDNEY_MESANGIAL_CELLS,DESCARTES_FETAL_KIDNEY_METANEPHRIC_CELLS,DESCARTES_FETAL_KIDNEY_MYELOID_CELLS,DESCARTES_FETAL_KIDNEY_STROMAL_CELLS,DESCARTES_FETAL_KIDNEY_URETERIC_BUD_CELLS,DESCARTES_FETAL_KIDNEY_VASCULAR_ENDOTHELIAL_CELLS)
+
+kidney_names = c("DESCARTES_FETAL_KIDNEY_ERYTHROBLASTS","DESCARTES_FETAL_KIDNEY_LYMPHOID_CELLS","DESCARTES_FETAL_KIDNEY_MEGAKARYOCYTES","DESCARTES_FETAL_KIDNEY_MESANGIAL_CELLS","DESCARTES_FETAL_KIDNEY_METANEPHRIC_CELLS","DESCARTES_FETAL_KIDNEY_MYELOID_CELLS","DESCARTES_FETAL_KIDNEY_STROMAL_CELLS","DESCARTES_FETAL_KIDNEY_URETERIC_BUD_CELLS","DESCARTES_FETAL_KIDNEY_VASCULAR_ENDOTHELIAL_CELLS")
+kidney_pw = list()
+
+for (i in (1:length(kidney))){
+  kidney_pw[[i]] = as.character(kidney[[i]]$ensembl_gene)
+}
+names(kidney_pw) = kidney_names
+```
+
+```{r}
+KIRC_FC_patients = data.frame(tcga_KIRC_tumor_cl - tcga_KIRC_norm_cl)
+KIRC_GSEA_prep = 
+rownames_to_column(KIRC_FC_patients, var = "ensembl_id")
+```
+
+```{r}
+kidney_gsea = list()
+for (i in 2:(ncol(KIRC_GSEA_prep))){
+  x = c(KIRC_GSEA_prep[,i])
+  names(x) = KIRC_GSEA_prep$ensembl_id
+  x = x[rank(x, ties.method = "first")]
+  
+  kidney_gsea[[i]] = fgsea(pathways = kidney_pw,
+                             stats =  x,
+                             scoreType = "std",
+                             nPermSimple = 10000,
+                             nproc = 6)}
+View(kidney_gsea)
+kidney_gsea_nona = list()
+for (v in 2:length(kidney_gsea)){
+  kidney_gsea_nona[[v]] = kidney_gsea[[v]]$padj
+  kidney_gsea_nona[[v]][is.na(kidney_gsea_nona[[v]])] = 1
+}
+
+
+kidney_NES = list()
+for (v in 2:length(kidney_gsea)){
+  kidney_NES[[v]] = kidney_gsea[[v]]$NES
+}
+
+kidney_NES = kidney_NES[-1]
+kidney_NES = as.data.frame(kidney_NES) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(kidney_NES) = kidney_names
+colnames(kidney_NES) = colnames(tcga_KIRC_tumor_cl)
+
+##repeat with padj filtering
+
+kidney_padj = list()
+for (v in 2:length(kidney_gsea)){
+  kidney_padj[[v]] = kidney_gsea[[v]]$NES
+}
+  
+for (v in 2:length(kidney_gsea)){
+  for (z in 1:length(kidney_gsea[[2]]$padj)){
+  if (kidney_gsea_nona[[v]][z] <= 0.05) {
+  kidney_padj[[v]][z]= kidney_gsea[[v]]$NES[z] }
+   else {kidney_gsea[[v]][z] = 0}
+  }}
+
+kidney_padj = kidney_padj[-1]
+kidney_padj= as.data.frame(kidney_padj) #auffällig: NA für manche NES, ES vorhanden, aber kein entsprechender p-value? 
+rownames(kidney_padj) = kidney_names
+colnames(kidney_padj) = colnames(tcga_KIRC_tumor_cl)
+
+```
+
+

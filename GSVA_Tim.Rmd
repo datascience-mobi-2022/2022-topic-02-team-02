@@ -1,0 +1,111 @@
+---
+title: "GSVA"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(GSVA)
+library(BiocParallel)
+library(msigdbr)
+library(ggplot2)
+library(uwot)
+```
+
+```{r}
+tcga <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tumorlist_z.RDS")
+```
+
+```{r}
+params <- MulticoreParam(workers = multicoreWorkers())
+
+h_gene_sets <- msigdbr(species = "Homo sapiens", category = "C2", subcategory  = "CP:PID")
+
+h_pathways <- lapply(as.list(unique(h_gene_sets$gs_name)), FUN = function(pw){
+  genes.indices <- which(h_gene_sets$gs_name == pw)
+  genes <- h_gene_sets[genes.indices, ]$human_gene_symbol
+  return(genes)
+})
+
+names(h_pathways) <- unique(h_gene_sets$gs_name)
+
+qc_pathways <- sapply(h_pathways, 
+                      function(geneset){
+                        len.geneset = length(geneset)
+                        intersection = length(which(geneset %in% rownames(tcga$BRCA)))
+                        return(list("ratio" = intersection/len.geneset, "intersection" = intersection))})
+# for one tumortype 
+
+new_tcga <- lapply(tcga, as.matrix)
+kirc = new_tcga$KIRC
+
+#Acthung!! dauert ewig!
+pw_activity_df <- lapply(new_tcga, function(x){
+                       gsva(expr = ,
+                       gset.idx.list = h_pathways,
+                       method = "ssgsea",
+                       min.sz = 3,
+                       BPPARAM = params)
+  
+})
+
+kirc_df =              gsva(expr = kirc ,
+                       gset.idx.list = qc_pathways,
+                       method = "ssgsea",
+                       min.sz = 3,
+                       BPPARAM = params)
+
+
+
+system.time(list_pw_activity <- bplapply(new_tcga, function(tumor){
+  pw_activity <- gsva(expr = tumor,
+                      gset.idx.list = h_pathways,
+                      kcdf = "Gaussian",
+                      min.sz = 3,
+                      BPPARAM = params)
+}))
+
+# ~ 20 min (habe nur 2 workers) -> multicoreWorkers()
+#------------------------------------------------------------------------------#
+# Visualisation!
+#------------------------------------------------------------------------------#
+
+pca.genes.brca <- Seurat::RunPCA(new_tcga$BRCA)
+pca.pw.brca <- Seurat::RunPCA(list_pw_activity$BRCA)
+pca.pw.ssgsea.brca <- Seurat::RunPCA(pw_activity_df)
+
+plot1 <- ggplot(as.data.frame(pca.genes.brca@cell.embeddings), aes(x = PC_1, y = PC_2)) +
+  geom_point()
+
+plot2 <- ggplot(as.data.frame(pca.pw.brca@cell.embeddings), aes(x = PC_1, y = PC_2)) +
+  geom_point()
+
+plot2.ssgsea <- ggplot(as.data.frame(pca.pw.ssgsea.brca@cell.embeddings), aes(x = PC_1, y = PC_2)) +
+  geom_point()
+
+umap.genes.brca <- umap(pca.genes.brca@cell.embeddings, metric = "cosine")
+umap.pw.brca <- umap(pca.pw.brca@cell.embeddings, metric = "cosine")
+umap.pw.ssgsea.brca <- umap(pca.pw.ssgsea.brca@cell.embeddings, metric = "cosine")
+
+plot3 <- ggplot(as.data.frame(umap.genes.brca), aes(x = V1, y = V2)) +
+  geom_point()
+
+plot4 <- ggplot(as.data.frame(umap.pw.brca), aes(x = V1, y = V2)) +
+  geom_point()
+
+plot4.ssgsea <- ggplot(as.data.frame(umap.pw.ssgsea.brca), aes(x = V1, y = V2)) +
+  geom_point()
+
+pca.genes <- Seurat::RunPCA(cbind(new_tcga$BRCA, new_tcga$LUAD))
+pca.pw <- Seurat::RunPCA(cbind(list_pw_activity$BRCA, list_pw_activity$LUAD))
+
+plot5 <- ggplot(as.data.frame(pca.genes@cell.embeddings), aes(x = PC_1, y = PC_2)) +
+  geom_point()
+
+plot6 <- ggplot(as.data.frame(pca.pw@cell.embeddings), aes(x = PC_1, y = PC_2)) +
+  geom_point()
+```
+

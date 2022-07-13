@@ -436,5 +436,22 @@ ggplot(PID_top_c1_c2_mean_melted, aes( fill = Pathway, y=NES, x=cluster)) +
 ```
 
 
+```{r}
+check PID pws 
+
+KIRC_PID_cl <- readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
+> View(KIRC_PID_cl)
+
+r = rownames(KIRC_PID_cl)
+r23_44 = r[23:44]
+print(r23_44)
+```
+
+```{r}
+Linda_PID= c("PID_ENDOTHELIN_PATHWAY",                    "PID_FAK_PATHWAY",                     "PID_FCER1_PATHWAY",                     "PID_GMCSF_PATHWAY" ,                     "PID_HIF1A_PATHWAY",                     "PID_IL1_PATHWAY" ,                    "PID_IL12_2PATHWAY" ,                     "PID_IL2_1PATHWAY"  ,                     "PID_IL2_PI3K_PATHWAY" ,                    "PID_IL2_STAT5_PATHWAY",                    "PID_IL23_PATHWAY" ,                     "PID_IL27_PATHWAY" )
+
+saveRDS(Linda_PID, file = "Linda_PID.RDS")
+
+```
 
 
