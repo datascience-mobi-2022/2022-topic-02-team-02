@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 set.seed(69)
 ```
 
-#KEGG pathways
+#Identifying Clusters in KIRC based on KEGG pathways
 
 
 ```{r Load data}
@@ -22,16 +22,30 @@ KIRC_KEGG = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_KEGG
 
 ```
 
+```{r}
+#Packages
+library(uwot)
+library(cluster)
+library(ggpubr)
+library(factoextra)
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
+library(reshape)
+library(ComplexHeatmap)
+library(circlize)
+library(stats)
+```
+
 ```{r KEGG PCA}
 #run pca 
-KIRC_KEGG_pca = prcomp(t(KIRC_KEGG))#center = F, scale. = F???
+KIRC_KEGG_pca = prcomp(t(KIRC_KEGG))
 length(KIRC_KEGG_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
 
 #dataframe with PCs (resulting from pathways) and patients
 KIRC_KEGG_pca_x = data.frame(KIRC_KEGG_pca[["x"]])
 
 #get the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
-library("factoextra")
 KIRC_KEGG_pca_eigval = get_eigenvalue(KIRC_KEGG_pca)
 rownames(KIRC_KEGG_pca_eigval) = colnames (KIRC_KEGG_pca_x)
 barplot(KIRC_KEGG_pca_eigval$variance.percent, main= "KEGG Pathways", ylab='Proportion of variance in percent', xlab = "Principal Components")
@@ -63,7 +77,6 @@ ggplot(KIRC_KEGG_pca_x, aes(PC1, PC3))+
 
 ```{r KEGG UMAP}
 #UMAP for better clusterin/visualization, running on PCA result
-library(uwot)
 KIRC_KEGG_UMAP= uwot::umap(KIRC_KEGG_pca_x)
 KIRC_KEGG_UMAP = data.frame(KIRC_KEGG_UMAP)
 #plot
@@ -88,7 +101,6 @@ ggplot (data =KIRC_KEGG_UMAP,
 
 
 ```{r KEGG Kmeans }
-library(cluster)
 #perform kmeans with 2:5 centers on UMAP results
 KIRC_KEGG_kmeans = sapply(2:5, function(k){
   kmeans(x = KIRC_KEGG_UMAP , centers = k, nstart = 100 )})
@@ -119,8 +131,6 @@ fviz_nbclust(KIRC_KEGG_UMAP, kmeans, method='silhouette')
 
 ```{r KEGG Kmeans Plot}
 # visualize the clusters in plot
-library(ggpubr)
-library(factoextra)
 #for 2 centers
 km.2 = kmeans(KIRC_KEGG_UMAP, centers = 2, nstart = 100)
 fviz_cluster(km.2, KIRC_KEGG_UMAP,
@@ -199,16 +209,16 @@ colnames(KEGG_c1_c23_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 KEGG_c1_m = as.matrix(KEGG_c1) #matrix needed for wilcoxon
 KEGG_c23_m = as.matrix(KEGG_c23)
-#clsuer 1 compared to the other clusters --> named as KEGG_1_...
+#clsuer 1 compared to the other clusters
 KEGG_1_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c1_m),function (x) {
   wilcox.test(KEGG_c1_m[x,],KEGG_c23_m[x,],paired=FALSE)
 }$p.value))
 rownames(KEGG_1_wilcox_pv)=rownames(KEGG_c1)
 colnames(KEGG_1_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
-alpha_KEGG=0.05/(nrow(KEGG_1_wilcox_pv))#0.0001157407
+alpha_KEGG=0.05/(nrow(KEGG_1_wilcox_pv))
 #how many pathways have sign different NES??
 length(which(KEGG_1_wilcox_pv<alpha_KEGG))
 
@@ -220,30 +230,23 @@ KEGG_1_wilcox_pv[is.nan(KEGG_1_wilcox_pv)] = 1
 ```{r Volcano Cluster 1 vs 2+3}
 #data preparation for Volcano Plot
 
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
-
 #calculate -log10 of p-value for plotting
 KEGG_1_wilcox_pv_log =-log10(KEGG_1_wilcox_pv)
 colnames(KEGG_1_wilcox_pv_log) = "neg_log10_pv"
 
-#combine differnece and pv matrix
+#combine difference and pv matrix
 KEGG_1_pv_dif =as.data.frame(cbind(KEGG_c1_c23_dif,KEGG_1_wilcox_pv_log))
 colnames(KEGG_1_pv_dif) = c("diff","neg_log10_pv")
-
-
 
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
 cutoffpv_KEGG = -log10(alpha_KEGG)#=3.593286, cut off later in plot 
 KEGG_1_pv_dif_sig = KEGG_1_pv_dif[which(KEGG_1_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
 min(KEGG_1_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes of the sig diff expressed genes (blue in plot)
 KEGG_1_pv_dif_sigup = KEGG_1_pv_dif_sig[which(KEGG_1_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
+
+
 #plotting
 ggplot(KEGG_1_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -275,7 +278,6 @@ ggplot(KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 
 ```{r top ten diff pw Cluster 1 vs 2+3}
 #top ten pathways
-library(dplyr)
 abs_KEGG_1_dif_sig<- KEGG_1_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values
@@ -296,10 +298,12 @@ ggplot(top_KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   theme(plot.title = element_text(size=6))
 
 ```
+
+
 ##Cluster 2 vs 1+3
 
 ```{r Cluster 2 vs cluster 1+3}
-#first: compare cluster 2 to cluster(1+3)
+#compare cluster 2 to cluster(1+3)
 KEGG_c13 = cbind(KEGG_c1,KEGG_c3)
 
 KEGG_c2_mean = data.frame(apply(KEGG_c2, 1,mean)) #pw activity mean for patients of cluster 2
@@ -323,18 +327,18 @@ colnames(KEGG_c2_c13_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 KEGG_c2_m = as.matrix(KEGG_c2) #matrix needed for wilcoxon
 KEGG_c13_m = as.matrix(KEGG_c13)
-#clsuer 2 compared to the other clusters --> named as KEGG_2_...
+#clsuer 2 compared to the other clusters
 KEGG_2_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c2_m),function (x) {
   wilcox.test(KEGG_c2_m[x,],KEGG_c13_m[x,],paired=FALSE)
 }$p.value))
 rownames(KEGG_2_wilcox_pv)=rownames(KEGG_c2)
 colnames(KEGG_2_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
-alpha_KEGG=0.05/(nrow(KEGG_2_wilcox_pv))#0.0001157407
+alpha_KEGG=0.05/(nrow(KEGG_2_wilcox_pv))
 #how many pathways have sign different NES??
-length(which(KEGG_2_wilcox_pv<alpha_KEGG))#66
+length(which(KEGG_2_wilcox_pv<alpha_KEGG))
 
 
 KEGG_2_wilcox_pv[is.nan(KEGG_2_wilcox_pv)] = 1
@@ -343,10 +347,6 @@ KEGG_2_wilcox_pv[is.nan(KEGG_2_wilcox_pv)] = 1
 
 ```{r Volcano Cluster 2 vs 1+3}
 #data preparation for Volcano Plot
-
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
 
 #calculate -log10 of p-value for plotting
 KEGG_2_wilcox_pv_log =-log10(KEGG_2_wilcox_pv)
@@ -357,17 +357,14 @@ KEGG_2_pv_dif =as.data.frame(cbind(KEGG_c2_c13_dif,KEGG_2_wilcox_pv_log))
 colnames(KEGG_2_pv_dif) = c("diff","neg_log10_pv")
 
 
-
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv_KEGG = -log10(alpha_KEGG)#=3.593286, cut off later in plot 
+cutoffpv_KEGG = -log10(alpha_KEGG)
 KEGG_2_pv_dif_sig = KEGG_2_pv_dif[which(KEGG_2_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
 min(KEGG_2_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes of the sig diff expressed genes (blue in plot)
 KEGG_2_pv_dif_sigup = KEGG_2_pv_dif_sig[which(KEGG_2_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
+
 #plotting
 ggplot(KEGG_2_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -381,6 +378,7 @@ ggplot(KEGG_2_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
                      values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
   guides(colour = guide_legend(override.aes = list(size=3)))
 
+
 #which Pathways are sign different??
 KEGG_2_dif_sig = data.frame(KEGG_2_pv_dif_sig$diff)
 KEGG_2_dif_sig_names= c(rownames(KEGG_2_pv_dif_sig))
@@ -393,9 +391,10 @@ ggplot(KEGG_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   ggtitle("KEGG pw with signif different NES in cluster 2")+
   theme(plot.title = element_text(size=10))
 ```
+
+
 ```{r top ten diff pw Cluster 2 vs 1+3}
 #top ten pathways
-library(dplyr)
 abs_KEGG_2_dif_sig<- KEGG_2_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values
@@ -428,7 +427,7 @@ KEGG_c3_mean = data.frame(apply(KEGG_c3, 1,mean)) #pw activity mean for patients
 KEGG_c12_mean = data.frame (apply (KEGG_c12, 1, mean))
 
 KEGG_c3_c12_dif = KEGG_c3_mean - KEGG_c12_mean #compare the mean activity scores of pathways
-#high scores means upregulated in cluster 2
+
 
 #rank the compared pw-matrix to see the most differently expressed pw
 KEGG_c3_c12_dif_rank = data.frame(KEGG_c3_c12_dif$apply.KEGG_c3..1..mean.[order(KEGG_c3_c12_dif[,1],decreasing = TRUE)])
@@ -445,16 +444,17 @@ colnames(KEGG_c3_c12_dif_rank) = c("Pathway", "diff")
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 KEGG_c3_m = as.matrix(KEGG_c3) #matrix needed for wilcoxon
 KEGG_c12_m = as.matrix(KEGG_c12)
-#clsuer 2 compared to the other clusters --> named as KEGG_2_...
+
+
 KEGG_3_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c3_m),function (x) {
   wilcox.test(KEGG_c3_m[x,],KEGG_c12_m[x,],paired=FALSE)
 }$p.value))
 rownames(KEGG_3_wilcox_pv)=rownames(KEGG_c3)
 colnames(KEGG_3_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
-alpha_KEGG=0.05/(nrow(KEGG_3_wilcox_pv))#0.0001157407
+alpha_KEGG=0.05/(nrow(KEGG_3_wilcox_pv))
 #how many pathways have sign different NES??
 length(which(KEGG_3_wilcox_pv<alpha_KEGG))
 
@@ -466,9 +466,6 @@ KEGG_3_wilcox_pv[is.nan(KEGG_3_wilcox_pv)] = 1
 ```{r Volcano Cluster 3 vs 1+2}
 #data preparation for Volcano Plot
 
-#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
-#NaNs in FC could be converted to zero ??
-#hence not the FC value data is used but the difference (minus)
 
 #calculate -log10 of p-value for plotting
 KEGG_3_wilcox_pv_log =-log10(KEGG_3_wilcox_pv)
@@ -481,15 +478,13 @@ colnames(KEGG_3_pv_dif) = c("diff","neg_log10_pv")
 
 
 #extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
-cutoffpv_KEGG = -log10(alpha_KEGG)#=3.593286, cut off later in plot 
+cutoffpv_KEGG = -log10(alpha_KEGG)
 KEGG_3_pv_dif_sig = KEGG_3_pv_dif[which(KEGG_3_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
 min(KEGG_3_pv_dif_sig$neg_log10_pv)
-#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+#upregulated genes of the sig diff expressed genes (blue in plot)
 KEGG_3_pv_dif_sigup = KEGG_3_pv_dif_sig[which(KEGG_3_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
-library(ggplot2)
-library(ggrepel)
+
 #plotting
 ggplot(KEGG_3_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   geom_point( size =0.3)+
@@ -519,7 +514,6 @@ ggplot(KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
 
 ```{r top ten diff pw Cluster 3 vs 1+2}
 #top ten pathways
-library(dplyr)
 abs_KEGG_3_dif_sig<- KEGG_3_dif_sig %>% 
   select_if(is.numeric) %>%
   abs()#absolute values
@@ -540,6 +534,7 @@ ggplot(top_KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   theme(plot.title = element_text(size=6))
 
 ```
+
 # compare absolute NES 
 
 ```{r absoulte NES in cluster 1-3}
@@ -560,72 +555,14 @@ colnames(KEGG_top_c2_mean) = "cluster 2"
 colnames(KEGG_top_c3_mean) = "cluster 3"
 KEGG_top_c1_c2_c3_mean = as.matrix(cbind(KEGG_top_c1_mean, KEGG_top_c2_mean, KEGG_top_c3_mean))
 
-library(reshape)
+
 KEGG_top_c1_c2_c3_mean_melted = (melt(KEGG_top_c1_c2_c3_mean))
 colnames(KEGG_top_c1_c2_c3_mean_melted) = c("Pathway", "cluster", "NES")
 ggplot(KEGG_top_c1_c2_c3_mean_melted, aes( fill = Pathway, y=NES, x=cluster)) + 
     geom_bar(position="dodge", stat="identity")
 ```
 
-
-#compare PID clusters and KEGG clusters
-
-
-```{r get the variables for PID}
-#the same code as for PID clustering, just to get all the variables 
-#Load data
-tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
-KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
-
-
-
-KIRC_PID_cl = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
-KIRC_PID = KIRC_PID_cl
-
-#run pca 
-KIRC_PID_pca = prcomp(t(KIRC_PID_cl))#center = F, scale. = F???
-length(KIRC_PID_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
-
-#dataframe with PCs (resulting from pathways) and patients
-KIRC_PID_pca_x = data.frame(KIRC_PID_pca[["x"]])
-
-
-#UMAP for better clusterin/visualization, running on PCA result
-library(uwot)
-KIRC_PID_UMAP= uwot::umap(KIRC_PID_pca_x)
-KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
-#plot
-ggplot (data = KIRC_PID_UMAP, 
-                    aes(x = X1, y = X2))+
-  geom_point(size = 2)
-
-PID_km2 =kmeans(KIRC_PID_UMAP, 2 ,nstart = 200)
-
-```
-
-```{r Compare KEGG and PID clusters}
-#vizualization of PID clusters in KIRC cluster plot
-#data preparation
-KEGG_UMAP_cluster = KIRC_KEGG_UMAP
-KEGG_UMAP_cluster$KEGG_cluster = factor(KEGG_km3$cluster)
-PID_UMAP_cluster = KIRC_PID_UMAP
-PID_UMAP_cluster$PID_cluster = factor(PID_km2$cluster)
-
-KEGG_UMAP_viz = KIRC_KEGG_UMAP #"viz" because df used for vizualization
-KEGG_UMAP_viz$KEGG_cluster = factor(KEGG_km3$cluster)
-KEGG_UMAP_viz$PID_cluster = factor(PID_km2$cluster)
-
-
-
-ggscatter(
-  KEGG_UMAP_viz, x = "X1", y = "X2", 
-  color = "KEGG_cluster", palette = "npg", ellipse = TRUE, ellipse.type = "convex",
-  shape = "PID_cluster", size = 1.5,  legend = "right", ggtheme = theme_bw(),
-) +
-  stat_mean(aes(color = KEGG_cluster), size = 4)
-```
-
-
+# H-test
 
 ```{r H test}
 #H test because 3 cluster
@@ -687,4 +624,63 @@ Heatmap(KEGG_c1_H_top25_ordered, column_title = "Cluster 1", column_title_gp = g
 
 
 ```
+
+
+#compare PID clusters and KEGG clusters
+
+
+```{r get the variables for PID}
+#the same code as for PID clustering, just to get all the variables 
+#Load data
+tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
+KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
+
+
+
+KIRC_PID_cl = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
+KIRC_PID = KIRC_PID_cl
+
+#run pca 
+KIRC_PID_pca = prcomp(t(KIRC_PID_cl))#center = F, scale. = F???
+length(KIRC_PID_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
+
+#dataframe with PCs (resulting from pathways) and patients
+KIRC_PID_pca_x = data.frame(KIRC_PID_pca[["x"]])
+
+
+#UMAP for better clusterin/visualization, running on PCA result
+KIRC_PID_UMAP= uwot::umap(KIRC_PID_pca_x)
+KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
+#plot
+ggplot (data = KIRC_PID_UMAP, 
+                    aes(x = X1, y = X2))+
+  geom_point(size = 2)
+
+PID_km2 =kmeans(KIRC_PID_UMAP, 2 ,nstart = 200)
+
+```
+
+```{r Compare KEGG and PID clusters}
+#vizualization of PID clusters in KIRC cluster plot
+#data preparation
+KEGG_UMAP_cluster = KIRC_KEGG_UMAP
+KEGG_UMAP_cluster$KEGG_cluster = factor(KEGG_km3$cluster)
+PID_UMAP_cluster = KIRC_PID_UMAP
+PID_UMAP_cluster$PID_cluster = factor(PID_km2$cluster)
+
+KEGG_UMAP_viz = KIRC_KEGG_UMAP #"viz" because df used for vizualization
+KEGG_UMAP_viz$KEGG_cluster = factor(KEGG_km3$cluster)
+KEGG_UMAP_viz$PID_cluster = factor(PID_km2$cluster)
+
+
+
+ggscatter(
+  KEGG_UMAP_viz, x = "X1", y = "X2", 
+  color = "KEGG_cluster", palette = "npg", ellipse = TRUE, ellipse.type = "convex",
+  shape = "PID_cluster", size = 1.5,  legend = "right", ggtheme = theme_bw(),
+) +
+  stat_mean(aes(color = KEGG_cluster), size = 4)
+```
+
+
 

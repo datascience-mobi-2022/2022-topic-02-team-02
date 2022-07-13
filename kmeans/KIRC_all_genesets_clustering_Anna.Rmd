@@ -31,6 +31,7 @@ library(factoextra)
 library(ggplot2)
 library(ggrepel)
 library(dplyr)
+library(stats)
 ```
 
 # for all datasets combined (KIRC_pa)
@@ -218,7 +219,6 @@ PA_1_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c1_m),function (x) {
 }$p.value))
 rownames(PA_1_wilcox_pv)=rownames(PA_c1)
 colnames(PA_1_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
 
 #Bonferroni-Korrektur
 alpha_PA=0.05/(nrow(PA_1_wilcox_pv))
@@ -335,7 +335,7 @@ PA_2_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c2_m),function (x) {
 }$p.value))
 rownames(PA_2_wilcox_pv)=rownames(PA_c2)
 colnames(PA_2_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
 alpha_PA=0.05/(nrow(PA_2_wilcox_pv))
@@ -448,7 +448,7 @@ PA_3_wilcox_pv  = data.matrix(sapply ( 1:nrow(PA_c3_m),function (x) {
 }$p.value))
 rownames(PA_3_wilcox_pv)=rownames(PA_c3)
 colnames(PA_3_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
 alpha_PA=0.05/(nrow(PA_3_wilcox_pv))

@@ -31,6 +31,7 @@ library(factoextra)
 library(ggplot2)
 library(ggrepel)
 library(dplyr)
+library(stats)
 ```
 
 ```{r PCA}
@@ -217,12 +218,6 @@ colnames(HM_c1_c2_FC) = "FC"
 HM_c1_c2_FC[is.nan(HM_c1_c2_FC)]=0
 #PROBLEM: what to do with INF??? (because of e.g. 0.1/0)
 
-#work with wilcoxon test as some of the pw have an enrichment score of zero for all patients, thus no normality, as shown below
-HM_c1_min = apply(HM_c1, 1, min)
-HM_c1_max = apply(HM_c1, 1, max) 
-HM_c1_constant = c(names(which(HM_c1_min==HM_c1_max)))
-length(HM_c1_constant)#there are 271 pw with constant NES, hence we use wilcoxon test 
-
 
 #perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
 HM_c1_m = as.matrix(HM_c1) #matrix needed for wilcoxon
@@ -232,7 +227,7 @@ HM_wilcox_pv  = data.matrix(sapply ( 1:nrow(HM_c1_m),function (x) {
 }$p.value))
 rownames(HM_wilcox_pv)=rownames(HM_c1)
 colnames(HM_wilcox_pv)="pvalue"
-#a lot of NaNs--> Maybe because of constant NES??
+
 
 #Bonferroni-Korrektur
 alpha_HM=0.05/(nrow(HM_wilcox_pv))
