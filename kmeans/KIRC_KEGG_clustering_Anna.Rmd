@@ -271,6 +271,8 @@ ggplot(KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
   theme(plot.title = element_text(size=10))
   
 ```
+
+
 ```{r top ten diff pw Cluster 1 vs 2+3}
 #top ten pathways
 library(dplyr)

@@ -24,6 +24,7 @@ KIRC_pa =  readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity.rds")
 
 ```{r Load packages}
 #packages
+library(uwot)
 library(cluster)
 library(ggpubr)
 library(factoextra)
@@ -36,7 +37,7 @@ library(dplyr)
 
 ```{r PCA}
 #run pca 
-KIRC_pa_pca = prcomp(t(KIRC_pa))#center = F, scale. = F???
+KIRC_pa_pca = prcomp(t(KIRC_pa))
 length(KIRC_pa_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
 
 #dataframe with PCs (resulting from pathways) and patients
@@ -76,7 +77,6 @@ ggplot(KIRC_pa_pca_x, aes(PC1, PC3))+
 
 ```{r UMAP}
 #UMAP for better clusterin/visualization, running on PCA result
-library(uwot)
 KIRC_pa_UMAP= uwot::umap(KIRC_pa_pca_x)
 KIRC_pa_UMAP = data.frame(KIRC_pa_UMAP)
 #plot
