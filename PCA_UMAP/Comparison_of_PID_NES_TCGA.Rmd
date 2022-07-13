@@ -17,7 +17,7 @@ KIRC_PID = NES_OVERALL_PID_cl_bound
 
 ```{r}
 
-#for PID pathways: optimal number ckusters = 2
+#for PID pathways: optimal number of clusters = 2
 
 PID_km2 =kmeans(KIRC_PID_UMAP, 2 ,nstart = 200)
 PID_km = PID_km2$cluster
@@ -122,14 +122,14 @@ colnames(PID_pv_dif) = c("diff","neg_log10_pv")
 
 
 
-#extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+#extracting significant differentially expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
 cutoffpv_PID = -log10(alpha_PID) 
 PID_pv_dif_sig = PID_pv_dif[which(PID_pv_dif$neg_log10_pv>cutoffpv_PID),]
 min(PID_pv_dif_sig$neg_log10_pv)
 #upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
 PID_pv_dif_sigup = PID_pv_dif_sig[which(PID_pv_dif_sig$diff>0),]
 
-#volcano plot, there are no sign downregulated pw
+#volcano plot, there are no significantly downregulated pathways
 library(ggplot2)
 library(ggrepel)
 #plotting
@@ -146,7 +146,7 @@ ggplot(PID_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
   guides(colour = guide_legend(override.aes = list(size=3)))
 
 
-#which Pathways are sign different??
+#which Pathways are signifficantly different??
 PID_dif_sig = data.frame(PID_pv_dif_sig$diff)
 PID_dif_sig_names= c(rownames(PID_pv_dif_sig))
 PID_dif_sig = cbind( PID_dif_sig_names, PID_dif_sig)
