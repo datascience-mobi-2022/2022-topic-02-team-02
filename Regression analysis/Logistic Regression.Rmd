@@ -22,6 +22,8 @@ library(stats)
 library(tidyselect)
 library(cvms)
 library(ROCR)
+library(stringr)
+library(car)
 ```
 
 ```{r set seed}
@@ -332,7 +334,7 @@ immuncluster_dendro = colnames(c1_patients)
 
 #add new row according to clustering, if in immune cluster --> 1, else --> 0
 cluster_number_tcga = vector(mode = 'list',531)
-KIRC_tcga_patients = as.data.frame(str_sub(colnames(KIRC_tcga_PID_predict), 6))
+KIRC_tcga_patients = as.data.frame(str_sub(colnames(KIRC_tcga_PID), 6))
 for (i in 1:nrow(KIRC_tcga_patients)){
   if (KIRC_tcga_patients[i,] %in% immuncluster_dendro){
     cluster_number_tcga[[i]] = 1
@@ -341,7 +343,7 @@ for (i in 1:nrow(KIRC_tcga_patients)){
   }
 }
 cluster_number_tcga = list.cbind(cluster_number_tcga)
-colnames(cluster_number_tcga) = colnames(KIRC_tcga_PID_predict)
+colnames(cluster_number_tcga) = colnames(KIRC_tcga_PID)
 KIRC_tcga_PID_predict_cluster = rbind(KIRC_tcga_PID_predict, cluster_number_tcga)
 rownames(KIRC_tcga_PID_predict_cluster)[rownames(KIRC_tcga_PID_predict_cluster) == "1"] <- "Infiltration"
 
@@ -439,14 +441,38 @@ chisqp_tcga_4 = 1 - pchisq(modelchi_tcga_4, chidf_tcga_4) # 0 ???????
 
 #Gütemaße
 n4 = length(model4_tcga$residuals)
-R2cs = 1-exp((model4_tcga$deviance - model4_tcga$null.deviance)/n) #cox snell
-R2n = R2cs/(1-exp(-(model4_tcga$null.deviance/n))) # 0.9777
+R2nk = 1-(model4_tcga$deviance / model4_tcga$null.deviance) # McFadden 0.507
+R2cs = 1-exp((model4_tcga$deviance - model4_tcga$null.deviance)/n4) # cox snell 0.401
+R2n = R2cs/(1-exp(-(model4_tcga$null.deviance/n4))) #Nagelkerke 0.63
+
+#check with package
+PseudoR2(model4_tcga, which = "McFadden") #0.5074508 (0.2-0.4 excellent fit?)
+PseudoR2(model4_tcga, which = "CoxSnell") #0.4010591
+PseudoR2(model4_tcga, which = "Nagelkerke") #0.6307655
 
 #OR
 OR = exp(cbind(OR = coef(model4_tcga), confint(model4_tcga)))
 
+
 #if NES of PID_TCR rises 1 unit, the chance of being immune infiltrated, rises by 2.65
 #if NES of PID_IL1 rises 1 unit, the chance of being immune infiltrated, rises by 3.2
+
+#Wald-test for significance of each coefficient
+wald = Anova(model4_tcga, type="II", test="Wald")
+#                 Df  Chisq Pr(>Chisq)    
+#PID_TCR_PATHWAY  1 23.036  1.590e-06 ***
+#PID_IL1_PATHWAY  1 36.289  1.701e-09 *
+
+#Chisq-test for whole model
+chisq = anova(model4_tcga, 
+      update(model4_tcga, ~1),    # update here produces null model for comparison
+      test="Chisq")
+
+#Model 1: Infiltration ~ PID_TCR_PATHWAY + PID_IL1_PATHWAY
+#Model 2: Infiltration ~ 1
+#  Resid. Df Resid. Dev Df Deviance  Pr(>Chi)    
+#1       528     264.19                          
+#2       530     536.38 -2  -272.19 < 2.2e-16 ***
 ```
 
 ```{r test logictic regression model(4) on small KIRC dataset}
