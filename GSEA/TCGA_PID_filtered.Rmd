@@ -10,6 +10,12 @@ tumorlist_z <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/tumorlist_z.
 KIRC_PID_cl <- readRDS("~/Desktop/GitHub/2022-topic-02-team-02/data/KIRC_PID_cl.RDS")
 ```
 
+```{r}
+library(msigdbr)
+library(tidyverse)
+library(fgsea)
+```
+
 
 ```{r}
 PID_filtered = c(rownames(KIRC_PID_cl))
