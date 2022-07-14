@@ -232,7 +232,7 @@ Moreover, pathways that are downregulated in the “fluctuating” subtype but n
 Moreover, KEGG clusters show similar subdivision of samples as PID clusters. In Figure 6C it can be seen that the “fluctuating” KEGG cluster mainly matches patients of the “upregulated” PID cluster, while the “neutral” KEGG subtype includes mostly patients of the “neutral” PID subtype. Additionally, the “upregulated” KEGG cluster corresponds to both PID clusters. 
 
 ## Logistic regression 
-
+The binary logistic regression model predicts immune infiltration in patients based on the pathway activity (NES) of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`. Both independent variables significantly contribute to the model as can be seen in Table XX, which depicts the model properties. 
 \begin{tabular}{ |p{4.5cm}||p{3cm}|p{3cm}|p{3cm}|  }
  \hline
  \multicolumn{4}{|c|}{Logistic regression model results} \\
@@ -244,6 +244,8 @@ Moreover, KEGG clusters show similar subdivision of samples as PID clusters. In 
  PID\_IL1\_PATHWAY & $1.1651$ & $0.1934$ &  $1.70e-09$\\
 \hline
 \end{tabular}
+By taking the exponent of the coefficients in Table XX, the returned value implies that for every increase of $1$ in NES of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5$%) and $3.206149$($220.6$%), respectively. The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as “Immune infiltrated” (FIG. XA and XB).  The contribution of each coefficient to the model was evaluated and confirmed with a Wald’s test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant. The significance of the whole model in contrast to a null-model was confirmed by McFadden’s pseudo-$R^2$ ($R_{Mc}^2=0.5074508$) and the p-value of the overall chi-square statistic ($p=7.860549e-60$).  
+The model was tested on KIRC patients in `DS2` and classified $42$ out of $72$ patients as “Immune infiltrated”. The accuracy of the model was verified by the clustering of the patients according to PID pathway activity, which showed two distinct clusters. One cluster showed upregulation in immune pathways and hence all these patients were assigned to the immune infiltrated group. In $94.4$% of the patients the prediction and the cluster assignment corresponded correctly. Moreover, the performance of the model was evaluated with a confusion table that compares predictions and immune infiltration according to the cluster as well. It revealed a false-negative rate of $2.5$%, a false-positive rate of $9.4$% and a true-positive rate (recall) of $97.5$% (FIG. XC). The ROC-curve that was plotted for the model (Fig. XD) showed an AUC of $0.9789062$.
 
 
 <!-- Discussion -->

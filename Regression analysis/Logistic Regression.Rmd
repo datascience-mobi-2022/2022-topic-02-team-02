@@ -217,7 +217,7 @@ mcp_counter %>%
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
-```{r testing model1 (trained on small KIRC) on big KIRC TCGA dataset}
+```{r adding cluster number and immunedeconv KIRC TCGA}
 #KIRC data from TCGA (531 samples)
 KIRC_tcga = pathway_activity_matrix %>% dplyr::select(starts_with('KIRC'))
 KIRC_tcga_PID = KIRC_tcga[PID_sigpw,]
@@ -301,6 +301,9 @@ summary(model0)
 #Test-Model, nur PID_TCR_PATHWAY und PID_IL1_PATHWAY
 model = glm(Infiltration ~ PID_TCR_PATHWAY+ PID_IL1_PATHWAY, data = KIRC_tcga_PID_sigpw_t, family = binomial()) 
 summary(model)
+
+exp(coefficients(model)[2]) #TCR: 2.64517
+exp(coefficients(model)[3]) #IL-1: 3.206149
 
 #Omnibus-Test
 modelchi = model$null.deviance - model$deviance
