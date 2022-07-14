@@ -627,7 +627,10 @@ draw(Heatmap_KEGG, heatmap_legend_side = "left")
 
 ```
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 ```{r}
@@ -695,6 +698,7 @@ ggscatter(
   shape = "PID_cluster", size = 1.5,  legend = "right", ggtheme = theme_bw(),
 ) +
   stat_mean(aes(color = KEGG_cluster), size = 4)
+  
 ```
 
 
