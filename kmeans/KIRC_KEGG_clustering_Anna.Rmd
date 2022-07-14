@@ -626,6 +626,7 @@ draw(Heatmap_KEGG, heatmap_legend_side = "left")
 
 
 ```
+
 ```{r}
 W = cbind(KEGG_c1_H_top25_ordered,KEGG_c2_H_top25_ordered,KEGG_c3_H_top25_ordered)
 ClusterHeatmap = Heatmap(W, name = "PID_all_sig_ordered", column_km = 3, cluster_rows = T, column_names_gp = gpar(fontsize = 7),row_names_gp = gpar(fontsize = 10), heatmap_legend_param = list(title= "NES"))
@@ -680,8 +681,9 @@ PID_UMAP_cluster$PID_cluster = factor(PID_km2$cluster)
 
 KEGG_UMAP_viz = KIRC_KEGG_UMAP #"viz" because df used for vizualization
 KEGG_UMAP_viz$KEGG_cluster = factor(KEGG_km3$cluster)
-KEGG_UMAP_viz$PID_cluster = factor(PID_km2$cluster)
 
+KEGG_UMAP_viz$PID_cluster = factor(PID_km2$cluster)
+ 
 
 
 ggscatter(
