@@ -397,7 +397,7 @@ KIRC_GSEA_activity_sum_top10 = KIRC_GSEA_activity_mean_prep[sum_larger_0$Pathway
   labs (y = "Normalized enrichment score (NES)",
         x = "Pathway",
         title = "Top 10 most frequently enriched pathways")+
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5, size = 20, face = "bold"),axis.title.y = element_text(size = 16),axis.title.x = element_text(size = 16))
 ```
 
 ```{r filter top 10 mean}
