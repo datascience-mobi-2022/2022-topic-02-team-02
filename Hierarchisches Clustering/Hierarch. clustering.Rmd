@@ -272,9 +272,9 @@ sig_patient3_order = data.matrix(sig_patient3[match(sig_kirc_20,sig_patient3_df$
 
 
 
-Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "Cluster 1",cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Cluster 2", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Cluster 3", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
+kirci = Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "Cluster 1",column_title_gp = gpar(fontsize = 16, fontface ="bold"),cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, column_title_gp = gpar(fontsize = 16, fontface ="bold"),col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Cluster 2", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Cluster 3",column_title_gp = gpar(fontsize = 16, fontface ="bold"), cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
 
-
+draw(kirci,heatmap_legend_side = "left")
 
 ```
 
@@ -346,11 +346,15 @@ peng_plot = ggplot(Immune_ready, aes(fill = Immunetype, y = Ratio, x = Cancertyp
   geom_bar(position="fill", stat="identity", aes(group = Cancertype)) + 
   scale_fill_manual(values = c("red","blue","white")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-labs(x = "Cancer type")
+labs(x = "Cancer type")+
+  theme(legend.key.size = unit(1, 'cm'),axis.title = element_text(size = 12))
 
 
-peng_plot
+peng_plot + guides(fill=guide_legend(title = "Expression level"))
+```
 
+
+```{r peng plot}
 Neutral = Immune_ready[which(Immune_ready$Immunetype == "Neutral"),]
 Neutral_sum = sum(Neutral$Ratio)
 Infiltrated = Immune_ready[which(Immune_ready$Immunetype == "High"),]

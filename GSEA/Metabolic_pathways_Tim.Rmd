@@ -493,13 +493,13 @@ heatmap.2(as.matrix(KIRC_GSEA_NES_PID),dendrogram = "column", hclustfun = hclust
 ```{r complex heatmap}
 col_fun = circlize::colorRamp2(c(-3,0,3), c("blue","black", "red"))
 all = Heatmap(KIRC_GSEA_activity, name = "mat", column_names_gp = gpar(fontsize = 0), show_column_names = F
-, col = col_fun, heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 14, fontface = "bold")), column_title = "NES for KIRC DS", column_title_gp = gpar(fontsize = 0),show_row_names = F,show_row_dend = F)
+, col = col_fun, heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 14, fontface = "bold")), column_title = "NES for all pathways DF2", column_title_gp = gpar(fontsize = 12, fontface = "bold"),show_row_names = F,show_row_dend = F)
 draw(all,  heatmap_legend_side = "left")
 
 PID_filtered = c(rownames(KIRC_PID_cl))
 KIRC_GSEA_activity_PID = KIRC_GSEA_activity_PID[which(rownames(KIRC_GSEA_activity_PID) %in% PID_filtered),]
 pid = Heatmap(KIRC_GSEA_activity_PID, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun,heatmap_legend_param = list(title = "NES", tlabels_gp = gpar(fontsize = 12)
-, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES PID genesets for KIRC DS", column_title_gp = gpar(fontsize = 9),show_row_names = F, show_row_dend = F,show_column_names = F)
+, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES for PID pathways DF2", column_title_gp = gpar(fontsize = 12, fontface = "bold"),show_row_names = F, show_row_dend = F,show_column_names = F)
 draw(pid,  heatmap_legend_side = "left")
 
 tcga_KIRC_norm_min = apply(KIRC_GSEA_activity_KEGG, 1, min)
@@ -507,13 +507,13 @@ tcga_KIRC_norm_max= apply(KIRC_GSEA_activity_KEGG, 1, max) #for normal cell data
 tcga_KIRC_tumor_constant = c(names(which(tcga_KIRC_norm_max==tcga_KIRC_norm_min)))
 KIRC_GSEA_activity_KEGG1 = KIRC_GSEA_activity_KEGG[-which(rownames(KIRC_GSEA_activity_KEGG) %in% tcga_KIRC_tumor_constant),]
 kegg = Heatmap(KIRC_GSEA_activity_KEGG1, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 5),col = col_fun,heatmap_legend_param = list(title = "NES",labels_gp = gpar(fontsize = 12)
-, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES KEGG genesets for KIRC DS", column_title_gp = gpar(fontsize = 0),show_row_names = F, show_row_dend = F,show_column_names = F)
+, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES for KEGG pathways  DF2", column_title_gp = gpar(fontsize = 12, fontface = "bold"),show_row_names = F, show_row_dend = F,show_column_names = F)
 draw(kegg,  heatmap_legend_side = "left")
 
 
 hm = Heatmap(KIRC_GSEA_activity_hallmark, name = "mat", column_names_gp = gpar(fontsize = 5), row_names_gp = gpar(fontsize = 8),col = col_fun, row_split = 3,column_split = 2,
  row_gap = unit(c(0,0), "mm"),column_gap = unit(c(0,0), "mm"),heatmap_legend_param = list(title = "NES", labels_gp = gpar(fontsize = 12)
-, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES Hallmark genesets for KIRC DS", column_title_gp = gpar(fontsize = 0),show_column_names = F,width = 50*unit(5.2, "mm"))
+, title_gp = gpar(fontsize = 14, fontface = "bold")),column_title = "NES for Hallmark pathways DF2", column_title_gp = gpar(fontsize = 12, fontface ="bold"),show_column_names = F,width = 50*unit(5.2, "mm"))
 draw(hm, heatmap_legend_side = "left")
 
 ```
