@@ -30,9 +30,9 @@
 \contentsline {subsection}{\numberline {5.2.1}Tims teil}{15}{subsection.5.2.1}%
 \contentsline {subsubsection}{\numberline {5.2.1.1}Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration}{15}{subsubsection.5.2.1.1}%
 \contentsline {subsubsection}{\numberline {5.2.1.2}KIRC subtypes show differences in metabolic, immune and cell cycle pathways (??Überschift sehr schlecht)}{16}{subsubsection.5.2.1.2}%
-\contentsline {section}{\numberline {5.3}Logistic regression}{16}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Discussion}{17}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{18}{chapter.7}%
-\contentsline {chapter}{\numberline {8}References}{19}{chapter.8}%
-\contentsline {chapter}{\numberline {9}Appendix}{21}{chapter.9}%
+\contentsline {section}{\numberline {5.3}Logistic regression}{17}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Discussion}{18}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{19}{chapter.7}%
+\contentsline {chapter}{\numberline {8}References}{20}{chapter.8}%
+\contentsline {chapter}{\numberline {9}Appendix}{22}{chapter.9}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
