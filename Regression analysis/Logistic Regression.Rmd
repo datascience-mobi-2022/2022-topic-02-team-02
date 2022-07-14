@@ -57,19 +57,22 @@ heatmap.2(immune_cells_matrix, dendrogram = "column", hclustfun = hclust, trace 
 
 #reverse log2 operation --> Transcripts per million (TPM)
 KIRC_tumor_tpm = 2^KIRC_tumor
+
 #quantiseq method --> returns immune cell fractions
-quantiseq = deconvolute(KIRC_tumor_tpm, "quantiseq", tumor = "true")
-cell_types_2 = quantiseq$cell_type
-quantiseq_matrix = quantiseq[,-1]
+quantiseq_KIRC = deconvolute(KIRC_tumor_tpm, "quantiseq", tumor = "true")
+cell_types_2 = quantiseq_KIRC$cell_type
+quantiseq_matrix = quantiseq_KIRC[,-1]
 rownames(quantiseq_matrix) = cell_types_2
 quantiseq_matrix = as.matrix(quantiseq_matrix)
 quantiseq_matrix = quantiseq_matrix[-c(11),]
+
 #plot immune cell fractions
 Heatmap_quantiseq_KIRC = Heatmap(quantiseq_matrix, name = "mat", column_split = 4, cluster_rows = FALSE, column_names_gp = gpar(fontsize = 5.5), row_names_gp = gpar(fontsize = 10),width = ncol(quantiseq_matrix)*unit(3.5, "mm"), height = nrow(quantiseq_matrix)*unit(11, "mm"), column_dend_height = unit(15, "mm"), column_title = "Immune cell fractions in KIRC tumor", col = colorRamp2(c(0, 0.2), c("black", "red")))
 Heatmap_quantiseq_KIRC
+
 #split quantiseq matrix according to PID clustering (PCA, UMAP, k-means)
-quantiseq_cluster1 = quantiseq[, c("cell_type", PID_c1_names)]
-quantiseq_cluster2 = quantiseq[, c("cell_type",PID_c2_names)]
+quantiseq_cluster1 = quantiseq_KIRC[, c("cell_type", PID_c1_names)]
+quantiseq_cluster2 = quantiseq_KIRC[, c("cell_type",PID_c2_names)]
 
 #barplot of immune infiltration QUANTISEQ
 quantiseq_cluster1_plot = quantiseq_cluster1 %>%
@@ -113,8 +116,8 @@ quantiseq_CD8 %>%
 
 #plot both separately
 quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
-  gather(cluster_1, fraction, -cell_type) %>%
-  ggplot(aes(x=cluster_1, y=fraction, fill=cell_type)) +
+  gather(Upregulated, fraction, -cell_type) %>%
+  ggplot(aes(x=Upregulated, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
     scale_fill_manual(values = "Blue") + 
@@ -123,14 +126,14 @@ quantiseq_cluster1_plot_CD8 = quantiseq_cluster1_CD8 %>%
 quantiseq_cluster1_plot_CD8
 
 quantiseq_cluster2_plot_CD8 = quantiseq_cluster2_CD8 %>%
-  gather(cluster_2, fraction, -cell_type) %>%
-  ggplot(aes(x=cluster_2, y=fraction, fill=cell_type)) +
+  gather(Neutral, fraction, -cell_type) %>%
+  ggplot(aes(x=Neutral, y=fraction, fill=cell_type)) +
     geom_bar(stat='identity') +
     coord_flip() +
     scale_fill_manual(values = "Blue") + 
     scale_x_discrete(limits = rev(levels(quantiseq_cluster2_CD8))) +
     theme(axis.text.y = element_text(size = 4)) + 
-    ylim(0,0.55)
+    ylim(0,0.33)
 quantiseq_cluster2_plot_CD8
 
 ggarrange(quantiseq_cluster1_plot_CD8, quantiseq_cluster2_plot_CD8, ncol = 1, nrow = 2)
@@ -399,7 +402,7 @@ regression_plots = list(TCR_regression_plot, IL1_regression_plot)
 ggarrange(plotlist = regression_plots, ncol = 2, nrow = 2)
 ```
 
-```{r}
+```{r Confusion table and ROC-curve}
 #Confusion table and FDR-plots for model
 
 #create dataframe with Infiltration and prediction only
@@ -424,6 +427,7 @@ print(auc@y.values) #0.9789062
 ```
 
 ```{r tried logistic regression model with gene expression values}
+
 #try with gene expression?
 PID_CD8_TCR_DOWNSTREAM_GENES = metabolic_genesets_PID_cl[["PID_CD8_TCR_DOWNSTREAM_PATHWAY"]]
 KIRC_tcga_exp_PIDgenes = tcga_exp_KIRC[PID_CD8_TCR_DOWNSTREAM_GENES,] #81 genes
