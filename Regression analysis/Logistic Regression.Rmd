@@ -343,6 +343,33 @@ chisq = anova(model0,
 #  Resid. Df Resid. Dev Df Deviance  Pr(>Chi)    
 #1       528     264.19                          
 #2       530     536.38 -2  -272.19 7.860549e-60***
+
+#Plot
+TCR_regression_plot1 = KIRC_tcga_PID_sigpw_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_TCR_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_TCR_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+IL1_regression_plot1 = KIRC_tcga_PID_sigpw_t %>%
+        mutate(prob = ifelse(Infiltration == 1, 1, 0)) %>%
+        ggplot(aes(PID_IL1_PATHWAY, prob)) +
+        geom_point(alpha = 0.2) +
+        geom_smooth(method = "glm", method.args = list(family = "binomial")) +
+        labs(
+          title = "Logistic Regression Model", 
+          x = "PID_IL1_PATHWAY activity",
+          y = "Probability of immune infiltration"
+          )
+
+regression_plots1 = list(TCR_regression_plot1, IL1_regression_plot1)
+ggarrange(plotlist = regression_plots1, ncol = 2, nrow = 2)
+IL1_regression_plot1
 ```
 
 ```{r test logictic regression model on small KIRC dataset}
