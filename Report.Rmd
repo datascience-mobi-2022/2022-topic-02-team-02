@@ -112,10 +112,10 @@ Shapiro-Wilks (SW) test is a normality test based on regression and correlation.
 Wilcoxon rank-sum test and Wilcoxon signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.  Wilcoxon signed-rank test is used to analyze matched-pair or one-sample data. It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero. The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007]. Wilcoxon rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values. The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011]. 
 
 #### Kruksal-Wallis 
-Kruksal-Wallis test is a rank-based non-parametric hypothesis test. It is an extension of Wilcoxon rank-sum test and can allows comparing more than two independent data sets. Kruksal-Wallis test tests the null hypothesis that there is no difference in distributions of all $k$ data sets. Alternative hypothesis states that there is a difference in at least two populations **(oder: …that at least two populations show stochastic heterogeneity)** [@Kruksal-Wallis-ostertagova-2014]. 
+Kruksal-Wallis test is a rank-based non-parametric hypothesis test. It is an extension of Wilcoxon rank-sum test and can allows comparing more than two independent data sets. Kruksal-Wallis test tests the null hypothesis that there is no difference in distributions of all $k$ data sets. Alternative hypothesis states that there is a difference in at least two populations **(oder: …that at least two populations show stochastic heterogeneity)**  [@Kruksal-Wallis-ostertagova-2014]. 
 
 #### Bonferroni correction
-Multiple statistical testing results in an increased risk for type I errors (false positives). Bonferroni correction is used to reduce this type I error rate. For this, the significance level is adjusted by dividing the critical $p$-value $\alpha$ by the number of tests [@Bonferroni-Amstrong-2014]. 
+Multiple statistical testing results in an increased risk for type I errors (false positives). Bonferroni correction is used to reduce this type I error rate. For this, the significance level is adjusted by dividing the `False decovery rate (FDR)` by the number of tests [@Bonferroni-Amstrong-2014]. 
 
 ### Clustering
 
@@ -149,22 +149,22 @@ For the evaluation of the regression model $R^2$-values and statistical tests ca
 
 <!-- Materials and Methods -->
 
-# Materials and Methods
+# Materials and Methods  
 
 ## Data cleaning
 
-The analysis was focused on two data sets containing **bulk-cell**(?) sequencing data. Pan-cancer analysis was performed on gene expression data of 9783 patients of 33 tumor types (Pan-cancer data set (DS1)). Focused analysis was based on gene expression data of normal and tumor tissue of 72 KIRC patients (DS2). The data obtained was already normalized by $log2$(Transcripts per million).
-Both data sets were filtered for protein-coding genes using biomaRt package. This reduced gene expression data in DS1 from 60 498 to 19 624 genes and in DS2 from 19624 to 19186 genes. In DS1, variance was computed for each gene over all samples and the lower p50-quantile was subsequently removed. Furthermore, constantly expressed genes only were removed in DS2, resulting in gene expression data of 18 645 genes.
+The analysis was focused on two data sets containing bulk-cell sequencing data. Pan-cancer analysis was performed on gene expression data of 9783 patients of 33 tumor types (Pan-cancer data frame `DF1`). Focused analysis was based on gene expression data of normal and tumor tissue of 72 KIRC patients (`DS2`). The data obtained was already normalized by $log2$(Transcripts per million).
+Both data sets were filtered for protein-coding genes using biomaRt package. This reduced gene expression data in `DS1` from 60 498 to 19 624 genes and in `DS2` from 19624 to 19186 genes. In `DS1`, variance was computed for each gene over all samples and the lower p50-quantile was subsequently removed. Furthermore, constantly expressed genes only were removed in `DS2`, resulting in gene expression data of 18 645 genes.
 
 ## TCGA pan-cancer analysis
 
 ## Focused Analysis: Identifying subtypes in KIRC
-For focused analysis, KIRC was examined in more detail. The analysis was based on DS2. Data cleaning was performed as described above.  
+For focused analysis, KIRC was examined in more detail. The analysis was based on `DS2`. Data cleaning was performed as described above.  
 First, differential gene expression in tumor tissue compared to normal tissue was analyzed by calculation of Foldchange $FC =(mean condition 1) / (mean condition 2)$ for each gene, where condition one represents gene expression of tumor tissue and condition two gene expression of normal tissue. Statistical significance was determined using Wilcoxon signed-rank test with Bonferroni correction, as Shapiro-Wilks test indicated no normality of the data.  
 The second part of this analysis was focused on differential pathway activity. Pathway activity matrices were determined using GSEA, where genes were ranked based on their foldchange. Pathways with an adjusted $p$-value $>0.05$ were considered as non-significant, hence their NES was set to zero. Hallmark-pathways, KEGG-pathways and PID-pathways were analyzed. Patients were compared based on their pathway activity. Subclusters of patients were visualized for each geneset by UMAP calculated on PCA-results and subsequently identified by k-means clustering. Optimal number of clusters was determined using elbow method and silhouette method. Pathways that were crucial for this clustering and were significantly different between those clusters were detected by Wilcoxon rank-sum test for two clusters and Kruksal-Wallis test for three clusters, both with Bonferroni correction.
 
 ## Predicting immune infiltration with logistic regression
-A binary logistic regression model was created based on the pathway activity of KIRC samples from DS1 and tested on DS2. The dependent variable to be predicted was the “Immune infiltration” of samples. The independent variables were pathways chosen from the most differentially significantly expressed PID pathways between the three clusters that have emerged in the PID clustering of KIRC patients in DS1. All patients of the cluster with highest pathway activity were marked as immune infiltrated with a “$1$” and all other patients with a “$0$”. The logistic regression was performed to predict the immune infiltration in the samples of DS2.
+A binary logistic regression model was created based on the pathway activity of KIRC samples from `DS1` and tested on `DS2`. The dependent variable to be predicted was the “Immune infiltration” of samples. The independent variables were pathways chosen from the most differentially significantly expressed PID pathways between the three clusters that have emerged in the PID clustering of KIRC patients in `DS1`. All patients of the cluster with highest pathway activity were marked as immune infiltrated with a “$1$” and all other patients with a “$0$”. The logistic regression was performed to predict the immune infiltration in the samples of `DS2`.
 
 ## Packages
 
