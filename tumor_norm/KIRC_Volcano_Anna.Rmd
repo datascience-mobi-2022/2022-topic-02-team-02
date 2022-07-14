@@ -177,15 +177,16 @@ tcga_KIRC_cl_pv_FC_sigup = tcga_KIRC_cl_pv_FC_sig[which(tcga_KIRC_cl_pv_FC_sig$K
 
 
 #plotting
-ggplot(tcga_KIRC_cl_pv_FC, aes(KIRC_logfoldchange,neg_log10_pv, color = "non-significant genes"))+
+ggplot(tcga_KIRC_cl_pv_FC, aes(KIRC_logfoldchange,neg_log10_pv, color = "Non-significant genes"))+
   geom_point( size =0.3)+
-  geom_point(data= tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange, neg_log10_pv, color = "downregulated genes"), size=0.3, color = "red")+
-  geom_point(data = tcga_KIRC_cl_pv_FC_sigup, aes(KIRC_logfoldchange,neg_log10_pv, color = "upregulated genes"), size=0.3, color = "blue")+
+  geom_point(data= tcga_KIRC_cl_pv_FC_sig, aes(KIRC_logfoldchange, neg_log10_pv, color = "Downregulated genes"), size=0.3, color = "red")+
+  geom_point(data = tcga_KIRC_cl_pv_FC_sigup, aes(KIRC_logfoldchange,neg_log10_pv, color = "Upregulated genes"), size=0.3, color = "blue")+
   xlab ("log2(FC)")+
   ylab ("-log10(p-value)")+
-  scale_color_manual(name="", breaks=c("downregulated genes", "non-significant genes", "upregulated genes"),
-                     values=c("downregulated genes" = "red", "non-significant genes" = "black", "upregulated genes" = "blue"))+
-  guides(colour = guide_legend(override.aes = list(size=3)))
+  scale_color_manual(name="", breaks=c("Downregulated genes", "Non-significant genes", "Upregulated genes"),
+                     values=c("Downregulated genes" = "red", "Non-significant genes" = "black", "Upregulated genes" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=6)))+
+   theme(axis.title = element_text(size = 15))
 
 
 ```
