@@ -272,7 +272,7 @@ sig_patient3_order = data.matrix(sig_patient3[match(sig_kirc_20,sig_patient3_df$
 
 
 
-kirci = Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "Cluster 1",column_title_gp = gpar(fontsize = 16, fontface ="bold"),cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, column_title_gp = gpar(fontsize = 16, fontface ="bold"),col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Cluster 2", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Cluster 3",column_title_gp = gpar(fontsize = 16, fontface ="bold"), cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
+kirci = Heatmap(sig_patient1_order, col = col_fun,show_heatmap_legend = F, column_title = "High",column_title_gp = gpar(fontsize = 16, fontface ="bold"),cluster_rows = F, cluster_columns = F, column_names_gp = grid::gpar(fontsize = 0))+ Heatmap(sig_patient2_order, column_title_gp = gpar(fontsize = 16, fontface ="bold"),col = col_fun,heatmap_legend_param = list(title= "NES"),column_title = "Neutral", cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0)) +Heatmap(sig_patient3_order, col = col_fun, show_heatmap_legend = F,column_title = "Low",column_title_gp = gpar(fontsize = 16, fontface ="bold"), cluster_rows = F,cluster_columns = F,column_names_gp = grid::gpar(fontsize = 0))
 
 draw(kirci,heatmap_legend_side = "left")
 
