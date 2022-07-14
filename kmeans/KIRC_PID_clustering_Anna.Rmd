@@ -434,8 +434,10 @@ common1_max = max(c(PID_c1_sig_ordered,PID_c2_sig_ordered))
 col_fun1 = circlize::colorRamp2(c(common1_min,0, common1_max), c("blue","black", "red"))
 
 
-Heatmap(PID_c1_sig_ordered, column_title = "Cluster 1", column_title_gp = gpar(fontsize = 10),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 7),labels_gp = gpar(fontsize = 7)))+
-  Heatmap(PID_c2_sig_ordered, column_title = "Cluster 2", column_title_gp = gpar(fontsize = 10),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE) 
+PID_Heatmap=Heatmap(PID_c1_sig_ordered, column_title = "Upregulated", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 11),heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 7),labels_gp = gpar(fontsize = 7)),width=15*unit(5,"mm"))+
+  Heatmap(PID_c2_sig_ordered, column_title = "Neutral", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun1,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 11),show_heatmap_legend = FALSE,width=15*unit(5,"mm")) 
+
+draw(PID_Heatmap,heatmap_legend_side="left")
 ```
 
 

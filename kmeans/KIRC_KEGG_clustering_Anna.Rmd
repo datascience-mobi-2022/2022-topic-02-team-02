@@ -618,12 +618,22 @@ common_max = max(c(KEGG_c1_H_top25_ordered, KEGG_c2_H_top25_ordered, KEGG_c3_H_t
 col_fun = circlize::colorRamp2(c(common_min,0, common_max), c("blue","black", "red"))
 
 
-Heatmap(KEGG_c1_H_top25_ordered, column_title = "Cluster 1", column_title_gp = gpar(fontsize = 10),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),heatmap_legend_param = list(title = "NES",title_gp = gpar(fontsize = 7),labels_gp = gpar(fontsize = 7)))+
-  Heatmap(KEGG_c2_H_top25_ordered, column_title = "Cluster 2", column_title_gp = gpar(fontsize = 10),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),show_heatmap_legend = FALSE) +
-  Heatmap(KEGG_c3_H_top25_ordered,column_title = "Cluster 3", column_title_gp = gpar(fontsize = 10), col = col_fun,cluster_rows = FALSE,cluster_columns =  F, column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 6),show_heatmap_legend = FALSE)
+Heatmap_KEGG = Heatmap(KEGG_c1_H_top25_ordered, column_title = "Fluctuating", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 108),heatmap_legend_param = list(title = "NES"),width=15*unit(3,"mm"))+
+  Heatmap(KEGG_c2_H_top25_ordered, column_title = "Upregulated", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE,width=15*unit(3,"mm")) +
+  Heatmap(KEGG_c3_H_top25_ordered,column_title = "Neutral", column_title_gp = gpar(fontsize = 16,fontface="bold"), col = col_fun,cluster_rows = FALSE,cluster_columns =  F, column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE,width=15*unit(3,"mm"))
+
+draw(Heatmap_KEGG, heatmap_legend_side = "left")
 
 
 ```
+```{r}
+W = cbind(KEGG_c1_H_top25_ordered,KEGG_c2_H_top25_ordered,KEGG_c3_H_top25_ordered)
+ClusterHeatmap = Heatmap(W, name = "PID_all_sig_ordered", column_km = 3, cluster_rows = T, column_names_gp = gpar(fontsize = 7),row_names_gp = gpar(fontsize = 10), heatmap_legend_param = list(title= "NES"))
+
+ClusterHeatmap
+```
+
+
 
 
 #compare PID clusters and KEGG clusters
