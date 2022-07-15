@@ -20,6 +20,13 @@ KIRC_KEGG = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_KEGG
 
 ```
 
+```{r}
+#packages
+library(factoextra)
+library(uwot)
+```
+
+
 ```{r KEGG PCA, UMAP}
 #run pca 
 KIRC_KEGG_pca = prcomp(t(KIRC_KEGG))#center = F, scale. = F???
@@ -29,13 +36,13 @@ length(KIRC_KEGG_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = 
 KIRC_KEGG_pca_x = data.frame(KIRC_KEGG_pca[["x"]])
 
 #get the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
-library("factoextra")
+
 KIRC_KEGG_pca_eigval = get_eigenvalue(KIRC_KEGG_pca)
 rownames(KIRC_KEGG_pca_eigval) = colnames (KIRC_KEGG_pca_x)
 barplot(KIRC_KEGG_pca_eigval$variance.percent, main= "KEGG Pathways", ylab='Proportion of variance in percent', xlab = "Principal Components")
 
 #UMAP for better clusterin/visualization, running on PCA result
-library(uwot)
+
 KIRC_KEGG_UMAP= uwot::umap(KIRC_KEGG_pca_x)
 KIRC_KEGG_UMAP = data.frame(KIRC_KEGG_UMAP)
 #plot
@@ -77,7 +84,6 @@ KIRC_PID_pca_x = data.frame(KIRC_PID_pca[["x"]])
 
 
 #UMAP for better clusterin/visualization, running on PCA result
-library(uwot)
 KIRC_PID_UMAP= uwot::umap(KIRC_PID_pca_x)
 KIRC_PID_UMAP = data.frame(KIRC_PID_UMAP)
 #plot
