@@ -1,12 +1,35 @@
 # Unsere Überschrift 
 
-The aim of this analysis was to determine differences in gene expression and pathway activity in cancer. Fist, pan-cancer analysis was conducted which focuses on 33 different cancer types, and secondly characteristics of kidney renal clear cell carcinoma (KIRC) were investigated in more detail. For both parts of the analysis, fist data cleaning and descriptive analysis were performed. Subsequently, several genesets have been used to examine pathway activities more closely: Hallmark, PID, KEGG, PENG and MMR pathways. Gene set enrichment analysis (GSEA) based on these genesets was performed to determine enriched genesets. Based on GSEA results differences and similarities between cancer types were analyzed and subtypes were identified by hierarchical clustering. For focused analysis on KIRC, PCA and UMAP allowed identification of sybtypes by k-means. Among others, KIRC subtypes that differ in immune pathway activity could be identified and differences between subtypes in immune cell fractions were determined using immune deconvolution. Consequently, the subtypes were assigned to high and low immune infiltration. Based on this, a logistic regression was built to predict the immune infiltration in KIRC samples, hence to which of the immune subtypes they are assigned. 
+The aim of this analysis was to determine differences in gene expression and pathway activity in cancer. Fist, pan-cancer analysis was conducted which focuses on 33 different cancer types, and secondly characteristics of kidney renal clear cell carcinoma (KIRC) were investigated in more detail. In the following, the data frame used for pan cancer analysis is referred to as "DF1" and the data set specifically for KIRC as "DF2". For both data sets, fist data cleaning and descriptive analysis were performed. Subsequently, several genesets have been used to examine pathway activities of the samples more closely: Hallmark, PID, KEGG, PENG and MMR pathways. Gene set enrichment analysis (GSEA) based on these genesets was performed to determine enriched pathways. Based on GSEA results differences and similarities between cancer types were analyzed and subtypes were identified by hierarchical clustering. For focused analysis on KIRC, PCA and UMAP allowed identification of sybtypes by k-means. Among others, KIRC subtypes that differ in immune pathway activity could be identified and differences between these subtypes in immune cell fractions were determined using immune deconvolution. Consequently, the subtypes were assigned to high and low immune infiltration. Based on this, a logistic regression was built to predict high or low immune infiltration in KIRC samples, hence to which of the immune subtypes each sample is assigned. 
 
-To run the project, you need to download the following files, including raw and cleaned data:
+## Clone the repository
+To run the project, you need to download the following files, including raw and cleaned data, and safe them in the "data" folder:
 
 You will find the analysis divided into several steps, which are organized in the following folders:  
-## Data Cleaning
 
+1. Data cleaning 
+$\\rightarrow$ Data cleaning for DF1 and DF2: Biotype and variance filtering
+
+2. Descriptive analysis
+$\\rightarrow$ Visualization of data distribution and cleaning steps for DF1
+$\\rightarrow$ Visualization of differential gene expression between normal and tumor tissue (DF2)
+
+3. Dimension reduction
+$\\rightarrow$ PCA (DFF1, DF2) and UMAP (DF1)
+
+4. GSEA
+$\\rightarrow$ GSEA for DF1 and DF2
+$\\rightarrow$ Visualization of pathway activity matrices
+
+5. Clustering
+$\\rightarrow$ DF1: Hierarchial clustering on PID geneset
+$\\rightarrow$ DF2: K-means clustering on Hallmark, PID, KEGG and all combined genesets and comparison of PID and KEGG subtypes
+
+6. Immune deconvolution
+$\\rightarrow$ Determination of immune cell fractions in KIRC (DF1 and DF2)
+
+7. Logistic regression
+$\\rightarrow$ Predicting high or low immune infiltration of KIRC samples
 
 
 
@@ -60,16 +83,5 @@ PCA shows no clustering of patients when comparing gene expression in tumor data
 **more ideas/possibilities**
 1. Look for micro RNA expression/pathways (same principle as for protein coding genes)
 2. pathway activity via challenge
-
-
-##Literature
-1. Xiaying Han, Dianwen Song (2022) Using a Machine Learning Approach to Identify Key Biomarkers for Renal Clear Cell Carcinoma
-$\\rightarrow$ "However, the main cause of death in KIRC patients is tumor metastasis. There are no obvious clinical features in the early stage of kidney cancer, and 25-30% of patients have already metastasized when they are first diagnosed..."
-
-2. Nowak, J.A., Yurgelun, M.B., Bruce, J.L., Rojas-Rudilla, V., Hall, D.L., Shivdasani, P., Garcia, E.P., Agoston, A.T., Srivastava, A., Ogino, S., et al. (2017). Detection of Mismatch Repair Deficiency and Microsatellite Instability in Colorectal Adenocarcinoma by Targeted Next-Generation Sequencing. J Mol Diagn 19, 84-91. 10.1016/j.jmoldx.2016.07.010. $\\rightarrow$ 2 genesets for MIS/MMR_D!
-
-3. Hsieh, J.J., Le, V.H., Oyama, T., Ricketts, C.J., Ho, T.H., and Cheng, E.H. (2018). Chromosome 3p Loss-Orchestrated VHL, HIF, and Epigenetic Deregulation in Clear Cell Renal Cell Carcinoma. J Clin Oncol 36, JCO2018792549-JCO2018792549. 10.1200/JCO.2018.79.2549.
-
-4. Zhang S, Zhang E, Long J, Hu Z, Peng J, Liu L, Tang F, Li L, Ouyang Y, Zeng Z. Immune infiltration in renal cell carcinoma. Cancer Sci. 2019 May;110(5):1564-1572. doi: 10.1111/cas.13996. Epub 2019 Apr 7. PMID: 30861269; PMCID: PMC6501001.
 
 
