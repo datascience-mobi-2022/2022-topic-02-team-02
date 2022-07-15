@@ -1,0 +1,658 @@
+---
+title: "GSEA TCGA"
+author: "Maja Glotz"
+date: "6/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+```{r load packages}
+library(msigdbr)
+library(scrime)
+library(fgsea)
+library(biomaRt)
+library(dplyr)
+library(org.Hs.eg.db)
+library(data.table)
+library(tibble)
+library(ggpubr)
+library(ggplot2)
+library(GeneOverlap)
+library(gplots)
+library(ggdendro)
+library(PPInfer)
+library(enrichplot)
+library(rlist)
+```
+
+```{r load data}
+tcga_annot = readRDS("data/tcga_tumor_annotation.RDS")
+tcga_exp_cleaned = readRDS("data/tcga_exp_cleaned.RDS")
+```
+
+```{r split annotation dataframe}
+#split annotation dataframe via tumor types
+tcga_annot_ACC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ACC"),]
+tcga_annot_BLCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BLCA"),]
+tcga_annot_BRCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="BRCA"),]
+tcga_annot_CESC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CESC"),]
+tcga_annot_CHOL = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="CHOL"),]
+tcga_annot_COAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="COAD"),]
+tcga_annot_DLBC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="DLBC"),]
+tcga_annot_ESCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="ESCA"),]
+tcga_annot_GBM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="GBM"),]
+tcga_annot_HNSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="HNSC"),]
+tcga_annot_KICH = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KICH"),]
+tcga_annot_KIRC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRC"),]
+tcga_annot_KIRP = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="KIRP"),]
+tcga_annot_LAML = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LAML"),]
+tcga_annot_LGG = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LGG"),]
+tcga_annot_LIHC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LIHC"),]
+tcga_annot_LUAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUAD"),]
+tcga_annot_LUSC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="LUSC"),]
+tcga_annot_MESO = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="MESO"),]
+tcga_annot_OV = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="OV"),]
+tcga_annot_PAAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PAAD"),]
+tcga_annot_PCPG= tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PCPG"),]
+tcga_annot_PRAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="PRAD"),]
+tcga_annot_READ = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="READ"),]
+tcga_annot_SARC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SARC"),]
+tcga_annot_SKCM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="SKCM"),]
+tcga_annot_STAD = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="STAD"),]
+tcga_annot_TGCT = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="TGCT"),]
+tcga_annot_THCA = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THCA"),]
+tcga_annot_THYM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="THYM"),]
+tcga_annot_UCEC = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCEC"),]
+tcga_annot_UCS = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UCS"),]
+tcga_annot_UVM = tcga_annot[which(tcga_annot$cancer_type_abbreviation=="UVM"),]
+```
+
+```{r split TCGA into single tumor types}
+#create single dataframes for each tumor type with FINAL CLEAN TCGA dataframe
+tcga_exp_ACC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_ACC$sample]
+tcga_exp_BLCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_BLCA$sample]
+tcga_exp_BRCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_BRCA$sample]
+tcga_exp_CESC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_CESC$sample]
+tcga_exp_CHOL = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_CHOL$sample]
+tcga_exp_COAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_COAD$sample]
+tcga_exp_DLBC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_DLBC$sample]
+tcga_exp_ESCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_ESCA$sample]
+tcga_exp_GBM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_GBM$sample]
+tcga_exp_HNSC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_HNSC$sample]
+tcga_exp_KICH = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KICH$sample]
+tcga_exp_KIRC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KIRC$sample]
+tcga_exp_KIRP = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_KIRP$sample]
+tcga_exp_LAML = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LAML$sample]
+tcga_exp_LGG = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LGG$sample]
+tcga_exp_LIHC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LIHC$sample]
+tcga_exp_LUAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LUAD$sample]
+tcga_exp_LUSC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_LUSC$sample]
+tcga_exp_MESO = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_MESO$sample]
+tcga_exp_OV = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_OV$sample]
+tcga_exp_PAAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PAAD$sample]
+tcga_exp_PCPG = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PCPG$sample]
+tcga_exp_PRAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_PRAD$sample]
+tcga_exp_READ = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_READ$sample]
+tcga_exp_SARC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_SARC$sample]
+tcga_exp_SKCM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_SKCM$sample]
+tcga_exp_STAD = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_STAD$sample]
+tcga_exp_TGCT = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_TGCT$sample]
+tcga_exp_THCA = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_THCA$sample]
+tcga_exp_THYM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_THYM$sample]
+tcga_exp_UCEC = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UCEC$sample]
+tcga_exp_UCS = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UCS$sample]
+tcga_exp_UVM = tcga_exp_cleaned[, names(tcga_exp_cleaned) %in% tcga_annot_UVM$sample]
+
+```
+
+```{r z transformation}
+#Compute z transformation
+ACC_z = as.data.frame(rowScales(tcga_exp_ACC))
+BLCA_z = as.data.frame(rowScales(tcga_exp_BLCA))
+BRCA_z = as.data.frame(rowScales(tcga_exp_BRCA))
+CESC_z = as.data.frame(rowScales(tcga_exp_CESC))
+CHOL_z = as.data.frame(rowScales(tcga_exp_CHOL))
+COAD_z = as.data.frame(rowScales(tcga_exp_COAD))
+DLBC_z = as.data.frame(rowScales(tcga_exp_DLBC))
+ESCA_z = as.data.frame(rowScales(tcga_exp_ESCA))
+GBM_z = as.data.frame(rowScales(tcga_exp_GBM))
+HNSC_z = as.data.frame(rowScales(tcga_exp_HNSC))
+KICH_z = as.data.frame(rowScales(tcga_exp_KICH))
+KIRC_z = as.data.frame(rowScales(tcga_exp_KIRC))
+KIRP_z = as.data.frame(rowScales(tcga_exp_KIRP))
+LAML_z = as.data.frame(rowScales(tcga_exp_LAML))
+LGG_z = as.data.frame(rowScales(tcga_exp_LGG))
+LIHC_z = as.data.frame(rowScales(tcga_exp_LIHC))
+LUAD_z = as.data.frame(rowScales(tcga_exp_LUAD))
+LUSC_z = as.data.frame(rowScales(tcga_exp_LUSC))
+MESO_z = as.data.frame(rowScales(tcga_exp_MESO))
+OV_z = as.data.frame(rowScales(tcga_exp_OV))
+PAAD_z = as.data.frame(rowScales(tcga_exp_PAAD))
+PCPG_z = as.data.frame(rowScales(tcga_exp_PCPG))
+PRAD_z = as.data.frame(rowScales(tcga_exp_PRAD))
+READ_z = as.data.frame(rowScales(tcga_exp_READ))
+SARC_z = as.data.frame(rowScales(tcga_exp_SARC))
+SKCM_z = as.data.frame(rowScales(tcga_exp_SKCM))
+STAD_z = as.data.frame(rowScales(tcga_exp_STAD))
+TGCT_z = as.data.frame(rowScales(tcga_exp_TGCT))
+THCA_z = as.data.frame(rowScales(tcga_exp_THCA))
+THYM_z = as.data.frame(rowScales(tcga_exp_THYM))
+UCEC_z = as.data.frame(rowScales(tcga_exp_UCEC))
+UCS_z = as.data.frame(rowScales(tcga_exp_UCS))
+UVM_z = as.data.frame(rowScales(tcga_exp_UVM))
+```
+
+```{r create tumor types list}
+tumorlist_z = list(ACC_z, BLCA_z, BRCA_z, CESC_z, CHOL_z, COAD_z, DLBC_z, ESCA_z, GBM_z, HNSC_z, KICH_z, KIRC_z, KIRP_z,LAML_z, LGG_z, LIHC_z, LUAD_z, LUSC_z, MESO_z, OV_z, PAAD_z, PCPG_z, PRAD_z, READ_z, SARC_z, SKCM_z, STAD_z, TGCT_z, THCA_z, THYM_z, UCEC_z, UCS_z, UVM_z)
+
+#remove NA's after scaling bc low variance genes can't be scaled (weren't removed in tcga exp low variance filtering due to overall higher variance)
+tumorlist_z = lapply(tumorlist_z, na.omit)
+
+all_tumortypes_names = c("ACC", "BLCA", "BRCA", "CESC", "CHOL", "COAD", "DLBC", "ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LAML", "LGG", "LIHC", "LUAD", "LUSC", "MESO", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THCA", "THYM", "UCEC", "UCS", "UVM")
+
+names(tumorlist_z) = all_tumortypes_names
+```
+
+
+```{r final GSEA loop for hallmark genesets}
+#final GSEA lapply/for-loop over all tumor types hallmark genesets!
+GSEA_OVERALL = vector(mode = 'list', length = 33)
+PVALUES_OVERALL = list()
+NES_OVERALL = list()
+
+pathway_names = names(metabolic_genesets_H)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL[[j]][[i]] = fgsea(pathways = hallmark_genesets,
+                               stats = m,
+                               scoreType = "std")
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL[[j]][[h]][,3]
+    PVALUES_OVERALL[[j]][1:50,h] = a
+  }
+  PVALUES_OVERALL[[j]][is.na(PVALUES_OVERALL[[j]])] = 1
+  colnames(PVALUES_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL[[j]] = data.frame(row.names = pathway_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL[[j]][[k]][,6]
+    NES_OVERALL[[j]][1:50,k] = t
+  }
+  colnames(NES_OVERALL[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL) = all_tumortypes_names
+names(PVALUES_OVERALL) = all_tumortypes_names
+names(NES_OVERALL) = all_tumortypes_names
+
+#calculate mean NES across patients within tumor type --> compare (pan-cancer)
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL[[i]], 1 , mean))
+}
+NES_mean = data.frame(row.names = pathway_names)
+for (j in 1:33){
+  NES_mean[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean) = all_tumortypes_names
+NES_matrix_hallmark = as.matrix(NES_mean)
+
+#plot mean enrichment for each tumor type
+#heatmap 1
+Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3.7, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE, col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+draw(Heatmap_NES_hallmark, heatmap_legend_side = "left")
+
+#heatmap 2
+melted = melt(NES_mean)
+pathwaynames = rep(pathway_names, 33)
+melted = cbind(melted, pathwaynames)
+ggplot(melted, aes(variable, pathwaynames)) + 
+  geom_tile(aes(fill = value), colour = "white") + 
+  scale_fill_gradient(low = "blue", high = "orange") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab(" ") +
+  ylab(" ") +
+  ggtitle("Pathway activity heatmap") +
+  theme(text = element_text(size = 6), plot.title = element_text(hjust = 0.5))
+
+#create dendrogram 
+hallmark_dendro_matrix = t(NES_matrix_hallmark)
+hallmark_dendro = as.dendrogram(hclust(d = dist(x = hallmark_dendro_matrix)))
+dendro_hallmark =  ggdendrogram(data = hallmark_dendro, rotate = TRUE)
+print(dendro_hallmark)
+```
+
+```{r GSEA TCGA KEGG}
+#final GSEA lapply/for-loop over all tumor types KEGG genesets!
+metabolic_genesets_KEGG = metabolic_genesets_KEGG[-c(11,141)] #only run once
+#ist in der data variable schon gemacht
+
+PVALUES_OVERALL_KEGG = list()
+NES_OVERALL_KEGG = list()
+GSEA_OVERALL_KEGG <- vector(mode = 'list', length = 33)
+
+KEGG_names = names(metabolic_genesets_KEGG)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_KEGG[[j]][[i]] = fgsea(pathways = metabolic_genesets_KEGG,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_KEGG[[j]][[h]][,3]
+    PVALUES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),h] = a
+  }
+  PVALUES_OVERALL_KEGG[[j]][is.na(PVALUES_OVERALL_KEGG[[j]])] = 1
+  colnames(PVALUES_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_KEGG[[j]] = data.frame(row.names = KEGG_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_KEGG[[j]][[k]][,6]
+    NES_OVERALL_KEGG[[j]][1:length(metabolic_genesets_KEGG),k] = t
+  }
+  colnames(NES_OVERALL_KEGG[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_KEGG[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_KEGG[[j]][rows[l], cols[l]] = 0
+  }
+  print(j)
+}
+names(GSEA_OVERALL_KEGG) = all_tumortypes_names
+names(PVALUES_OVERALL_KEGG) = all_tumortypes_names
+names(NES_OVERALL_KEGG) = all_tumortypes_names
+
+#create NES mean matrix over each tumor type
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_KEGG[[i]], 1 , mean))
+}
+NES_mean_KEGG = data.frame(row.names = KEGG_names)
+for (j in 1:33){
+  NES_mean_KEGG[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_KEGG) = all_tumortypes_names
+
+NES_matrix_KEGG = as.matrix(NES_mean_KEGG)
+
+#plot as heatmap
+Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 3), width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+draw(Heatmap_NES_KEGG, heatmap_legend_side = "left")
+
+#create dendrogram 
+KEGG_dendro_matrix = t(NES_matrix_KEGG)
+KEGG_dendro = as.dendrogram(hclust(d = dist(x = KEGG_dendro_matrix)))
+dendro_KEGG =  ggdendrogram(data = KEGG_dendro, rotate = TRUE)
+print(dendro_KEGG)
+
+#repeat for sum
+NES_sum_list = list()
+for (i in 1:33){
+  NES_sum_list[[i]] = data.frame(apply(NES_OVERALL_KEGG[[i]], 1 , sum))
+}
+NES_sum_KEGG = data.frame(row.names = KEGG_names)
+for (j in 1:33){
+  NES_sum_KEGG[,j] = NES_sum_list[[j]]
+}
+colnames(NES_sum_KEGG) = all_tumortypes_names
+NES_summatrix_KEGG = as.matrix(NES_sum_KEGG)
+heatmap.2(NES_summatrix_KEGG, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+```
+
+```{r GSEA TCGA PID}
+#final GSEA lapply/for-loop over all tumor types PID genesets!
+#von TIM mit richtigen 88 pathways durchgeführt!
+
+PVALUES_OVERALL_PID = list()
+NES_OVERALL_PID = list()
+GSEA_OVERALL_PID <- vector(mode = 'list', length = 33)
+
+metabolic_genesets_PID = metabolic_genesets_PID[-c(152, 170)] ## only run once, remove problematic ones!
+PID_names = names(metabolic_genesets_PID_cl)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_PID[[j]][[i]] = fgsea(pathways = metabolic_genesets_PID,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_PID[[j]][[h]][,3]
+    PVALUES_OVERALL_PID[[j]][1:length(metabolic_genesets_PID_cl),h] = a
+  }
+  PVALUES_OVERALL_PID[[j]][is.na(PVALUES_OVERALL_PID[[j]])] = 1
+  colnames(PVALUES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_PID[[j]] = data.frame(row.names = PID_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_PID[[j]][[k]][,6]
+    NES_OVERALL_PID[[j]][1:length(metabolic_genesets_PID_cl),k] = t
+  }
+  colnames(NES_OVERALL_PID[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_PID[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_PID[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL_PID) = all_tumortypes_names
+names(PVALUES_OVERALL_PID) = all_tumortypes_names
+names(NES_OVERALL_PID) = all_tumortypes_names
+
+#mean matrix für richtige PID NES
+PID_names = rownames(NES_OVERALL_PID_cl[[1]])
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_PID_cl[[i]], 1 , mean))
+}
+NES_mean_PID_cl = data.frame(row.names = PID_names)
+for (j in 1:33){
+  NES_mean_PID_cl[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_PID_cl) = all_tumortypes_names
+
+NES_matrix_PID = as.matrix(NES_mean_PID_cl)
+#plot mean NES
+Heatmap_NES_PID = Heatmap(NES_matrix_PID, name = "NES", cluster_rows = TRUE, column_split = 5, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_PID)*unit(8, "mm"), height = nrow(NES_matrix_PID)*unit(2, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PID gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+draw(Heatmap_NES_PID, heatmap_legend_side = "left")
+
+#create dendrogram 
+PID_dendro_matrix = t(NES_matrix_PID)
+PID_dendro = as.dendrogram(hclust(d = dist(x = PID_dendro_matrix)))
+dendro_PID =  ggdendrogram(data = PID_dendro, rotate = TRUE)
+print(dendro_PID)
+```
+
+```{r GSEA MMR pathways}
+#final GSEA lapply/for-loop over all tumor types MMR genesets!
+#need to remove geneset 2, 3 and 7 from MMR
+MMR = MMR[-c(2,3,4,7)] #only run once; already updated in data file
+
+PVALUES_OVERALL_MMR = list()
+NES_OVERALL_MMR = list()
+GSEA_OVERALL_MMR <- vector(mode = 'list', length = 33)
+
+MMR_names = names(MMR)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_MMR[[j]][[i]] = fgsea(pathways = MMR,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_MMR[[j]] = data.frame(row.names = MMR_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_MMR[[j]][[h]][,3]
+    PVALUES_OVERALL_MMR[[j]][1:length(MMR),h] = a
+  }
+  PVALUES_OVERALL_MMR[[j]][is.na(PVALUES_OVERALL_MMR[[j]])] = 1
+  colnames(PVALUES_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_MMR[[j]] = data.frame(row.names = MMR_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_MMR[[j]][[k]][,6]
+    NES_OVERALL_MMR[[j]][1:length(MMR),k] = t
+  }
+  colnames(NES_OVERALL_MMR[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_MMR[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_MMR[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL_MMR) = all_tumortypes_names
+names(PVALUES_OVERALL_MMR) = all_tumortypes_names
+names(NES_OVERALL_MMR) = all_tumortypes_names
+
+# Compute mean NES for each tumor type
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_MMR[[i]], 1 , mean))
+}
+NES_mean_MMR = data.frame(row.names = MMR_names)
+for (j in 1:33){
+  NES_mean_MMR[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_MMR) = all_tumortypes_names
+
+NES_matrix_MMR = as.matrix(NES_mean_MMR[-4,])
+Heatmap_NES_MMR = Heatmap(NES_matrix_MMR, name = "NES", cluster_rows = TRUE, column_split = 5, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 10), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA MMR gene sets", col = colorRamp2(c(-0.08, 0, 0.02), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+draw(Heatmap_NES_MMR, heatmap_legend_side = "left")
+
+#create dendrogram 
+MMR_dendro_matrix = t(NES_matrix_MMR)
+MMR_dendro = as.dendrogram(hclust(d = dist(x = MMR_dendro_matrix)))
+dendro_MMR =  ggdendrogram(data = MMR_dendro, rotate = TRUE)
+print(dendro_MMR)
+```
+
+```{r GSEA PENG pathways}
+#final GSEA over all tumor types PENG pathways!
+
+PVALUES_OVERALL_PENG = list()
+NES_OVERALL_PENG = list()
+GSEA_OVERALL_PENG <- vector(mode = 'list', length = 33)
+
+PENG_names = names(PENG_pathways)
+
+for (j in 1:33) {
+  for (i in 1:(ncol(tumorlist_z[[j]]))){
+    m = c(tumorlist_z[[j]][,i])
+    names(m) = rownames(tumorlist_z[[j]])
+    m = m[order(m), drop = FALSE]
+    GSEA_OVERALL_PENG[[j]][[i]] = fgsea(pathways = PENG_pathways,
+                               stats = m,
+                               scoreType = "std",
+                               nproc = 6)
+  }
+  print("GSEA done")
+  names(GSEA_OVERALL_PENG[[j]]) = colnames(tumorlist_z[[j]])
+  PVALUES_OVERALL_PENG[[j]] = data.frame(row.names = PENG_names)
+  for (h in 1:ncol(tumorlist_z[[j]])){
+    a = GSEA_OVERALL_PENG[[j]][[h]][,3]
+    PVALUES_OVERALL_PENG[[j]][1:length(PENG_pathways),h] = a
+  }
+  PVALUES_OVERALL_PENG[[j]][is.na(PVALUES_OVERALL_PENG[[j]])] = 1
+  colnames(PVALUES_OVERALL_PENG[[j]]) = colnames(tumorlist_z[[j]])
+  NES_OVERALL_PENG[[j]] = data.frame(row.names = PENG_names)
+  for (k in 1:ncol(tumorlist_z[[j]])){
+    t = GSEA_OVERALL_PENG[[j]][[k]][,6]
+    NES_OVERALL_PENG[[j]][1:length(PENG_pathways),k] = t
+  }
+  colnames(NES_OVERALL_PENG[[j]]) = colnames(tumorlist_z[[j]])
+  indexes = which(PVALUES_OVERALL_PENG[[j]] >= 0.05, arr.ind=TRUE)
+  rows = as.vector(indexes[,1])
+  cols = as.vector(indexes[,2])
+  for (l in 1:length(rows)) {
+    NES_OVERALL_PENG[[j]][rows[l], cols[l]] = 0
+    print(l)
+  }
+  print("once again")
+}
+names(GSEA_OVERALL_PENG) = all_tumortypes_names
+names(PVALUES_OVERALL_PENG) = all_tumortypes_names
+names(NES_OVERALL_PENG) = all_tumortypes_names
+
+NES_mean_list = list()
+for (i in 1:33){
+  NES_mean_list[[i]] = data.frame(apply(NES_OVERALL_PENG[[i]], 1 , mean))
+}
+NES_mean_PENG = data.frame(row.names = PENG_names)
+for (j in 1:33){
+  NES_mean_PENG[,j] = NES_mean_list[[j]]
+}
+colnames(NES_mean_PENG) = all_tumortypes_names
+NES_matrix_PENG = as.matrix(NES_mean_PENG)
+Heatmap_NES_PENG = Heatmap(NES_matrix_PENG, name = "NES", cluster_rows = TRUE, column_split = 7, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 15), width = ncol(NES_matrix_PENG)*unit(8, "mm"), height = nrow(NES_matrix_PENG)*unit(14, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA PENG gene sets", col = colorRamp2(c(-0.1, 0, 0.1), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+draw(Heatmap_NES_PENG, heatmap_legend_side= "left")
+
+#create dendrogram 
+PENG_dendro_matrix = t(NES_matrix_PENG)
+PENG_dendro = as.dendrogram(hclust(d = dist(x = PENG_dendro_matrix)))
+dendro_PENG =  ggdendrogram(data = PENG_dendro, rotate = TRUE)
+print(dendro_PENG)
+```
+
+```{r pan-cancer analysis}
+#comparison of tumor types
+#compute mean of mean NES overall tumor types to find top 15 up- and downregulated pathways respectively
+#create pathway activity matrix for all genesets! 1) listcbind with NES matrices and then rbind with hallmark, KEGG, PID, MMR
+NES_OVERALL_hallmark_alle = list.cbind(nes_overall)
+NES_OVERALL_PID_alle = list.cbind(NES_OVERALL_PID_cl) 
+NES_OVERALL_KEGG_alle = list.cbind(NES_OVERALL_KEGG)
+NES_OVERALL_MMR_alle = list.cbind(NES_OVERALL_MMR)
+
+names(NES_OVERALL_PID_alle) = colnames(NES_OVERALL_KEGG_alle)
+
+pathway_activity_matrix = rbind(NES_OVERALL_hallmark_alle, NES_OVERALL_PID_alle, NES_OVERALL_KEGG_alle, NES_OVERALL_MMR_alle)
+
+#melt Hallmark, KEGG, PID and MMR MEAN(!) pathway activity matrices 
+pathway_activity_matrix_mean = rbind(NES_mean, NES_mean_KEGG, NES_mean_PID_cl, NES_mean_MMR)
+
+#find top pathways across all tumor types
+pathway_mean_alle = as.data.frame(apply(pathway_activity_matrix_mean, 1, mean))
+colnames(pathway_mean_alle) = "NES"
+topup_pathways = slice_max(pathway_mean_alle, order_by = pathway_mean_alle[,1], n = 15)
+topdown_pathways = slice_min(pathway_mean_alle, order_by = pathway_mean_alle[,1], n = 15)
+topdown_pathways = topdown_pathways[order(nrow(topdown_pathways):1),, drop = FALSE]
+top_pathways = rbind(topup_pathways, topdown_pathways)
+top_pathways_names = c(rownames(top_pathways))
+top_pathways_meandf = as.matrix(pathway_activity_matrix_mean[top_pathways_names, ])
+heatmap.2(top_pathways_meandf, dendrogram = "column", hclustfun = hclust, trace = "none", margins = c(11,11))
+
+#heatmap
+NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
+Heatmap_NES_ALLE = Heatmap(NES_matrix_ALLE, name = "NES", cluster_rows = TRUE, column_split = 7, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_ALLE)*unit(8, "mm"), height = nrow(NES_matrix_ALLE)*unit(0.6, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA all gene sets", row_dend_width = unit(0, "cm"), col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
+Heatmap_NES_ALLE
+
+#create dendrogram 
+alle_dendro_matrix = t(NES_matrix_ALLE)
+alle_dendro = as.dendrogram(hclust(d = dist(x = alle_dendro_matrix)))
+dendro_alle =  ggdendrogram(data = alle_dendro, rotate = TRUE)
+print(dendro_alle)
+
+#find top high variance genes from pathway activity matrix across all tumor types
+pathway_activity_var = as.data.frame(apply(pathway_activity_matrix, 1, var))
+pathway_activity_var = pathway_activity_var[order(pathway_activity_var$`apply(pathway_activity_matrix, 1, var)`),, drop = FALSE]
+top30_var_pw = rownames(pathway_activity_var)[298:327]
+
+#Heatmap top 30 variance pathways
+top_var_pw_matrix = as.matrix(pathway_activity_matrix_mean[top30_var_pw, ])
+Heatmap_TopVar_pw = Heatmap(top_var_pw_matrix, name = "NES", cluster_rows = TRUE, show_row_dend = FALSE, column_split = 6, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_MMR)*unit(8, "mm"), height = nrow(NES_matrix_MMR)*unit(35, "mm"), column_dend_height = unit(15, "mm"), column_title = "Top 30 variance pathways TCGA", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)))
+draw(Heatmap_TopVar_pw, heatmap_legend_side = "left")
+
+# select top 15 UP and DOWN regulated pathways for KIRC
+KIRC_ordered = pathway_activity_matrix_mean[,12, drop = FALSE]
+KIRC_topup = slice_max(KIRC_ordered, order_by = KIRC_ordered[,1], n = 15)
+KIRC_topdown = slice_min(KIRC_ordered, order_by = KIRC_ordered[,1], n = 15)
+KIRC_topdown = KIRC_topdown[order(nrow(KIRC_topdown):1),, drop = FALSE]
+KIRC_top = rbind(KIRC_topup, KIRC_topdown)
+KIRC_top = rownames_to_column(KIRC_top)
+top_pathways_KIRC = c(KIRC_top[,1])
+
+blue = c(rep("blue", 30))
+KIRC_top$rowname <- factor(KIRC_top$rowname, levels = KIRC_top$rowname)
+ggplot(KIRC_top, aes(x=rowname, y=KIRC, fill=rowname)) + 
+  geom_bar(stat = "identity")+
+  coord_flip() +
+  labs (y = "NES",
+        x = "pathways") +
+  ggtitle("Top up- and downregulated pathways in KIRC") + 
+  scale_fill_manual(values= blue)+ 
+  theme(legend.position="none")
+
+# compare enrichment for most enriched pathway in KIRC with other tumor types:
+KEGG_O_GLYCAN_BIOSYNTHESIS = t(pathway_activity_matrix_mean[rownames(pathway_activity_matrix_mean) == "KEGG_O_GLYCAN_BIOSYNTHESIS",, drop = FALSE])
+KEGG_O_GLYCAN_BIOSYNTHESIS = as.data.frame(KEGG_O_GLYCAN_BIOSYNTHESIS)
+KEGG_O_GLYCAN_BIOSYNTHESIS = rownames_to_column(KEGG_O_GLYCAN_BIOSYNTHESIS)
+
+KEGG_O_GLYCAN_BIOSYNTHESIS = KEGG_O_GLYCAN_BIOSYNTHESIS[order(KEGG_O_GLYCAN_BIOSYNTHESIS$KEGG_O_GLYCAN_BIOSYNTHESIS), ]
+
+KEGG_O_GLYCAN_BIOSYNTHESIS$rowname <- factor(KEGG_O_GLYCAN_BIOSYNTHESIS$rowname, levels = KEGG_O_GLYCAN_BIOSYNTHESIS$rowname)
+ggplot(KEGG_O_GLYCAN_BIOSYNTHESIS, aes(x=rowname, y=KEGG_O_GLYCAN_BIOSYNTHESIS)) + 
+  geom_bar(stat = "identity")+
+  coord_flip() +
+  labs (y = "Tumor types",
+        x = "NES",
+        title = "KEGG_O_GLYCAN_BIOSYNTHESIS in all tumor types")
+```
+
+```{r result plots}
+#GSEA barplot for example patient KIRC
+GSEA_KIRC_patient = GSEA_OVERALL_PID[[12]][["TCGA-B8-5163-01"]]
+GSEA.barplot(GSEA_KIRC_patient, category = "pathway", score = 'NES',
+             pvalue = 'pval', sort = 'NES', decreasing = TRUE)
+GSEA.barplot(GSEA_KIRC_patient, category = "pathway", score = 'NES',
+             pvalue = 'pval', sort = 'NES', decreasing = FALSE)
+
+#GSEA table plot for KIRC patient
+KIRC_patient_ranked = c(tumorlist_z[["KIRC"]][, "TCGA-B8-5163-01"])
+names(KIRC_patient_ranked) = rownames(tumorlist_z[["KIRC"]])
+KIRC_patient_ranked = KIRC_patient_ranked[order(KIRC_patient_ranked), drop = FALSE]
+    
+topPathwaysUp <- GSEA_KIRC_patient[ES > 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- GSEA_KIRC_patient[ES < 0][tail(order(pval), n=10), pathway]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+as_ggplot(plotGseaTable(metabolic_genesets_PID_cl[topPathways], KIRC_patient_ranked, GSEA_KIRC_patient, gseaParam=0.5, render = FALSE))
+
+#enrichment plots 
+KIRC_patient_pa = as.data.frame(pathway_activity_matrix[, "KIRC.TCGA-B8-5163-01"])
+rownames(KIRC_patient_pa) = rownames(pathway_activity_matrix)
+colnames(KIRC_patient_pa) = "NES"
+
+#Upregulated --> EMT
+Up_EMT = plotEnrichment(metabolic_genesets_H[["HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"]], KIRC_patient_ranked)
+Up_EMT
+
+#Downregulated --> DrugMetabolism
+Down_DrugMetabolism = plotEnrichment(metabolic_genesets_KEGG[["KEGG_DRUG_METABOLISM_CYTOCHROME_P450"]], KIRC_patient_ranked)
+Down_DrugMetabolism
+
+#Neutral --> UV response up
+Neutral_Glycolysis = plotEnrichment(metabolic_genesets_H[["HALLMARK_GLYCOLYSIS"]],KIRC_patient_ranked)
+Neutral_Glycolysis
+```
+

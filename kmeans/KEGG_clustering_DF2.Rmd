@@ -1,0 +1,638 @@
+---
+title: "KIRC_KEGG_clustering"
+author: "Anna von Bachmann"
+date: '2022-06-19'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+
+#Identifying Clusters in KIRC based on KEGG pathways
+
+
+```{r Load data}
+#Load data
+
+tcga_tumor_norm = readRDS("~/GitHub/2022-topic-02-team-02/data/tcga_tumor_normal_datascience_proj_2022.RDS")
+KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]]) #annotation
+KIRC_KEGG = readRDS("~/GitHub/2022-topic-02-team-02/data/KIRC_GSEA_activity_KEGG.rds")
+
+```
+
+```{r}
+#Packages
+library(uwot)
+library(cluster)
+library(ggpubr)
+library(factoextra)
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
+library(reshape)
+library(ComplexHeatmap)
+library(circlize)
+library(stats)
+```
+
+```{r KEGG PCA}
+#run pca 
+KIRC_KEGG_pca = prcomp(t(KIRC_KEGG))
+length(KIRC_KEGG_pca$sdev) #72 patients resulting in 72 PCs as rank of matrix = number of PCs
+
+#dataframe with PCs (resulting from pathways) and patients
+KIRC_KEGG_pca_x = data.frame(KIRC_KEGG_pca[["x"]])
+
+#get the eigenvalues for each PC (eigenvalues measure the amount of variation retained by each PC)
+KIRC_KEGG_pca_eigval = get_eigenvalue(KIRC_KEGG_pca)
+rownames(KIRC_KEGG_pca_eigval) = colnames (KIRC_KEGG_pca_x)
+barplot(KIRC_KEGG_pca_eigval$variance.percent, main= "KEGG Pathways", ylab='Proportion of variance in percent', xlab = "Principal Components")
+```
+
+
+```{r KEGG PCA plot}
+#plot the data (patients in coordinate system with PC1, PC2/PC3 as axes)
+
+ggplot(KIRC_KEGG_pca_x, aes(PC1, PC2))+  #plot PC1 and PC2
+  geom_point( size =2)
+
+ggplot(KIRC_KEGG_pca_x, aes(PC1, PC3))+   #plot in PC1  and PC3
+  geom_point( size =2)
+  
+
+#plot the data (patients) in the first principal components regarding gender
+KIRC_gender = ifelse(KIRC_annot$gender == "FEMALE", "red", "blue")#gender-vector
+sum(KIRC_annot$gender=="FEMALE")
+
+ggplot(KIRC_KEGG_pca_x, aes(PC1, PC2))+  #plot PC1 and pC2
+  geom_point( size =2, color = KIRC_gender)+
+   ggtitle("PCA for KEGG pw with regard to gender ")
+
+ggplot(KIRC_KEGG_pca_x, aes(PC1, PC3))+
+  geom_point( size =2, color = KIRC_gender)+
+   ggtitle("PCAfor KEGG pw with regard to gender ")
+```
+
+```{r KEGG UMAP}
+#UMAP for better clusterin/visualization, running on PCA result
+KIRC_KEGG_UMAP= uwot::umap(KIRC_KEGG_pca_x)
+KIRC_KEGG_UMAP = data.frame(KIRC_KEGG_UMAP)
+#plot
+ggplot (data = KIRC_KEGG_UMAP, 
+                    aes(x = X1, y = X2))+
+  geom_point(size = 2)
+
+#plot with colors for gender
+
+KIRC_tumorstatus = KIRC_annot$tumor_status
+KIRC_gender_Umap = KIRC_annot$gender  #vector for coloring 
+KIRC_KEGG_UMAP = data.frame(KIRC_KEGG_UMAP)
+
+ggplot (data =KIRC_KEGG_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_tumorstatus))+
+  geom_point(size = 1)
+
+ggplot (data =KIRC_KEGG_UMAP, 
+                    aes(x = X1, y = X2 , color = KIRC_gender_Umap))+
+  geom_point(size = 1)
+```
+
+
+```{r KEGG Kmeans }
+#perform kmeans with 2:5 centers on UMAP results
+KIRC_KEGG_kmeans = sapply(2:5, function(k){
+  kmeans(x = KIRC_KEGG_UMAP , centers = k, nstart = 100 )})
+
+
+
+#find the optimal number of clusters
+
+#extract tot.withinss --> for silhouette plot (elbow method)
+KIRC_KEGG_kmeans_tw = sapply(1:5, function(k){
+  kmeans(x = KIRC_KEGG_UMAP , centers = k, nstart = 100 )$tot.withinss})
+
+#elbow plot
+plot(KIRC_KEGG_kmeans_tw, type = "b", pch= 20, xlab = "centers", ylab = "Total within-clusters sum of squares")
+
+#extract cluster values for silhouette plot
+KIRC_KEGG_kmeans_c = sapply(2:7, function(k){
+  kmeans(x = KIRC_KEGG_UMAP , centers = k, nstart = 100 )$cluster})
+
+#silhouette plot
+sapply(1:6, function(x){
+  plot(silhouette(KIRC_KEGG_kmeans_c[,x], dist(KIRC_KEGG_UMAP)), main ="Silhouette plot")})
+
+
+#find the optimal number clusters, silhouette plot (average silhouette width)
+fviz_nbclust(KIRC_KEGG_UMAP, kmeans, method='silhouette')
+```
+
+```{r KEGG Kmeans Plot}
+# visualize the clusters in plot
+#for 2 centers
+km.2 = kmeans(KIRC_KEGG_UMAP, centers = 2, nstart = 100)
+fviz_cluster(km.2, KIRC_KEGG_UMAP,
+             palette = c("orange", "blue"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+
+# for 3 centers
+km.3 = kmeans(KIRC_KEGG_UMAP, centers = 3, nstart = 100)
+fviz_cluster(km.3, KIRC_KEGG_UMAP,
+             palette = c("orange", "blue", "forestgreen"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+
+# for 4 centers
+km.4 = kmeans(KIRC_KEGG_UMAP, centers = 4, nstart = 100)
+fviz_cluster(km.4, KIRC_KEGG_UMAP,
+             palette = c("orange", "blue", "forestgreen", "black"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+
+```
+
+
+```{r KEGG culsters}
+#for KEGG pathways: optimal number of cluster: 3 
+KEGG_km3 =kmeans(KIRC_KEGG_UMAP, 3 ,nstart = 200)
+fviz_cluster(KEGG_km3, KIRC_KEGG_UMAP,
+             palette = c("orange", "blue", "forestgreen"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )
+KEGG_km = KEGG_km3$cluster
+
+#assign the patients to corresponding cluster
+KEGG_c1_names = names(KEGG_km[which(KEGG_km == 1)]) #patient names of cluster1 #22 patients
+KEGG_c2_names = names(KEGG_km[which(KEGG_km == 2)])#23 patients
+KEGG_c3_names = names(KEGG_km[which(KEGG_km == 3)])#27 patients
+
+KEGG_c1 = KIRC_KEGG[,colnames(KIRC_KEGG) %in% KEGG_c1_names] # df with patients of cluster1
+KEGG_c2 = KIRC_KEGG[,colnames(KIRC_KEGG) %in% KEGG_c2_names]
+KEGG_c3 = KIRC_KEGG[,colnames(KIRC_KEGG) %in% KEGG_c3_names]
+```
+
+##Cluster 1 vs 2+3
+
+```{r Cluster 1 vs cluster 2+3}
+#first: compare cluster 1 to cluster(2+3)
+KEGG_c23 = cbind(KEGG_c2,KEGG_c3)
+
+KEGG_c1_mean = data.frame(apply(KEGG_c1, 1,mean)) #pw activity mean for patients of cluster 1
+KEGG_c23_mean = data.frame (apply (KEGG_c23, 1, mean))
+
+KEGG_c1_c23_dif = KEGG_c1_mean - KEGG_c23_mean #compare the mean activity scores of pathways
+#high scores means upregulated in cluster 1 
+
+#rank the compared pw-matrix to see the most differently expressed pw
+KEGG_c1_c23_dif_rank = data.frame(KEGG_c1_c23_dif$apply.KEGG_c1..1..mean.[order(KEGG_c1_c23_dif[,1],decreasing = TRUE)])
+KEGG_rownames = c(rownames(KEGG_c1_c23_dif))
+KEGG_rownames_rank = c(KEGG_rownames[order(KEGG_c1_c23_dif[,1],decreasing = TRUE)])
+
+KEGG_c1_c23_dif_rank = as.data.frame(cbind(KEGG_rownames_rank, KEGG_c1_c23_dif_rank))
+colnames(KEGG_c1_c23_dif_rank) = c("Pathway", "diff")
+
+```
+
+```{r Wilcoxon Cluster 1 vs 2+3}
+
+#perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
+KEGG_c1_m = as.matrix(KEGG_c1) #matrix needed for wilcoxon
+KEGG_c23_m = as.matrix(KEGG_c23)
+#clsuer 1 compared to the other clusters
+KEGG_1_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c1_m),function (x) {
+  wilcox.test(KEGG_c1_m[x,],KEGG_c23_m[x,],paired=FALSE)
+}$p.value))
+rownames(KEGG_1_wilcox_pv)=rownames(KEGG_c1)
+colnames(KEGG_1_wilcox_pv)="pvalue"
+
+
+#Bonferroni-Korrektur
+alpha_KEGG=0.05/(nrow(KEGG_1_wilcox_pv))
+#how many pathways have sign different NES??
+length(which(KEGG_1_wilcox_pv<alpha_KEGG))
+
+
+KEGG_1_wilcox_pv[is.nan(KEGG_1_wilcox_pv)] = 1
+```
+
+
+```{r Volcano Cluster 1 vs 2+3}
+#data preparation for Volcano Plot
+
+#calculate -log10 of p-value for plotting
+KEGG_1_wilcox_pv_log =-log10(KEGG_1_wilcox_pv)
+colnames(KEGG_1_wilcox_pv_log) = "neg_log10_pv"
+
+#combine difference and pv matrix
+KEGG_1_pv_dif =as.data.frame(cbind(KEGG_c1_c23_dif,KEGG_1_wilcox_pv_log))
+colnames(KEGG_1_pv_dif) = c("diff","neg_log10_pv")
+
+#extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+cutoffpv_KEGG = -log10(alpha_KEGG)#=3.593286, cut off later in plot 
+KEGG_1_pv_dif_sig = KEGG_1_pv_dif[which(KEGG_1_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
+min(KEGG_1_pv_dif_sig$neg_log10_pv)
+#upregulated genes of the sig diff expressed genes (blue in plot)
+KEGG_1_pv_dif_sigup = KEGG_1_pv_dif_sig[which(KEGG_1_pv_dif_sig$diff>0),]
+
+
+
+#plotting
+ggplot(KEGG_1_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
+  geom_point( size =0.3)+
+  geom_point(data= KEGG_1_pv_dif_sig, aes(diff , neg_log10_pv, color = "lower NES"), size=0.3, color = "orange")+
+  geom_point(data = KEGG_1_pv_dif_sigup, aes(diff,neg_log10_pv, color = "higher NES"), size=0.3, color = "blue")+
+  ggtitle("differences in NES between KEGG custer 1 compared to cluster (2+3) ")+
+  geom_text_repel(data = KEGG_1_pv_dif_sig, aes(diff, neg_log10_pv), label = row.names(KEGG_1_pv_dif_sig), size = 2, show.legend = FALSE)+
+  xlab ("mean(c1)-mean(c2,c3)")+
+  ylab ("-log10(p-value)")+
+  scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
+                     values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=3)))
+
+
+#which Pathways are sign different??
+KEGG_1_dif_sig = data.frame(KEGG_1_pv_dif_sig$diff)
+KEGG_1_dif_sig_names= c(rownames(KEGG_1_pv_dif_sig))
+KEGG_1_dif_sig = cbind( KEGG_1_dif_sig_names, KEGG_1_dif_sig)
+colnames(KEGG_1_dif_sig) = c("Pathway", "diff")
+
+ggplot(KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("KEGG pw with signif different NES in cluster 1")+
+  theme(plot.title = element_text(size=10))
+  
+```
+
+
+```{r top ten diff pw Cluster 1 vs 2+3}
+#top ten pathways
+abs_KEGG_1_dif_sig<- KEGG_1_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_KEGG_1_dif_sig = cbind(KEGG_1_dif_sig_names, abs_KEGG_1_dif_sig)
+colnames( abs_KEGG_1_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_1_dif_sig_rank = abs_KEGG_1_dif_sig[order(abs_KEGG_1_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_1_dif_sig_rank = c(abs_KEGG_1_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_1_dif_sig = KEGG_1_dif_sig[which(KEGG_1_dif_sig[,1] %in% names_abs_KEGG_1_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_1_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 1")+
+  theme(plot.title = element_text(size=6))
+
+```
+
+
+##Cluster 2 vs 1+3
+
+```{r Cluster 2 vs cluster 1+3}
+#compare cluster 2 to cluster(1+3)
+KEGG_c13 = cbind(KEGG_c1,KEGG_c3)
+
+KEGG_c2_mean = data.frame(apply(KEGG_c2, 1,mean)) #pw activity mean for patients of cluster 2
+KEGG_c13_mean = data.frame (apply (KEGG_c13, 1, mean))
+
+KEGG_c2_c13_dif = KEGG_c2_mean - KEGG_c13_mean #compare the mean activity scores of pathways
+#high scores means upregulated in cluster 2
+
+#rank the compared pw-matrix to see the most differently expressed pw
+KEGG_c2_c13_dif_rank = data.frame(KEGG_c2_c13_dif$apply.KEGG_c2..1..mean.[order(KEGG_c2_c13_dif[,1],decreasing = TRUE)])
+KEGG_2_rownames = c(rownames(KEGG_c2_c13_dif))
+KEGG_2_rownames_rank = c(KEGG_2_rownames[order(KEGG_c2_c13_dif[,1],decreasing = TRUE)])
+
+KEGG_c2_c13_dif_rank = as.data.frame(cbind(KEGG_2_rownames_rank, KEGG_c2_c13_dif_rank))
+colnames(KEGG_c2_c13_dif_rank) = c("Pathway", "diff")
+
+```
+
+```{r Wilcoxon Cluster 2 vs 1+3}
+
+#perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
+KEGG_c2_m = as.matrix(KEGG_c2) #matrix needed for wilcoxon
+KEGG_c13_m = as.matrix(KEGG_c13)
+#clsuer 2 compared to the other clusters
+KEGG_2_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c2_m),function (x) {
+  wilcox.test(KEGG_c2_m[x,],KEGG_c13_m[x,],paired=FALSE)
+}$p.value))
+rownames(KEGG_2_wilcox_pv)=rownames(KEGG_c2)
+colnames(KEGG_2_wilcox_pv)="pvalue"
+
+
+#Bonferroni-Korrektur
+alpha_KEGG=0.05/(nrow(KEGG_2_wilcox_pv))
+#how many pathways have sign different NES??
+length(which(KEGG_2_wilcox_pv<alpha_KEGG))
+
+
+KEGG_2_wilcox_pv[is.nan(KEGG_2_wilcox_pv)] = 1
+```
+
+
+```{r Volcano Cluster 2 vs 1+3}
+#data preparation for Volcano Plot
+
+#calculate -log10 of p-value for plotting
+KEGG_2_wilcox_pv_log =-log10(KEGG_2_wilcox_pv)
+colnames(KEGG_2_wilcox_pv_log) = "neg_log10_pv"
+
+#combine differnece and pv matrix
+KEGG_2_pv_dif =as.data.frame(cbind(KEGG_c2_c13_dif,KEGG_2_wilcox_pv_log))
+colnames(KEGG_2_pv_dif) = c("diff","neg_log10_pv")
+
+
+#extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+cutoffpv_KEGG = -log10(alpha_KEGG)
+KEGG_2_pv_dif_sig = KEGG_2_pv_dif[which(KEGG_2_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
+min(KEGG_2_pv_dif_sig$neg_log10_pv)
+#upregulated genes of the sig diff expressed genes (blue in plot)
+KEGG_2_pv_dif_sigup = KEGG_2_pv_dif_sig[which(KEGG_2_pv_dif_sig$diff>0),]
+
+
+#plotting
+ggplot(KEGG_2_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
+  geom_point( size =0.3)+
+  geom_point(data= KEGG_2_pv_dif_sig, aes(diff , neg_log10_pv, color = "lower NES"), size=0.3, color = "orange")+
+  geom_point(data = KEGG_2_pv_dif_sigup, aes(diff,neg_log10_pv, color = "higher NES"), size=0.3, color = "blue")+
+  ggtitle("differences in NES between KEGG custer 2 compared to cluster (1+3) ")+
+  geom_text_repel(data = KEGG_2_pv_dif_sig, aes(diff, neg_log10_pv), label = row.names(KEGG_2_pv_dif_sig), size = 2, show.legend = FALSE)+
+  xlab ("mean(c2)-mean(c1,c3)")+
+  ylab ("-log10(p-value)")+
+  scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
+                     values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=3)))
+
+
+#which Pathways are sign different??
+KEGG_2_dif_sig = data.frame(KEGG_2_pv_dif_sig$diff)
+KEGG_2_dif_sig_names= c(rownames(KEGG_2_pv_dif_sig))
+KEGG_2_dif_sig = cbind( KEGG_2_dif_sig_names, KEGG_2_dif_sig)
+colnames(KEGG_2_dif_sig) = c("Pathway", "diff")
+
+ggplot(KEGG_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("KEGG pw with signif different NES in cluster 2")+
+  theme(plot.title = element_text(size=10))
+```
+
+
+```{r top ten diff pw Cluster 2 vs 1+3}
+#top ten pathways
+abs_KEGG_2_dif_sig<- KEGG_2_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_KEGG_2_dif_sig = cbind(KEGG_2_dif_sig_names, abs_KEGG_2_dif_sig)
+colnames( abs_KEGG_2_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_2_dif_sig_rank = abs_KEGG_2_dif_sig[order(abs_KEGG_2_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_2_dif_sig_rank = c(abs_KEGG_2_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_2_dif_sig = KEGG_2_dif_sig[which(KEGG_2_dif_sig[,1] %in% names_abs_KEGG_2_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_2_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 2")+
+  theme(plot.title = element_text(size=6))
+
+```
+
+
+##Cluster 3 vs 1+2
+
+```{r Cluster 3 vs cluster 1+2}
+
+KEGG_c12 = cbind(KEGG_c1,KEGG_c2)
+
+KEGG_c3_mean = data.frame(apply(KEGG_c3, 1,mean)) #pw activity mean for patients of cluster 2
+KEGG_c12_mean = data.frame (apply (KEGG_c12, 1, mean))
+
+KEGG_c3_c12_dif = KEGG_c3_mean - KEGG_c12_mean #compare the mean activity scores of pathways
+
+
+#rank the compared pw-matrix to see the most differently expressed pw
+KEGG_c3_c12_dif_rank = data.frame(KEGG_c3_c12_dif$apply.KEGG_c3..1..mean.[order(KEGG_c3_c12_dif[,1],decreasing = TRUE)])
+KEGG_3_rownames = c(rownames(KEGG_c3_c12_dif))
+KEGG_3_rownames_rank = c(KEGG_3_rownames[order(KEGG_c3_c12_dif[,1],decreasing = TRUE)])
+
+KEGG_c3_c12_dif_rank = as.data.frame(cbind(KEGG_3_rownames_rank, KEGG_c3_c12_dif_rank))
+colnames(KEGG_c3_c12_dif_rank) = c("Pathway", "diff")
+
+```
+
+```{r Wilcoxon Cluster 3 vs 1+2}
+
+#perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
+KEGG_c3_m = as.matrix(KEGG_c3) #matrix needed for wilcoxon
+KEGG_c12_m = as.matrix(KEGG_c12)
+
+
+KEGG_3_wilcox_pv  = data.matrix(sapply ( 1:nrow(KEGG_c3_m),function (x) {
+  wilcox.test(KEGG_c3_m[x,],KEGG_c12_m[x,],paired=FALSE)
+}$p.value))
+rownames(KEGG_3_wilcox_pv)=rownames(KEGG_c3)
+colnames(KEGG_3_wilcox_pv)="pvalue"
+
+
+#Bonferroni-Korrektur
+alpha_KEGG=0.05/(nrow(KEGG_3_wilcox_pv))
+#how many pathways have sign different NES??
+length(which(KEGG_3_wilcox_pv<alpha_KEGG))
+
+
+KEGG_3_wilcox_pv[is.nan(KEGG_3_wilcox_pv)] = 1
+```
+
+
+```{r Volcano Cluster 3 vs 1+2}
+#data preparation for Volcano Plot
+
+
+#calculate -log10 of p-value for plotting
+KEGG_3_wilcox_pv_log =-log10(KEGG_3_wilcox_pv)
+colnames(KEGG_3_wilcox_pv_log) = "neg_log10_pv"
+
+#combine differnece and pv matrix
+KEGG_3_pv_dif =as.data.frame(cbind(KEGG_c3_c12_dif,KEGG_3_wilcox_pv_log))
+colnames(KEGG_3_pv_dif) = c("diff","neg_log10_pv")
+
+
+
+#extracting sign differently expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+cutoffpv_KEGG = -log10(alpha_KEGG)
+KEGG_3_pv_dif_sig = KEGG_3_pv_dif[which(KEGG_3_pv_dif$neg_log10_pv>cutoffpv_KEGG),]
+min(KEGG_3_pv_dif_sig$neg_log10_pv)
+#upregulated genes of the sig diff expressed genes (blue in plot)
+KEGG_3_pv_dif_sigup = KEGG_3_pv_dif_sig[which(KEGG_3_pv_dif_sig$diff>0),]
+
+
+#plotting
+ggplot(KEGG_3_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
+  geom_point( size =0.3)+
+  geom_point(data= KEGG_3_pv_dif_sig, aes(diff , neg_log10_pv, color = "lower NES"), size=0.3, color = "orange")+
+  geom_point(data = KEGG_3_pv_dif_sigup, aes(diff,neg_log10_pv, color = "higher NES"), size=0.3, color = "blue")+
+  ggtitle("differences in NES between KEGG custer 3 compared to cluster (1+2) ")+
+  geom_text_repel(data = KEGG_3_pv_dif_sig, aes(diff, neg_log10_pv), label = row.names(KEGG_3_pv_dif_sig), size = 2, show.legend = FALSE)+
+  xlab ("mean(c3)-mean(c1,c2)")+
+  ylab ("-log10(p-value)")+
+  scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
+                     values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=3)))
+
+
+#which Pathways are sign different??
+KEGG_3_dif_sig = data.frame(KEGG_3_pv_dif_sig$diff)
+KEGG_3_dif_sig_names= c(rownames(KEGG_3_pv_dif_sig))
+KEGG_3_dif_sig = cbind( KEGG_3_dif_sig_names, KEGG_3_dif_sig)
+colnames(KEGG_3_dif_sig) = c("Pathway", "diff")
+
+ggplot(KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("KEGG pw with signif different NES in cluster 3")+
+  theme(plot.title = element_text(size=10))
+```
+
+```{r top ten diff pw Cluster 3 vs 1+2}
+#top ten pathways
+abs_KEGG_3_dif_sig<- KEGG_3_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_KEGG_3_dif_sig = cbind(KEGG_3_dif_sig_names, abs_KEGG_3_dif_sig)
+colnames( abs_KEGG_3_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_KEGG_3_dif_sig_rank = abs_KEGG_3_dif_sig[order(abs_KEGG_3_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_KEGG_3_dif_sig_rank = c(abs_KEGG_3_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_KEGG_3_dif_sig = KEGG_3_dif_sig[which(KEGG_3_dif_sig[,1] %in% names_abs_KEGG_3_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_KEGG_3_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten KEGG pw with signif different NES in cluster 3")+
+  theme(plot.title = element_text(size=6))
+
+```
+
+# compare absolute NES 
+
+```{r absoulte NES in cluster 1-3}
+#Compare the absolute NES scores between the clusters
+top_abs_KEGG_names = c(names_abs_KEGG_3_dif_sig_rank, names_abs_KEGG_1_dif_sig_rank, names_abs_KEGG_2_dif_sig_rank)#choose the top ten pathways of every cluster comparison
+top_abs_KEGG_names = unique(top_abs_KEGG_names)
+
+KEGG_top_c1 = KEGG_c1[which(rownames(KEGG_c1) %in% top_abs_KEGG_names),]
+KEGG_top_c2 = KEGG_c2[which(rownames(KEGG_c2) %in% top_abs_KEGG_names),]
+KEGG_top_c3 = KEGG_c3[which(rownames(KEGG_c3) %in% top_abs_KEGG_names),]
+
+KEGG_top_c1_mean = data.frame(apply(KEGG_top_c1, 1, mean))
+KEGG_top_c2_mean = data.frame(apply(KEGG_top_c2, 1, mean))
+KEGG_top_c3_mean = data.frame(apply(KEGG_top_c3, 1, mean))
+
+colnames(KEGG_top_c1_mean) = "cluster 1"
+colnames(KEGG_top_c2_mean) = "cluster 2"
+colnames(KEGG_top_c3_mean) = "cluster 3"
+KEGG_top_c1_c2_c3_mean = as.matrix(cbind(KEGG_top_c1_mean, KEGG_top_c2_mean, KEGG_top_c3_mean))
+
+
+KEGG_top_c1_c2_c3_mean_melted = (melt(KEGG_top_c1_c2_c3_mean))
+colnames(KEGG_top_c1_c2_c3_mean_melted) = c("Pathway", "cluster", "NES")
+ggplot(KEGG_top_c1_c2_c3_mean_melted, aes( fill = Pathway, y=NES, x=cluster)) + 
+    geom_bar(position="dodge", stat="identity")
+```
+
+# H-test
+
+```{r H test}
+#H test because 3 cluster
+
+KEGG_H1_cluster = c(rep(c(1),times = ncol(KEGG_c1)))
+KEGG_H2_cluster = c(rep(c(2),times = ncol(KEGG_c2)))
+KEGG_H3_cluster = c(rep(c(3),times = ncol(KEGG_c3)))
+H_cluster = c(KEGG_H1_cluster, KEGG_H2_cluster, KEGG_H3_cluster)
+KEGG_H_all = cbind(KEGG_c1, KEGG_c2, KEGG_c3)
+H_KEGG_cluster = rbind(KEGG_H_all, H_cluster)
+
+
+H_pv = c()
+for (i in 1:186){
+  v = as.numeric(H_KEGG_cluster[i,])
+  q = as.numeric(H_KEGG_cluster[nrow(H_KEGG_cluster),])
+  H_pv[i] = kruskal.test(v,q)$p.value
+}
+H_pv = matrix(H_pv)
+rownames(H_pv) = rownames(H_KEGG_cluster[1:186,])
+H_pv_cl = data.frame(na.omit(H_pv))
+H_pv_ordered = data.frame(H_pv_cl[order(-H_pv_cl$na.omit.H_pv., decreasing = T),,drop = F])
+
+#sign??
+cutoffpv_H = 0.05/186
+H_KEGG_sig = as.matrix(H_pv_ordered[which(H_pv_ordered$na.omit.H_pv.<cutoffpv_H),])
+rownames(H_KEGG_sig) = rownames(H_pv_ordered)[1:nrow(H_KEGG_sig)]
+top25_KEGG_H = c(rownames(H_KEGG_sig)[1:25])
+#get the top 25 pw for each cluster
+KEGG_c1_H_top25 = KEGG_c1[which(rownames(KEGG_c1) %in% top25_KEGG_H), ]
+KEGG_c2_H_top25 = KEGG_c2[which(rownames(KEGG_c2) %in% top25_KEGG_H), ]
+KEGG_c3_H_top25 = KEGG_c3[which(rownames(KEGG_c3) %in% top25_KEGG_H), ]
+
+#order according to pv
+KEGG_c1_H_top25 = cbind(rownames(KEGG_c1_H_top25), KEGG_c1_H_top25)
+KEGG_c1_H_top25_ordered = data.matrix(KEGG_c1_H_top25[match(top25_KEGG_H, KEGG_c1_H_top25$`rownames(KEGG_c1_H_top25)`),])
+KEGG_c1_H_top25_ordered = KEGG_c1_H_top25_ordered[,-1]#only once!!!!
+
+KEGG_c2_H_top25 = cbind(rownames(KEGG_c2_H_top25), KEGG_c2_H_top25)
+KEGG_c2_H_top25_ordered = data.matrix(KEGG_c2_H_top25[match(top25_KEGG_H, KEGG_c2_H_top25$`rownames(KEGG_c2_H_top25)`),])
+KEGG_c2_H_top25_ordered = KEGG_c2_H_top25_ordered[,-1]#only once!!!!
+
+KEGG_c3_H_top25 = cbind(rownames(KEGG_c3_H_top25), KEGG_c3_H_top25)
+KEGG_c3_H_top25_ordered = data.matrix(KEGG_c3_H_top25[match(top25_KEGG_H, KEGG_c3_H_top25$`rownames(KEGG_c3_H_top25)`),])
+KEGG_c3_H_top25_ordered = KEGG_c3_H_top25_ordered[,-1]#only once!!!!
+
+```
+
+```{r Heartmap H test}
+
+common_min = min(c(KEGG_c1_H_top25_ordered, KEGG_c2_H_top25_ordered, KEGG_c3_H_top25_ordered))
+common_max = max(c(KEGG_c1_H_top25_ordered, KEGG_c2_H_top25_ordered, KEGG_c3_H_top25_ordered))
+col_fun = circlize::colorRamp2(c(common_min,0, common_max), c("blue","black", "red"))
+
+
+Heatmap_KEGG = Heatmap(KEGG_c1_H_top25_ordered, column_title = "Fluctuating", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 108),heatmap_legend_param = list(title = "NES"),width=15*unit(3,"mm"))+
+  Heatmap(KEGG_c2_H_top25_ordered, column_title = "Upregulated", column_title_gp = gpar(fontsize = 16,fontface="bold"),col = col_fun,cluster_rows = FALSE, cluster_columns =  F,column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE,width=15*unit(3,"mm")) +
+  Heatmap(KEGG_c3_H_top25_ordered,column_title = "Neutral", column_title_gp = gpar(fontsize = 16,fontface="bold"), col = col_fun,cluster_rows = FALSE,cluster_columns =  F, column_names_gp = gpar(fontsize = 6),row_names_gp = gpar(fontsize = 8),show_heatmap_legend = FALSE,width=15*unit(3,"mm"))
+
+draw(Heatmap_KEGG, heatmap_legend_side = "left")
+
+
+```
+
+```{r}
+ClusteredHM = cbind(KEGG_c1_H_top25_ordered,KEGG_c2_H_top25_ordered,KEGG_c3_H_top25_ordered)
+ClusterHeatmap = Heatmap(ClusteredHM, name = "PID_all_sig_ordered", column_km = 3, cluster_rows = T, column_names_gp = gpar(fontsize = 7),row_names_gp = gpar(fontsize = 10), heatmap_legend_param = list(title= "NES"))
+
+ClusterHeatmap
+```
+
+
+
