@@ -7,35 +7,28 @@ To run the project, you need to download the following files, including raw and 
 
 You will find the analysis divided into several steps, which are organized in the following folders:  
 
-1. Data cleaning 
-
+1. Data cleaning <br />
 $\\rightarrow$ Data cleaning for DF1 and DF2: Biotype and variance filtering
 
-2. Descriptive analysis
-
+2. Descriptive analysis <br />
 $\\rightarrow$ Visualization of data distribution and cleaning steps for DF1
 $\\rightarrow$ Visualization of differential gene expression between normal and tumor tissue (DF2)
 
-3. Dimension reduction
-
+3. Dimension reduction <br />
 $\\rightarrow$ PCA (DFF1, DF2) and UMAP (DF1)
 
-4. GSEA
-
+4. GSEA<br />
 $\\rightarrow$ GSEA for DF1 and DF2
 $\\rightarrow$ Visualization of pathway activity matrices
 
-5. Clustering
-
+5. Clustering <br />
 $\\rightarrow$ DF1: Hierarchial clustering on PID geneset
 $\\rightarrow$ DF2: K-means clustering on Hallmark, PID, KEGG and all combined genesets and comparison of PID and KEGG subtypes
 
-6. Immune deconvolution
-
+6. Immune deconvolution <br />
 $\\rightarrow$ Determination of immune cell fractions in KIRC (DF1 and DF2)
 
-7. Logistic regression
-
+7. Logistic regression <br />
 $\\rightarrow$ Predicting high or low immune infiltration of KIRC samples
 
 
