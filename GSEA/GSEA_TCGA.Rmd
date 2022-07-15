@@ -217,7 +217,7 @@ NES_matrix_hallmark = as.matrix(NES_mean)
 
 #plot mean enrichment for each tumor type
 #heatmap 1
-Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE, col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+Heatmap_NES_hallmark = Heatmap(NES_matrix_hallmark, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 6), width = ncol(NES_matrix_hallmark)*unit(7, "mm"), height = nrow(NES_matrix_hallmark)*unit(3.7, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA Hallmark gene sets", show_heatmap_legend = TRUE, col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
 draw(Heatmap_NES_hallmark, heatmap_legend_side = "left")
 
 #heatmap 2
@@ -299,9 +299,10 @@ for (j in 1:33){
 }
 colnames(NES_mean_KEGG) = all_tumortypes_names
 
-#plot as heatmap
 NES_matrix_KEGG = as.matrix(NES_mean_KEGG)
-Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
+
+#plot as heatmap
+Heatmap_NES_KEGG = Heatmap(NES_matrix_KEGG, name = "NES", cluster_rows = TRUE, column_split = 4, column_names_gp = gpar(fontsize = 10), row_names_gp = gpar(fontsize = 3), width = ncol(NES_matrix_KEGG)*unit(8, "mm"), height = nrow(NES_matrix_KEGG)*unit(1, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA KEGG gene sets", col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), show_row_dend = FALSE, heatmap_legend_param = list(title = "NES", title_gp = gpar(fontsize = 16, fontface = "bold"), labels_gp = gpar(fontsize = 14)), column_title_gp = gpar(fontsize = 20, fontface = "bold"))
 draw(Heatmap_NES_KEGG, heatmap_legend_side = "left")
 
 #create dendrogram 
