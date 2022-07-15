@@ -18,28 +18,28 @@ Next, you need to make sure that you can easily access the data. Therefore you w
 <br />
 
 #### Repository organisation
-You will fi nd the analysis divided into several steps, which are organized in the following folders:  
+You will find the analysis divided into several steps, which are organized in the following folders:  
 
 1. Data cleaning <br />
-$\\rightarrow$ Data cleaning for DF1 and DF2: Biotype and variance filtering
+$\\rightarrow$ Data cleaning (DF1, DF2): biotype and variance filtering
 
 2. Descriptive analysis <br />
-$\\rightarrow$ Visualization of data distribution and cleaning steps for DF1 <br />
-$\\rightarrow$ Visualization of differential gene expression between normal and tumor tissue (DF2)
+$\\rightarrow$ Visualization of data distribution and cleaning steps (DF1) <br />
+$\\rightarrow$ Visualization of differential gene expression between normal and tumor tissue(DF2)
 
 3. Dimension reduction <br />
-$\\rightarrow$ PCA (DFF1, DF2) and UMAP (DF1)
+$\\rightarrow$ PCA (DF1, DF2) and UMAP (DF1)
 
 4. GSEA<br />
-$\\rightarrow$ GSEA for DF1 and DF2 <br />
+$\\rightarrow$ GSEA (DF1, DF2) <br />
 $\\rightarrow$ Visualization of pathway activity matrices
 
 5. Clustering <br />
-$\\rightarrow$ DF1: Hierarchial clustering on PID geneset <br />
-$\\rightarrow$ DF2: K-means clustering on Hallmark, PID, KEGG and all combined genesets and comparison of PID and KEGG subtypes
+$\\rightarrow$ Hierarchial clustering on PID geneset (DF1) <br />
+$\\rightarrow$ K-means clustering on Hallmark, PID, KEGG and all combined genesets and comparison of PID and KEGG subtypes (DF2)
 
 6. Immune deconvolution <br />
-$\\rightarrow$ Determination of immune cell fractions in KIRC (DF1 and DF2)
+$\\rightarrow$ Determination of immune cell fractions in KIRC (DF1, DF2)
 
 7. Logistic regression <br />
 $\\rightarrow$ Predicting high or low immune infiltration of KIRC samples
