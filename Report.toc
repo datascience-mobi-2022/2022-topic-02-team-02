@@ -2,15 +2,15 @@
 \contentsline {chapter}{\numberline {1}Abstract}{2}{chapter.1}%
 \contentsline {chapter}{\numberline {2}List of abbreviations}{5}{chapter.2}%
 \contentsline {chapter}{\numberline {3}Introduction}{6}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Computational Tools}{8}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}Dimension reduction}{8}{subsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.1.1}PCA}{8}{subsubsection.3.1.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.1.2}UMAP}{8}{subsubsection.3.1.1.2}%
-\contentsline {subsection}{\numberline {3.1.2}Statistical analysis}{8}{subsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.2.1}Shapiro-Wilks test}{8}{subsubsection.3.1.2.1}%
+\contentsline {section}{\numberline {3.1}Computational Tools}{7}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Dimension reduction}{7}{subsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.1}PCA}{7}{subsubsection.3.1.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.2}UMAP}{7}{subsubsection.3.1.1.2}%
+\contentsline {subsection}{\numberline {3.1.2}Statistical analysis}{7}{subsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.2.1}Shapiro-Wilks test}{7}{subsubsection.3.1.2.1}%
 \contentsline {subsubsection}{\numberline {3.1.2.2}Wilcoxon rank-sum and signed-rank test}{8}{subsubsection.3.1.2.2}%
 \contentsline {subsubsection}{\numberline {3.1.2.3}Kruksal-Wallis}{8}{subsubsection.3.1.2.3}%
-\contentsline {subsubsection}{\numberline {3.1.2.4}Bonferroni correction}{9}{subsubsection.3.1.2.4}%
+\contentsline {subsubsection}{\numberline {3.1.2.4}Bonferroni correction}{8}{subsubsection.3.1.2.4}%
 \contentsline {subsection}{\numberline {3.1.3}Clustering}{9}{subsection.3.1.3}%
 \contentsline {subsubsection}{\numberline {3.1.3.1}Kmeans}{9}{subsubsection.3.1.3.1}%
 \contentsline {subsubsection}{\numberline {3.1.3.2}Hierarchial clustering}{9}{subsubsection.3.1.3.2}%
@@ -24,15 +24,17 @@
 \contentsline {section}{\numberline {4.4}Predicting immune infiltration with logistic regression}{12}{section.4.4}%
 \contentsline {section}{\numberline {4.5}Packages}{13}{section.4.5}%
 \contentsline {chapter}{\numberline {5}Results}{14}{chapter.5}%
-\contentsline {section}{\numberline {5.1}TCGA pan-cancer analysis}{14}{section.5.1}%
+\contentsline {section}{\numberline {5.1}TCGA pan-cancer analysis !!prägnantere überschrift}{14}{section.5.1}%
 \contentsline {subsection}{\numberline {5.1.1}GSEA reveals the similarities and differences of tumor types in pan-cancer analysis (/in pathway activity)}{14}{subsection.5.1.1}%
-\contentsline {section}{\numberline {5.2}KIRC specific analysis}{15}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Tims teil}{15}{subsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.1}Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration}{15}{subsubsection.5.2.1.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.2}KIRC subtypes show differences in metabolic, immune and cell cycle pathways (??Überschift sehr schlecht)}{16}{subsubsection.5.2.1.2}%
-\contentsline {section}{\numberline {5.3}Logistic regression}{17}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Discussion}{18}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{19}{chapter.7}%
-\contentsline {chapter}{\numberline {8}References}{20}{chapter.8}%
-\contentsline {chapter}{\numberline {9}Appendix}{22}{chapter.9}%
+\contentsline {subsection}{\numberline {5.1.2}Identifying immune signaling (expression pattern) subtypes in 24 tumor types}{15}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}KIRC specific analysis ??prägnantere überschrift}{16}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{16}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Cancer hallmark pathways form subclusters in KIRC}{17}{subsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.2.1}Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration}{17}{subsubsection.5.2.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2.2}The classification into metabolic subtypes is consistent with immune clusters in KIRC ?????????????????}{18}{subsubsection.5.2.2.2}%
+\contentsline {section}{\numberline {5.3}Logistic regression}{18}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Discussion}{20}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{21}{chapter.7}%
+\contentsline {chapter}{\numberline {8}References}{22}{chapter.8}%
+\contentsline {chapter}{\numberline {9}Appendix}{24}{chapter.9}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
