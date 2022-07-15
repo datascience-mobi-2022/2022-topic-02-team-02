@@ -1,7 +1,5 @@
 ---
 title: "Pan_cancer_PCA_UMAP_DF1"
-author: "Linda Blaier"
-date: '2022-05-29'
 output: html_document
 ---
 
