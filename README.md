@@ -30,18 +30,21 @@ $\\rightarrow$ Visualization of differential gene expression between normal and 
 3. Dimension reduction <br />
 $\\rightarrow$ PCA (DF1, DF2) and UMAP (DF1)
 
-4. GSEA<br />
+4. Genesets <br />
+$\\rightarrow$ Comparing genesets using Jaccard index
+
+5. GSEA<br />
 $\\rightarrow$ GSEA (DF1, DF2) <br />
 $\\rightarrow$ Visualization of pathway activity matrices
 
-5. Clustering <br />
+6. Clustering <br />
 $\\rightarrow$ Hierarchial clustering on PID geneset (DF1) <br />
 $\\rightarrow$ K-means clustering on Hallmark, PID, KEGG and all combined genesets and comparison of PID and KEGG subtypes (DF2)
 
-6. Immune deconvolution <br />
+7. Immune deconvolution <br />
 $\\rightarrow$ Determination of immune cell fractions in KIRC (DF1, DF2)
 
-7. Logistic regression <br />
+8. Logistic regression <br />
 $\\rightarrow$ Predicting high or low immune infiltration of KIRC samples
 
 
