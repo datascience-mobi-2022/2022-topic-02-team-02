@@ -1,0 +1,258 @@
+---
+title: "UMAP_PID_NES_vgl"
+author: "Linda Blaier"
+date: '2022-07-05'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(69)
+```
+```{r}
+#KIRC_PID_clustering_Anna
+KIRC_PID_UMAP = umap_umap_PID_layout
+KIRC_PID = NES_OVERALL_PID_cl_bound
+```
+
+```{r}
+
+#for PID pathways: optimal number of clusters = 2
+
+PID_km2 =kmeans(KIRC_PID_UMAP, 2 ,nstart = 200)
+PID_km = PID_km2$cluster
+PID_c1_names = names(PID_km[which(PID_km == 1)]) #patient names of cluster1
+PID_c2_names = names(PID_km[which(PID_km == 2)]) # patient names of cluster2
+fviz_cluster(PID_km2, KIRC_PID_UMAP,
+             palette = c("orange", "blue"), 
+             geom = "point",
+             ellipse.type = "convex", 
+             ggtheme = theme_bw()
+             )#erroooooorrr
+
+
+PID_c1 = KIRC_PID[,colnames(KIRC_PID) %in% PID_c1_names] # df with patients of cluster1
+PID_c2 = KIRC_PID[,!colnames(KIRC_PID) %in% PID_c1_names] #df with patients cluster 2
+PID_c1_mean = data.frame(apply(PID_c1, 1,mean)) #pw activity mean for patients of cluster 1
+PID_c2_mean = data.frame (apply (PID_c2, 1, mean)) #fpr cluster 2
+PID_c1_c2 = cbind(PID_c2_mean, PID_c1_mean) #combine mean cluster 1 and cluster2 
+PID_c1_c2_dif = PID_c1_mean - PID_c2_mean #compare the mean activity scores of pathways
+#high scores means upregulated in cluster 1 
+
+#rank the compared pw-matrix to see the most differently expressed pw
+PID_c1_c2_dif_rank = data.frame(PID_c1_c2_dif$apply.PID_c1..1..mean.[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+PID_rownames = c(rownames(PID_c1_c2_dif))
+PID_rownames_rank = c(PID_rownames[order(PID_c1_c2_dif[,1],decreasing = TRUE)])
+
+PID_c1_c2_dif_rank = as.data.frame(cbind(PID_rownames_rank, PID_c1_c2_dif_rank))
+colnames(PID_c1_c2_dif_rank) = c("Pathway", "diff")
+
+  
+ggplot(PID_c1_c2_dif_rank, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()
+ 
+library(dplyr)
+
+PID_c1_c2_dif_rank %>%
+  filter(PID_c1_c2_dif_rank$diff !=0) %>%
+  ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
+    geom_bar(stat="identity")+
+    coord_flip()
+  
+
+  
+ 
+PID_c1_c2_dif_rank%>%
+  filter(abs(PID_c1_c2_dif_rank$dif)>0.050)%>%
+  ggplot( aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()
+
+#!!! until now there was no testing for significance--> these pw are differentially expressed but we dont now yet if significant--> see below
+```
+
+```{r calculations (wilcoxon, FC)}
+#working with FC and not with difference (minus)
+PID_c1_c2_FC = data.matrix(PID_c1_mean/PID_c2_mean)
+colnames(PID_c1_c2_FC) = "FC"
+PID_c1_c2_FC[is.nan(PID_c1_c2_FC)]=0
+#PROBLEM: what to do with INF??? (because of e.g. 0.1/0)
+
+#work with wilcoxon test as some of the pw have an enrichment score of zero for all patients, thus no normality, as shown below
+PID_c1_min = apply(PID_c1, 1, min)
+PID_c1_max = apply(PID_c1, 1, max) 
+PID_c1_constant = c(names(which(PID_c1_min==PID_c1_max)))
+length(PID_c1_constant) #there are 271 pw with constant NES, hence we use wilcoxon test 
+
+
+#perform wilcoxon test (unpaired) to see if there is a sign difference in NES between the clusters
+PID_c1_m = as.matrix(PID_c1) #matrix needed for wilcoxon
+PID_c2_m = as.matrix(PID_c2)
+PID_wilcox_pv  = data.matrix(sapply ( 1:nrow(PID_c1_m),function (x) {
+  wilcox.test(PID_c1_m[x,],PID_c2_m[x,],paired=FALSE)
+}$p.value))
+rownames(PID_wilcox_pv)=rownames(PID_c1)
+colnames(PID_wilcox_pv)="pvalue"
+#a lot of NaNs--> Maybe because of constant NES??
+
+#Bonferroni-Korrektur
+alpha_PID=0.05/(nrow(PID_wilcox_pv))
+#how many pathways have sign different NES??
+length(which(PID_wilcox_pv<alpha_PID))
+
+
+PID_wilcox_pv[is.nan(PID_wilcox_pv)] = 1
+```
+
+```{r Volcano Plot}
+#data preparation for Volcano Plot
+
+#problem with FC as there are a lot of Inf(if e.g. 0.1/0)--> what to do with those??
+#NaNs in FC can be converted to zero because 0/0=0
+#thus not the FC value data is used but the difference (minus)
+#calculate -log10 of p-value for plotting
+PID_wilcox_pv_log =-log10(PID_wilcox_pv)
+colnames(PID_wilcox_pv_log) = "neg_log10_pv"
+PID_wilcox_pv_log [PID_wilcox_pv_log  == Inf] <- 0
+
+#combine diff and pv matrix
+PID_pv_dif =as.data.frame(cbind(PID_c1_c2_dif,PID_wilcox_pv_log))
+colnames(PID_pv_dif) = c("diff","neg_log10_pv")
+
+
+
+#extracting significant differentially expressed genes (pvalue > cutoff), for coloring in volcano plot ---> will later be orange
+cutoffpv_PID = -log10(alpha_PID) 
+PID_pv_dif_sig = PID_pv_dif[which(PID_pv_dif$neg_log10_pv>cutoffpv_PID),]
+min(PID_pv_dif_sig$neg_log10_pv)
+#upregulated genes (FC >1) of the sig diff expressed genes (blue in plot)
+PID_pv_dif_sigup = PID_pv_dif_sig[which(PID_pv_dif_sig$diff>0),]
+
+#volcano plot, there are no significantly downregulated pathways
+library(ggplot2)
+library(ggrepel)
+#plotting
+ggplot(PID_pv_dif, aes(diff ,neg_log10_pv, color = "non-significant"))+
+  geom_point( size =0.3)+
+  geom_point(data= PID_pv_dif_sig, aes(diff , neg_log10_pv, color = "lower NES"), size=0.3, color = "orange")+
+  geom_point(data = PID_pv_dif_sigup, aes(diff,neg_log10_pv, color = "higher NES"), size=0.3, color = "blue")+
+  ggtitle("differences in NES between two PID clusters")+
+  geom_text_repel(data = PID_pv_dif_sig, aes(diff, neg_log10_pv), label = row.names(PID_pv_dif_sig), size = 2, show.legend = FALSE)+
+  xlab ("mean(c1)-mean(c2)")+
+  ylab ("-log10(p-value)")+
+  scale_color_manual(name="", breaks=c("lower NES", "non-significant", "higher NES"),
+                     values=c("lower NES" = "orange", "non-significant" = "black", "higher NES" = "blue"))+
+  guides(colour = guide_legend(override.aes = list(size=3)))
+
+
+#which Pathways are signifficantly different??
+PID_dif_sig = data.frame(PID_pv_dif_sig$diff)
+PID_dif_sig_names= c(rownames(PID_pv_dif_sig))
+PID_dif_sig = cbind( PID_dif_sig_names, PID_dif_sig)
+colnames(PID_dif_sig) = c("Pathway", "diff")
+
+ggplot(PID_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("PID pw with signif different NES in 2 KIRC clusters")+
+  theme(plot.title = element_text(size=10))
+
+```
+
+
+```{r top ten diff pw }
+#top ten pathways
+library(dplyr)
+abs_PID_dif_sig<- PID_dif_sig %>% 
+  select_if(is.numeric) %>%
+  abs()#absolute values
+
+abs_PID_dif_sig = cbind(PID_dif_sig_names, abs_PID_dif_sig)
+colnames( abs_PID_dif_sig) = c("Pathway", "abs.diff")#matrix with absolute difference in NES and pw names
+
+abs_PID_dif_sig_rank = abs_PID_dif_sig[order(abs_PID_dif_sig$abs.diff, decreasing = T),] #ranked matrix
+
+names_abs_PID_dif_sig_rank = c(abs_PID_dif_sig_rank[1:10,1])#names of top ten pw
+
+top_PID_dif_sig = PID_dif_sig[which(PID_dif_sig[,1] %in% names_abs_PID_dif_sig_rank),]# df with top ten dif (significant) pw
+  
+ggplot(top_PID_dif_sig, aes(x=reorder(Pathway,diff), y=diff)) +
+  geom_bar(stat="identity")+
+  coord_flip()+
+  ggtitle("top ten PID pw with signif different NES in cluster 1 vs 2")+
+  theme(plot.title = element_text(size=6))
+
+```
+
+
+
+```{r}
+#Are the pathways in both clusters upregulated compared to normal tissue and in one of the clusters even more? or are the pw in one cluster up and one downregulated compared to normal tissue?? -->whats the absolute NES in the top ten pw for both clusters?
+
+PID_top_c1 = PID_c1[which(rownames(PID_c1) %in% names_abs_PID_dif_sig_rank),]
+PID_top_c2 = PID_c2[which(rownames(PID_c2) %in% names_abs_PID_dif_sig_rank),]
+
+PID_top_c1_mean = data.frame(apply(PID_top_c1, 1, mean))
+PID_top_c2_mean = data.frame(apply(PID_top_c2, 1, mean))
+colnames(PID_top_c1_mean) = "cluster 1"
+colnames(PID_top_c2_mean) = "cluster 2"
+PID_top_c1_c2_mean = as.matrix(cbind(PID_top_c1_mean, PID_top_c2_mean))
+
+library(reshape)
+PID_top_c1_c2_mean_melted = (melt(PID_top_c1_c2_mean))
+colnames(PID_top_c1_c2_mean_melted) = c("Pathway", "cluster", "NES")
+ggplot(PID_top_c1_c2_mean_melted, aes( fill = Pathway, y=NES, x=cluster)) + 
+    geom_bar(position="dodge", stat="identity")
+```
+```{r}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+```
+
+
+```{r Seurat Plots}
+KIRC_PCA_x1=data.frame(KIRC_PID_pca_x)
+Seurat_PID = CreateSeuratObject(counts= KIRC_PID_cl)#create a Seurat object wiht the data, this object will be filled by the following commands (PCA;UMAP;clustering...)
+VlnPlot(Seurat_PID, features = c("PID-TCR-PATHWAY"))
+
+all.pathways = rownames(Seurat_PID)
+Seurat_PID = ScaleData(Seurat_PID, features = all.pathways, verbose = FALSE)#scaling 
+Seurat_PID = FindVariableFeatures(object = Seurat_PID)  #to run the PCA, otherwise Error
+Seurat_PID = RunPCA(Seurat_PID, features = VariableFeatures(object = Seurat_PID), approx = FALSE, npcs = 71)# approx = F, because: "Hi, this is a warning not an error, just saying that you're running partial SVD but computing most (or all) of the singular values. You can set approx=FALSE to run standard SVD instead."
+
+print(Seurat_PID[["pca"]], dims = 1:5, nfeatures = 5) #what influences the PCs?
+
+DimPlot(Seurat_PID, reduction = "pca")#plot PCA
+DimHeatmap(Seurat_PID, cells = 300, balance = TRUE) #heatmap for the influence on first PC
+
+Seurat_PID = FindNeighbors(Seurat_PID, dims =1:7)#patients assign differently to clusters when diffenent number of dims
+Seurat_PID = FindClusters(Seurat_PID, n.start = 20, n.iter = 50, resolution = 0.2) #"Identify clusters of cells by a shared nearest neighbor (SNN) modularity optimization based clustering algorithm. First calculate k-nearest neighbors and construct the SNN graph. Then optimize the modularity function to determine clusters."
+
+
+#rename the clusters
+cluster.ids = c("cluster1", "cluster2")
+names(cluster.ids) = levels(Seurat_PID) 
+Seurat_PID = RenameIdents(Seurat_PID, cluster.ids)
+
+
+
+Seurat_PID= RunUMAP(Seurat_PID, dims = 1:10) #UMAP
+DimPlot(Seurat_PID, reduction = "umap", label = TRUE, pt.size = 0.5) #umap plot
+
+cluster1.marker = FindMarkers(Seurat_PID, ident.1 = "cluster1", min.pct = 0.25)#find markers for cluster 1--> runs a wilcoxon between clusters to identify markers
+VlnPlot(Seurat_PID, features = c(row.names(cluster1.marker)[1:nrow(cluster1.marker)]))#plot the markers
+
+
+Seurat_PID_markers = FindAllMarkers(Seurat_PID, min.pct = 0.25) #find markers for all clusters
+
+Seurat_PID_top_pw = Seurat_PID_markers %>% group_by(cluster) %>% top_n(n =5, wt =avg_log2FC) #top 10 pw that identify clusters (top 5 for each cluster)
+FeaturePlot(Seurat_PID, features = Seurat_PID_top_pw$gene[1:10]) #umap with color for pw activity for top 10
+FeaturePlot(Seurat_PID, features = "PID-CD8-TCR-DOWNSTREAM-PATHWAY")#umap with color for pw activity for one pathway
+
+DoHeatmap(Seurat_PID, features = Seurat_PID_markers$gene)#heatmap clusterwise
+
+```
+
+
