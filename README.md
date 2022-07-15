@@ -27,15 +27,15 @@ $\\rightarrow$ Biotype and variance filtering (DF1, DF2)
 $\\rightarrow$ Visualization of data distribution and cleaning steps (DF1) <br />
 $\\rightarrow$ Visualization of differential gene expression between normal and tumor tissue(DF2)
 
-3. Dimension reduction <br />
-$\\rightarrow$ PCA (DF1, DF2) and UMAP (DF1)
-
-4. Genesets <br />
+3. Genesets <br />
 $\\rightarrow$ Comparing genesets using Jaccard index
 
-5. GSEA<br />
+4. GSEA<br />
 $\\rightarrow$ GSEA (DF1, DF2) <br />
 $\\rightarrow$ Visualization of pathway activity matrices
+
+5. Dimension reduction <br />
+$\\rightarrow$ PCA (DF1, DF2) and UMAP (DF1)
 
 6. Clustering <br />
 $\\rightarrow$ Hierarchial clustering on PID geneset (DF1) <br />
@@ -46,6 +46,9 @@ $\\rightarrow$ Determination of immune cell fractions in KIRC (DF1, DF2)
 
 8. Logistic regression <br />
 $\\rightarrow$ Predicting high or low immune infiltration of KIRC samples
+
+9. Figures <br />
+$\\rightarrow$ Final version of figures used in the report
 
 
 
