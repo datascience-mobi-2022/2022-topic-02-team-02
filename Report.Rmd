@@ -115,6 +115,7 @@ Since KIRC is the most prevalent form of RCC and has the worst prognosis with a 
 ### Dimension reduction
 
 #### PCA
+Principal component analysis is used to reduce a multidimensional set of data to a lower number of informative dimensions called principal components (PCs). The principle components are linear combinations of the original variables and are identified using matrix diagonalisation therefore, PCs have no correlation to each other. Each PC explains a portion of the total variance of the dataset, while they are ordered by decreasing proportion of explained variance. This way PCA aids to analyse and visualize structures in datasets [@pca_abdi_2010].  
 
 #### UMAP 
 
@@ -135,9 +136,11 @@ Multiple statistical testing results in an increased risk for type I errors (fal
 
 ### Clustering
 
-#### Kmeans
+#### K-means
+Clustering is used to find similarities in a data set and to group the data points accordingly. K-means is a numerical, unsupervised, non-deterministic iterative clustering method [@k_means_Na_2010] which determines the group affiliation based on a minimization of the within-cluster sum of squares. 
 
 #### Hierarchial clustering
+Hierarchical clustering is a bottom-up clustering method. Therefore, each object starts in its own cluster and similar clusters are merged iteratively to identify subcategories in the data set.  There are different linkage methods that determine which clusters are most similar one of which is the Ward method. It groups clusters with regard to minimizing the variance within clusters [@Statistics_Holmes_2019]. 
 
 ### Immune deconvolution
 
