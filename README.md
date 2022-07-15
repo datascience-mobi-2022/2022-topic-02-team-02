@@ -1,9 +1,20 @@
-# 2022-topic-02-team-02
-The aim of this analysis is to find differences in gene expression and pathway activity in 
-1. 33 different cancer types (pan-cancer analysis)
-2. normal and tumor tissue of KIRC patients
+# Unsere Überschrift 
 
+The aim of this analysis was to determine differences in gene expression and pathway activity in cancer. Fist, pan-cancer analysis was conducted which focuses on 33 different cancer types, and secondly characteristics of kidney renal clear cell carcinoma (KIRC) were investigated in more detail. For both parts of the analysis, fist data cleaning and descriptive analysis were performed. Subsequently, several genesets have been used to examine pathway activities more closely: Hallmark, PID, KEGG, PENG and MMR pathways. Gene set enrichment analysis (GSEA) based on these genesets was performed to determine enriched genesets. Based on GSEA results differences and similarities between cancer types were analyzed and subtypes were identified by hierarchical clustering. For focused analysis on KIRC, PCA and UMAP allowed identification of sybtypes by k-means. Among others, KIRC subtypes that differ in immune pathway activity could be identified and differences between subtypes in immune cell fractions were determined using immune deconvolution. Consequently, the subtypes were assigned to high and low immune infiltration. Based on this, a logistic regression was built to predict the immune infiltration in KIRC samples, hence to which of the immune subtypes they are assigned. 
+
+To run the project, you need to download the following files, including raw and cleaned data:
+
+You will find the analysis divided into several steps, which are organized in the following folders:  
 ## Data Cleaning
+
+
+
+
+
+
+
+
+
 ### Pan-cancer analysis
 1. Filter for biotypes with BiomaRt $\\rightarrow$ select only protein coding genes
 2. Filter for low variance genes $\\rightarrow$ keep only upper p50 quantile

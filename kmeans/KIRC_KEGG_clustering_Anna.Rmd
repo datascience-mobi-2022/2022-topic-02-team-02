@@ -628,7 +628,10 @@ draw(Heatmap_KEGG, heatmap_legend_side = "left")
 ```
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
