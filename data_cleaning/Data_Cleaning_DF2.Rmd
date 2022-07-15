@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 #Load data
 tcga_tumor_norm = readRDS("data/tcga_tumor_normal_datascience_proj_2022.RDS")
+#packages 
+library(biomaRt)
+library(dplyr)
 ```
 
 
@@ -24,8 +27,6 @@ tcga_KIRC_annot = data.frame(tcga_tumor_norm[["KIRC"]][["clinical"]])
 
 ```{r}
 
-library(biomaRt)
-library(dplyr)
 ##biotypes of the tcga_KIRC_tumor dataset
 gene_identifier_tumor = strsplit(rownames(tcga_KIRC_tumor), split = "|", fixed = TRUE)
 
@@ -67,7 +68,7 @@ dim(tcga_KIRC_norm_protein_coding)
 ``` 
 
 ```{r}
-#filtering genes with constant expression (problematic for shapiro test (no normality of the data of constant values) and hence ttest (only usable for normal distributed data))
+#filtering genes with constant expression
 tcga_KIRC_norm_min = apply(tcga_KIRC_norm_protein_coding, 1, min)
 tcga_KIRC_norm_max= apply(tcga_KIRC_norm_protein_coding, 1, max) #for normal cell data set
 tcga_KIRC_tumor_min = apply(tcga_KIRC_tumor_protein_coding, 1, min)
