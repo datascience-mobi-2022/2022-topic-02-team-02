@@ -1,5 +1,5 @@
 ---
-title: "PCA_pan_cancer"
+title: "Pan_cancer_PCA_UMAP_DF1"
 author: "Linda Blaier"
 date: '2022-05-29'
 output: html_document
@@ -13,13 +13,6 @@ set.seed(69)
 ```{r}
 # run Biotypes.Rmd to load data needed for this markdown
 # work with tcga_exp_prc_clean -> w/o low variable under p50
-#dim (tcga_exp_prc_clean)
-#tcga_exp_pca = prcomp (t(tcga_exp_prc_clean), center = F, scale. = F)
-#pca_var = tcga_exp_pca$sdev^2
-#proportion_pca_var = pca_var/sum(pca_var)
-#names_prop_pca_var = 1:length(proportion_pca_var)
-#barplot(proportion_pca_var[1:20])
-#tcga_exp_pca$sdev
 ```
 
 ```{r load packages}
@@ -27,10 +20,12 @@ library(Seurat)
 library(ggplot2)
 library(tidyverse)
 library(cluster)
+library(ggpubr)
+library(factoextra)
 ```
 
 ```{r PCA and data exploration}
-#tcga_exp_prc_clean is the "big data set", only protein coding genes and without low variance genes (p50-Quantile cut off)
+#tcga_exp_prc_clean is the cleaned DF1 (only protein coding genes and without low variance genes (p50-Quantile cut off))
 PCA_exp = RunPCA(as.matrix(tcga_exp_prc_clean))
 #create data frame with PCs and respective genes
 PCA_exp_PCs = PCA_exp@cell.embeddings
@@ -47,7 +42,7 @@ PCA_exp_scatter2 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = 
   geom_point(data= pca_kirc , aes(x = PC_1, y = PC_2), color = "black")
 print(PCA_exp_scatter2) 
 
-#plot PCA, PC1 vs PC2, KIRC = black --> outlier
+#plot PCA, PC1 vs PC2, KIRC = black 
 PCA_exp_scatter3 = ggplot (data = as.data.frame(PCA_exp_PCs), aes(x = PC_1, y = PC_3, color = cancer_types )) +
   geom_point(point = 0.5) + 
   geom_point(data= pca_kirc , aes(x = PC_1, y = PC_3), color = "black")
@@ -63,7 +58,6 @@ PCA_exp_gender
 ```
 
 ```{r UMAP}
-
 cancer_types = tcga_annot$cancer_type_abbreviation
 data_kirc = which(cancer_types == "KIRC")
 
@@ -118,9 +112,6 @@ sapply(1:33, function(i){
 
 ```{r clustering}
 #find optimal clusternumber
-library(ggpubr)
-library(factoextra)
-
 kmeans(UMAP_exp, centers= 20, nstart = 50)##
 # for 4 centers
 km.4 = kmeans(UMAP_exp, centers= 20, nstart = 50)
@@ -131,7 +122,6 @@ fviz_cluster(km.4, data.frame(UMAP_exp),
              ellipse.type = "convex", 
              ggtheme = theme_bw()
              )
-UMAP_plot
 
 #extract tot.withinss --> for silhouette plot (elbow method)
 tcga_UMAP_kmeans_tw = sapply(1:20, function(k){
@@ -156,94 +146,10 @@ sapply(1:19, function(x){
 tumorlist = readRDS("../data/tumorlist_z.RDS")
 
 cancer_abc = sort(cancer_names)
-names(PCA_tumorlist_ACC_BLCA) = cancer_abc[1:2] #funktioniert
+names(PCA_tumorlist_ACC_BLCA) = cancer_abc[1:2]
 ```
 
-```{r}
-# RunPCA only works on Genesets with 50 or more patients -> but setting npcs (total number of PCs to compute and store) doesn't change anything
-#only CHOL and DLBC have <50 columns/patients -> exclude from PCA 
-
-# cancer_abc[1:4]
-tumorlist_1_4 = tumorlist[1:4]
-PCA_tumorlist_1_4 = lapply (1:4, function (i) {
-  RunPCA(as.matrix(tumorlist[[i]]))
-}) 
-
-UMAP_tumorlist_1_4 = lapply (1:4, function (j) {
-  uwot::umap(PCA_tumorlist_1_4[[j]]@cell.embeddings)
-})
-
-UMAP_output_1_4 = list ()
-for (i in 1:4) {
-  UMAP_df = data.frame(UMAP_tumorlist_1_4[[i]])
-  UMAP_output_1_4[[i]] = ggplot (data = UMAP_df,
-  aes (x = X1, y =X2, color = "blue")) + 
-    geom_point(size = 0.5 , color = "blue")+ 
-    ggtitle (cancer_abc [[i]])
-}
-
-names(UMAP_output_1_4) = cancer_abc[1:4]
-
-sapply(1:4, function(i){
-  plot(UMAP_output_1_4[[i]])
-  }) 
-
-# cancer_abc[8:33]
-tumorlist_8_33 = tumorlist[8:33]
-PCA_tumorlist_8_33 = lapply (8:33, function (i) {
-  RunPCA(as.matrix(tumorlist[[i]]))
-}) 
-
-UMAP_tumorlist_8_33 = lapply (1:26, function (j) {
-  uwot::umap(PCA_tumorlist_8_33[[j]]@cell.embeddings)
-})
-cancer_abc_8_33 = cancer_abc[8:33]
-UMAP_output_8_33 = list ()
-for (i in 1:26) {
-  UMAP_df = data.frame(UMAP_tumorlist_8_33[[i]])
-  UMAP_output_8_33[[i]] = ggplot (data = UMAP_df,
-  aes (x = X1, y =X2, color = "blue")) + 
-    geom_point(size = 0.5 , color = "blue")+ 
-    ggtitle (cancer_abc_8_33 [[i]])
-}
-names(UMAP_output_8_33) = cancer_abc[8:33]
-
-sapply(1:26, function(i){
-  plot(UMAP_output_8_33[[i]])
-  })
-
-#PCA and UMAP for COAD
-tumorlist_COAD = tumorlist[[6]]
-PCA_COAD = RunPCA(as.matrix(tumorlist_COAD))
-UMAP_COAD = uwot::umap(PCA_COAD@cell.embeddings)
-UMAP_COAD_plot = ggplot (data = data.frame(UMAP_COAD), 
-                         aes (x = X1, y = X2, color = "blue")) + 
-  geom_point(size = 0.5, color = "blue")+
-  ggtitle("COAD")
-UMAP_COAD_plot
-colnames(UMAP_COAD) = c("X1", "X2")
-
-#PCA and UMAP for CHOL and DLBC but set custom npcs
-tumorlist_CHOL = tumorlist [[5]]
-PCA_CHOL = RunPCA(as.matrix(tumorlist_CHOL), npcs = ncol(tumorlist_CHOL)-1)
-UMAP_CHOL = uwot::umap(PCA_CHOL@cell.embeddings)
-UMAP_CHOL_plot = ggplot (data = data.frame(UMAP_CHOL), 
-                         aes (x = X1, y = X2, color = "blue")) + 
-  geom_point(size = 0.5, color = "blue")+
-  ggtitle("CHOL")
-UMAP_CHOL_plot
-
-tumorlist_DLBC = tumorlist [[7]]
-PCA_DLBC = RunPCA(as.matrix(tumorlist_DLBC), npcs = ncol(tumorlist_DLBC)-1)
-UMAP_DLBC = uwot::umap(PCA_DLBC@cell.embeddings)
-UMAP_DLBC_plot = ggplot (data = data.frame(UMAP_DLBC), 
-                         aes (x = X1, y = X2, color = "blue")) + 
-  geom_point(size = 0.5, color = "blue")+
-  ggtitle("DLBC")
-UMAP_DLBC_plot
-```
-
-```{r}
+```{r UMAP for each type}
 #PCA over all tumor types in one 
 #set number of PCs to number of patients (-1 is because of RunPCA)
 
@@ -270,16 +176,3 @@ sapply(1:33, function(i){
   })
 ```
  
-```{r}
-umap_plot_33 = list ()
-for (i in 1: length(UMAP_output_33)) {
-  UMAP_tumor = UMAP_output_33[[i]]$data
-  UMAP_output_33_df = data.frame(UMAP_tumor)
-  umap_plot_33 = ggplot (data = UMAP_output_33_df, 
-                         aes (x = X1, y = X2, color = cancer_types)) +
-    geom_point(size = 0.5)
-}
-umap_plot_33
-```
-
-
