@@ -21,7 +21,7 @@ Next, you need to make sure that you can easily access the data. Therefore you w
 You will find the analysis divided into several steps, which are organized in the following folders:  
 
 1. Data cleaning <br />
-$\\rightarrow$ Data cleaning (DF1, DF2): biotype and variance filtering
+$\\rightarrow$ Biotype and variance filtering (DF1, DF2)
 
 2. Descriptive analysis <br />
 $\\rightarrow$ Visualization of data distribution and cleaning steps (DF1) <br />
