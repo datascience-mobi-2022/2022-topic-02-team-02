@@ -565,8 +565,8 @@ heatmap.2(top_pathways_meandf, dendrogram = "column", hclustfun = hclust, trace 
 
 #heatmap
 NES_matrix_ALLE = as.matrix(pathway_activity_matrix_mean)
-Heatmap_NES_ALLE = Heatmap(NES_matrix_ALLE, name = "NES", cluster_rows = TRUE, column_split = 7, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_ALLE)*unit(8, "mm"), height = nrow(NES_matrix_ALLE)*unit(0.6, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA all gene sets", row_dend_width = unit(0, "cm"), col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")))
-Heatmap_NES_ALLE
+Heatmap_NES_ALLE = Heatmap(NES_matrix_ALLE, name = "NES", cluster_rows = TRUE, column_split = 7, column_names_gp = gpar(fontsize = 10), show_row_names = FALSE, width = ncol(NES_matrix_ALLE)*unit(10, "mm"), height = nrow(NES_matrix_ALLE)*unit(0.6, "mm"), column_dend_height = unit(15, "mm"), column_title = "Mean NES TCGA all gene sets", show_row_dend = FALSE, col = colorRamp2(c(-0.2, 0, 0.2), c("blue", "black", "red")), column_title_gp = gpar(fontsize = 20, fontface = "bold"), heatmap_legend_param = list(title = "NES"))
+draw(Heatmap_NES_ALLE, heatmap_legend_side = "left")
 
 #create dendrogram 
 alle_dendro_matrix = t(NES_matrix_ALLE)
