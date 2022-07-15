@@ -99,7 +99,6 @@ PID_c1_c2_dif_rank%>%
 PID_c1_c2_FC = data.matrix(PID_c1_mean/PID_c2_mean)
 colnames(PID_c1_c2_FC) = "FC"
 PID_c1_c2_FC[is.nan(PID_c1_c2_FC)]=0
-#PROBLEM: what to do with INF??? (because of e.g. 0.1/0)
 
 #work with wilcoxon test as some of the pw have an enrichment score of zero for all patients, thus no normality, as shown below
 PID_c1_min = apply(PID_c1, 1, min)
