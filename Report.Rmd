@@ -129,7 +129,7 @@ Shapiro-Wilks (SW) test is a normality test based on regression and correlation.
 Wilcoxon rank-sum test and Wilcoxon signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.  Wilcoxon signed-rank test is used to analyze matched-pair or one-sample data. It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero. The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007]. Wilcoxon rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values. The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011]. 
 
 #### Kruksal-Wallis 
-Kruksal-Wallis test is a rank-based non-parametric hypothesis test. It is an extension of Wilcoxon rank-sum test and can allows comparing more than two independent data sets. Kruksal-Wallis test tests the null hypothesis that there is no difference in distributions of all $k$ data sets. Alternative hypothesis states that there is a difference in at least two populations **(oder: …that at least two populations show stochastic heterogeneity)**  [@Kruksal-Wallis-ostertagova-2014]. 
+Kruksal-Wallis test is a rank-based non-parametric hypothesis test. It is an extension of Wilcoxon rank-sum test and can allows comparing more than two independent data sets. Kruksal-Wallis test tests the null hypothesis that there is no difference in distributions of all $k$ data sets. Alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998]. 
 
 #### Bonferroni correction
 Multiple statistical testing results in an increased risk for type I errors (false positives). Bonferroni correction is used to reduce this type I error rate. For this, the significance level is adjusted by dividing the `False decovery rate (FDR)` by the number of tests [@Bonferroni-Amstrong-2014]. 
@@ -192,7 +192,7 @@ A binary logistic regression model was created based on the pathway activity of 
 
 # Results
 
-## TCGA pan-cancer analysis !!prägnantere überschrift
+## TCGA pan-cancer analysis 
 
 ### GSEA reveals the similarities and differences of tumor types in pan-cancer analysis (/in pathway activity)
 
@@ -211,7 +211,7 @@ In (FIG) an exemplary result of the subtype identification is shown for the canc
 
 Based on PID pathway activities, we conducted a more in-depth analysis of the tumor microenvironment in KIRC. Therefore, we performed immune deconvolution to assess the total amount of immune cells present in tumor tissue (FIG). Patients in the “upregulated” subtype could be mapped to high CD8+ T-cell infiltration, whereas macrophages M2 and neutrophiles showed lower infiltration compared to the other two subtypes. Nonetheless, it is visible that other types of immune cells are outstandingly present in the tumor microenvironments of the “neutral” and “downregulated” subtype. The latter subtype showed highest infiltration rates in neutrophils, whereas the “neutral” subtype is characterized by high macrophage, as well as medium neutrophile infiltration. Other immune cells such as NK cells and B cells were not detectable upon all subtypes. Consequently, the subtypes differ not in immune infiltration in general, as the pathways expression patterns suggest, but are characterized by the presence of different immune cell types. 
 
-## KIRC specific analysis ??prägnantere überschrift
+## Focused analysis on KIRC
 
 ### Characterization of metabolic and immune signaling landscape in KIRC
 After characterizing differences within Kidney renal clear cell cancer patients, we next wanted to identity differentially expressed genes and pathways between tumorous and healthy tissue. Using the binary logarithm of the mean Fold change between both tissue types, we encountered that the tumorous tissue features both up and down regulated genes (FIG). To further analyze which parameters are crucial in distinguishing tumorous from healthy tissue, we used GSEA on 3 gene sets: PID, KEGG, and Hallmark. 
@@ -228,7 +228,7 @@ Next, Wilcoxon ranked-sum test with Bonferroni correction determined 14 pathways
 Additional patient data was provided, such as gender and tumor stage and was examined with regard to PID clusters. Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the “upregulated” cluster are tumor free, while in the “neutral” cluster, only $28.1\%$ of patients characterize as tumor free (Figure 5F). 
 
 
-#### The classification into metabolic subtypes is consistent with immune clusters in KIRC ?????????????????
+#### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
 Next, KEGG pathways were investigated more precisely. GSEA shows that enriched KEGG pathways in tumor compared to normal tissue were both, up- and downregulated (Figure 6A). Based on UMAP, patients could be divided into three subtypes by k-means clustering. Pathways, that are significantly different between clusters, were determined using Kruksal-Wallis test with Bonferroni correction. This allowed identification of a “fluctuating” cluster showing both up- and downregulation, one “upregulated” cluster with high or neutral NES and one “neutral” cluster mainly without pathway enrichment (Figure 6B). 
 KEGG pathways, that are upregulated in the “fluctuating” and “upregulated” subtypes, but not the in “neutral” subtype, include pathways that are mainly associated with immunological processes but also cell cycle. In this context, immunological processes refer to disease related pathways, such as diabetes mellitus, as well as cytokine and chemokine signaling and antigen processing and presentation.  
 Moreover, pathways that are downregulated in the “fluctuating” subtype but neutral in both other subtypes relate mostly to metabolic pathways, such as fatty acid, amino acid, and drug metabolism, as well as TCA cycle.
