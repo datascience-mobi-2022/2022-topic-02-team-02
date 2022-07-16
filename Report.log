@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  16 JUL 2022 13:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  16 JUL 2022 14:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -726,6 +726,19 @@ Package: xparse 2022-01-12 L3 Experimental document command parser
 Package: blx-case-expl3 2022/02/02 v3.17 expl3 case changing code for biblatex
 )) (/usr/local/texlive/2022/texmf-dist/tex/latex/xpatch/xpatch.sty
 Package: xpatch 2020/03/25 v0.3a Extending etoolbox patching commands
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/cleveref/cleveref.sty
+Package: cleveref 2018/03/27 v0.21.4 Intelligent cross-referencing
+Package cleveref Info: `hyperref' support loaded on input line 2370.
+LaTeX Info: Redefining \cref on input line 2370.
+LaTeX Info: Redefining \Cref on input line 2370.
+LaTeX Info: Redefining \crefrange on input line 2370.
+LaTeX Info: Redefining \Crefrange on input line 2370.
+LaTeX Info: Redefining \cpageref on input line 2370.
+LaTeX Info: Redefining \Cpageref on input line 2370.
+LaTeX Info: Redefining \cpagerefrange on input line 2370.
+LaTeX Info: Redefining \Cpagerefrange on input line 2370.
+LaTeX Info: Redefining \labelcref on input line 2370.
+LaTeX Info: Redefining \labelcpageref on input line 2370.
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/csquotes/csquotes.sty
 Package: csquotes 2021-02-22 v5.2l context-sensitive quotations (JAW)
 \csq@reset=\count421
@@ -802,7 +815,7 @@ Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
 \c@LT@chunks=\count443
 \LT@p@ftn=\toks28
 )
-Class scrreprt Info: longtable captions redefined on input line 101.
+Class scrreprt Info: longtable captions redefined on input line 102.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
 \multirow@colwidth=\skip101
@@ -895,40 +908,36 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
-(./Report.aux
-
-LaTeX Warning: Label `umap' multiply defined.
-
-)
+(./Report.aux)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 127.
-LaTeX Font Info:    ... okay on input line 127.
-Package scrbase Info: activating english \contentsname on input line 127.
-Package scrbase Info: activating english \listfigurename on input line 127.
-Package scrbase Info: activating english \listtablename on input line 127.
-LaTeX Info: Redefining \microtypecontext on input line 127.
-Package microtype Info: Applying patch `item' on input line 127.
-Package microtype Info: Applying patch `toc' on input line 127.
-Package microtype Info: Applying patch `eqnum' on input line 127.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 128.
+LaTeX Font Info:    ... okay on input line 128.
+Package scrbase Info: activating english \contentsname on input line 128.
+Package scrbase Info: activating english \listfigurename on input line 128.
+Package scrbase Info: activating english \listtablename on input line 128.
+LaTeX Info: Redefining \microtypecontext on input line 128.
+Package microtype Info: Applying patch `item' on input line 128.
+Package microtype Info: Applying patch `toc' on input line 128.
+Package microtype Info: Applying patch `eqnum' on input line 128.
 
-Package microtype Warning: Unable to apply patch `footnote' on input line 127.
+Package microtype Warning: Unable to apply patch `footnote' on input line 128.
 
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
@@ -936,7 +945,7 @@ Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 127.
+LaTeX Info: Redefining \showhyphens on input line 128.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -964,7 +973,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 127.
+Package hyperref Info: Link coloring OFF on input line 128.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/usr/local/texlive/2022/texmf-dist/tex/latex/refcount/refcount.sty
@@ -976,9 +985,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count462
 )
-LaTeX Info: Redefining \ref on input line 127.
-LaTeX Info: Redefining \pageref on input line 127.
-LaTeX Info: Redefining \nameref on input line 127.
+LaTeX Info: Redefining \ref on input line 128.
+LaTeX Info: Redefining \pageref on input line 128.
+LaTeX Info: Redefining \nameref on input line 128.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -1041,12 +1050,12 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'Report.bbl' not found.
 No file Report.bbl.
-Package biblatex Info: Reference section=0 on input line 127.
-Package biblatex Info: Reference segment=0 on input line 127.
+Package biblatex Info: Reference section=0 on input line 128.
+Package biblatex Info: Reference segment=0 on input line 128.
 \c@lstlisting=\count463
-Package scrhack Info: undefining \float@addtolists on input line 127.
+Package scrhack Info: undefining \float@addtolists on input line 128.
 LaTeX Font Info:    Trying to load font information for T1+lmss on input line 1
-36.
+37.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -1055,46 +1064,46 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-52.
+53.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-52.
+53.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-152.
+153.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-152.
+153.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 152.
+(Font)              <14.4> on input line 153.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 152.
+(Font)              <10> on input line 153.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 152.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 152
+(Font)              <7> on input line 153.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 153
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 152
+LaTeX Font Info:    Trying to load font information for U+msb on input line 153
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-Overfull \hbox (40.0571pt too wide) in paragraph at lines 152--157
+Overfull \hbox (40.0571pt too wide) in paragraph at lines 153--158
  [][] 
  []
 
@@ -1108,17 +1117,22 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/10.95'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 165.
+(Font)              <10.95> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 165.
+(Font)              <8> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 165.
+(Font)              <6> on input line 166.
 [2
 
 ]
 Package tocbasic Info: character protrusion at toc deactivated on input line 16
-5.
-(./Report.toc [3
+6.
+(./Report.toc
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+8.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [3
 
 ])
 \tf@toc=\write4
@@ -1132,37 +1146,42 @@ chapter 2.
 chapter 3.
 [6
 
-] [7]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-98.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [8] [9] [10]
+] [7] [8] [9] [10]
 chapter 4.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+434.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+Underfull \hbox (badness 10000) in paragraph at lines 412--437
+\T1/lmtt/m/n/10.95 For all KIRC patients of\T1/lmr/m/n/10.95 (+20) DF1\T1/lmtt/
+m/n/10.95 the immune cell fractions of the bulk samples
+ []
+
 [11
 
 ] [12] [13]
 chapter 5.
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=163, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=168, 
 555.35109pt x 184.65593pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l0_Ebene 1.pdf  used on input line 492.
+l0_Ebene 1.pdf  used on input line 499.
 (pdftex.def)             Requested size: 426.7912pt x 141.90936pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 492--493
+Underfull \hbox (badness 10000) in paragraph at lines 499--500
 [][]
  []
 
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_Ebene 1.pdf, id=166, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_Ebene 1.pdf, id=171, 
 475.0761pt x 353.19728pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l6_Ebene 1.pdf  used on input line 508.
+l6_Ebene 1.pdf  used on input line 515.
 (pdftex.def)             Requested size: 426.79613pt x 317.30333pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1174,39 +1193,39 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5.1})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.543 
+l.550 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0
 _Ebene 1.pdf>] [15
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.543 
+l.550 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6
 _Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf, id=209, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf, id=214, 
 568.0295pt x 294.98555pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l3_Ebene 1.pdf  used on input line 549.
+l3_Ebene 1.pdf  used on input line 556.
 (pdftex.def)             Requested size: 426.80981pt x 221.64821pt.
 [16
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.571 
+l.579 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3
 _Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf, id=243, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf, id=248, 
 504.11319pt x 397.33711pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l4_Ebene 1.pdf  used on input line 613.
+l4_Ebene 1.pdf  used on input line 621.
 (pdftex.def)             Requested size: 426.80595pt x 336.4043pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1216,28 +1235,28 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5.4})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.634 
+l.642 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4
 _Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf, id=276, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf, id=281, 
 574.23775pt x 420.10484pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l1_Ebene 1.pdf  used on input line 658.
+l1_Ebene 1.pdf  used on input line 666.
 (pdftex.def)             Requested size: 426.80438pt x 312.2445pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [19]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=291, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=295, 
 542.22766pt x 177.32076pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l2_Ebene 1.pdf  used on input line 698.
+l2_Ebene 1.pdf  used on input line 706.
 (pdftex.def)             Requested size: 426.79143pt x 139.57048pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1247,56 +1266,46 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5.5})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.728 
+l.736 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1
+_Ebene 1.pdf>] [21
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.745 
+       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2
 _Ebene 1.pdf>]
-Overfull \hbox (7.32076pt too wide) in paragraph at lines 739--751
+Overfull \hbox (7.32076pt too wide) in paragraph at lines 747--759
 [][]
  []
 
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf,
- id=328, 536.5627pt x 343.85808pt>
+ id=353, 536.5627pt x 343.85808pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1
 .pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.
 pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l7_version3_Ebene 1.pdf  used on input line 754.
+l7_version3_Ebene 1.pdf  used on input line 762.
 (pdftex.def)             Requested size: 426.81093pt x 273.52325pt.
 
-Overfull \hbox (4.57349pt too wide) in paragraph at lines 753--755
+Overfull \hbox (4.57349pt too wide) in paragraph at lines 761--763
 []\T1/lmr/m/n/10.95 (-20) - []
  []
 
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 755.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[21
-pdfTeX warning (ext4): destination with the same identifier (name{figure.5.6}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.785 
-       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2
-_Ebene 1.pdf>] [22
+[22
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5.7}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.785 
+l.793 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7
 _version3_Ebene 1.pdf>] [23]
 chapter 6.
 [24
 
-]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 8
-54.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [25] [26] [27]
+] [25] [26] [27]
 chapter 7.
 [28
 
@@ -1309,43 +1318,40 @@ chapter 9.
 [32
 
 ] (./Report.aux)
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package logreq Info: Writing requests to 'Report.run.xml'.
 \openout1 = `Report.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 29903 strings out of 478268
- 567148 string characters out of 5846347
- 1587162 words of memory out of 5000000
- 47285 multiletter control sequences out of 15000+600000
- 551224 words of font info for 202 fonts, out of 8000000 for 9000
+ 31494 strings out of 478268
+ 605165 string characters out of 5846347
+ 1614004 words of memory out of 5000000
+ 48911 multiletter control sequences out of 15000+600000
+ 546255 words of font info for 184 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  108i,20n,106p,10610b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local
-/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2
-022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2022/texmf-dist
-/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvi
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2022/
+texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/texmf-dist/fon
+ts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvi
 ps/lm/lm-mathsy.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/l
 mbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb
 ></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/loc
-al/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texlive/
-2022/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2022/texmf-
-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/
-type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publi
-c/lm/lmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.
-pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr/
-local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/texl
-ive/2022/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texlive/2022/t
-exmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2022/texmf-dis
-t/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/ty
-pe1/public/lm/lmtt10.pfb>
-Output written on Report.pdf (32 pages, 4268260 bytes).
+al/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/
+2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-
+dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/
+type1/public/lm/lmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public
+/lm/lmri10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss10
+.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr
+/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/tex
+live/2022/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/202
+2/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-di
+st/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2022/texmf-dist/fonts/t
+ype1/public/lm/lmtt12.pfb>
+Output written on Report.pdf (32 pages, 4281048 bytes).
 PDF statistics:
- 657 PDF objects out of 1000 (max. 8388607)
- 533 compressed objects within 6 object streams
- 159 named destinations out of 1000 (max. 500000)
- 45308 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 655 PDF objects out of 1000 (max. 8388607)
+ 531 compressed objects within 6 object streams
+ 153 named destinations out of 1000 (max. 500000)
+ 41220 words of extra memory for PDF output out of 42996 (max. 10000000)
 
