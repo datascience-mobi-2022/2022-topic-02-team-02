@@ -61,11 +61,11 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
 	{\vspace{\stretch{2}}}
 	{\usekomafont{title}
 
-		{\Huge Molecular Characterization of Immune Signaling Subtypes in Human Cancer}
-
-		{\LARGE A Pan-Cancer Analysis with therapeutic outlooks for clear cell renal cell carcinoma}
+		{\huge Molecular Characterization of Immune Signaling and Metabolic Subtypes in Human Cancer}
 
 		{\Huge }
+		
+		{\LARGE A Pan-Cancer Analysis with therapeutic outlooks for clear cell renal cell carcinoma}
 
 	}
 
@@ -99,7 +99,7 @@ Pan cancer analysis aims to find similarities and differences across different t
 
 It is known that cancer cells have certain characteristics that distinguish them from normal cells, the so-called hallmarks of cancer. These enable them to evade human protection mechanisms and sustain uncontrolled cell proliferation. Cancer hallmarks often are a consequence of altered gene expression patterns [@cancer_hallmarks_hanahan_2011]. Among other things in this project, we want to identify and compare pathways with altered gene expression who are primarily responsible for establishing the cancer hallmarks across the 33 tumor types selected in the TCGA. 
 
-The activation of oncogenes and the loss of tumor suppressor gene function are the main cause for tumor development. Both can lead to reprogramming of cellular metabolism. This way cancer cells can cover their high needs for nutrients even in a nutrient-poor environment. For example, cancer cells change their energy metabolism to deregulate glucose and amino acid uptake. They also use anaerob glycolysis as preferred way of generating energy which among other things like the use of intermediates of Glycolysis and TCA Cycle leads to increased biomass needed for proliferation [@metabolism_hallmarks_natalya_2016; @Metabolism_Warburg_1927]. Therefore, we also did a pan cancer analysis on metabolic pathways for which we used pathways curated by the Kyoto Encyclopedia of Genes and Genomes (KEGG). 
+The activation of oncogenes and the loss of tumor suppressor gene function are the main cause for tumor development. Both can lead to reprogramming of cellular metabolism. This way cancer cells can cover their high needs for nutrients even in a nutrient-poor environment. For example, cancer cells change their energy metabolism to deregulate glucose and amino acid uptake. They also use anaerob glycolysis as preferred way of generating energy which among other things like the use of intermediates of Glycolysis and TCA Cycle leads to increased biomass needed for proliferation [@metabolism_hallmarks_natalya_2016; @Metabolism_Warburg_1927]. Therefore, we also performed a pan cancer analysis on metabolic pathways for which we used pathways curated by the Kyoto Encyclopedia of Genes and Genomes (KEGG). 
 
 Beyond the tumor cells themselves, a tumor type is also characterized by its microenvironment. Dependent on the composition of immune cells in the microenvironment, it can either promote or suppress tumorigenesis. For instance, Cytotoxic T cells (CD8+) are usually associated with a positive prognosis while macrophages are associated with a poor prognosis for the cancer patient [@tumor_microenvironment_Anderson_2020]. To investigate immune infiltration, we used a gene set from the Pathway interaction database (PID).  The respective pathways mainly concern signalling especially regarding cell cycle and immune response. 
 
@@ -194,14 +194,14 @@ A binary logistic regression model was created based on the pathway activity of 
 
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf}
-  \caption{This is a figure.}
+  \caption{Clustering of 33 tumor types based on gene expression. (A) UMAP besed on gene expression levels show clustering between different tumor types. (B) Venn-diagram shows overlap between the significantly differentially expressed genes and genes in the genesets Hallmark, KEGG and PID}
   \label{umap}
 \end{figure}
 Visualizing the 33 tumor types based on gene expression using PCA and UMAP revealed that gene expression landscape is highly diverse. Nontheless, tumor types, which all differ severly in their phenotype and histopathalogy, appear to form clusters upon gene expression \ref{umap}$A$. To asses the fundament of these clusters, we utilized serveral genesets, including hallmark, PID and KEGG, which include $24,7%$ of our highly differentially expressed genes and were used for further analysis using GSEA \ref{umap}$B$.
 
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_Ebene 1.pdf}
-  \caption{This is a figure.}
+  \caption{GSEA results for 33 tumor types (A) Heatmap showing enrichment of hallmark genesets in all tumor types (B) Heatmap showing enrichment of KEGG genesets in all tumor types (C) Heatmap showing the top 30 variant genesets}
   \label{hm}
 \end{figure}
 
@@ -214,7 +214,7 @@ The top 30 variance pathways across all tumor types identified several clusters 
 
 \begin{figure}
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf}
-  \caption{}
+  \caption{Immune signaling subtypes identified in 24 tumor times and association with immune infiltration in KIRC (A) Ratio of "High", "Low" and "Neutral" immune signaling expression over all patients and per tumor type (B) Heatmap showing exemplary results of clustering for KIRC (C) Heatmap showing immune infiltration in KIRC}
   \label{pengplot}
 \end{figure}
 
@@ -230,7 +230,7 @@ Based on PID pathway activities, we conducted a more in-depth analysis of the tu
 
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf}
-  \caption{}
+  \caption{Identification of differences between healthy and tumorous tissue in KIRC (A) Volcano plot showing differential gene expression between healthy and tumorous tissue (B) Top 10 most frequently enriched pathways (C) Heatmap showing differentially expressed hallmark pathways}
   \label{volcano}
 \end{figure}
 
@@ -246,7 +246,7 @@ To characterize subtypes within the 72 KIRC patients, we next looked at each gen
 
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf}
-  \caption{This is a figure.}
+  \caption{Identifying Immune subtypes within KIRC (A) K-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster}
   \label{pid}
 \end{figure}
 
@@ -258,7 +258,7 @@ Additional patient data was provided, such as gender and tumor stage and was exa
 
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf}
-  \caption{This is a figure.}
+  \caption{Identifying Metabolic and Signaling subtypes within KIRC (A) K-means clustering based on KEGG pathways (B) Mapping of PID clusters onto KEGG clusters}
   \label{kegg}
 \end{figure}
 Next, KEGG pathways were investigated more precisely. GSEA shows that enriched KEGG pathways in tumor compared to normal tissue were both, up- and downregulated (Figure 6A). Based on UMAP, patients could be divided into three subtypes by k-means clustering. Pathways, that are significantly different between clusters, were determined using Kruksal-Wallis test with Bonferroni correction. This allowed identification of a “fluctuating” cluster showing both up- and downregulation, one “upregulated” cluster with high or neutral NES and one “neutral” cluster mainly without pathway enrichment \ref{kegg}$A$. 
@@ -286,7 +286,7 @@ The binary logistic regression model predicts immune infiltration in patients ba
 
 \begin{figure}[h]-
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}
-  \caption{This is a figure.}
+  \caption{Prediction of immune subtypes based on immune signaling pathways (A) Logistic regression model for $`PID_TCR_PATHWAY`$ and $`PID_IL1_PATHWAY activity`$ (B) Confusion Table (C) ROC-curve for model performance }
   \label{log}
 \end{figure}
 By taking the exponent of the coefficients in Table \ref{tab}, the returned value implies that for every increase of $1$ in NES of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5$%) and $3.206149$($220.6$%), respectively. The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as “Immune infiltrated” \ref{log}$A$. The contribution of each coefficient to the model was evaluated and confirmed with a Wald’s test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant. The significance of the whole model in contrast to a null-model was confirmed by McFadden’s pseudo-$R^2$ ($R_{Mc}^2=0.5074508$) and the p-value of the overall chi-square statistic ($p=7.860549e-60$).  
@@ -310,7 +310,8 @@ Since immune infiltration and the composition of the TME fluctuates among tumor 
 
 Beyond the relative differences within KIRC, tumorous tissue was compared with healthy tissue. Noticeably, allograft rejection and interferon gamma response as well as cell cycle regulator upregulation were the most commonly enriched pathways, distinguishing tumorous from healthy tissue. These pathways characterize an aggressive and often metastatic KIRC subtype[@Allograft-E2F-Lin-2022]. Since these hallmark pathways are upregulated in the majority of KIRC patients, the dominance of this subtypes is standing to reason and is supported by further analysis. On the first look KRAS appeared to be downregulated, which is rather untypical for an oncogene, especially since KRAS is effected in the majority of tumors. The ´Hallmark KRAS signaling DN´ pathway, however, consist of genes, which are downregulated in presence of KRAS activation, which is concurrent to literature[@RAS-Kumar-2018]. Even though no mutational analysis was performed, this pathway hints at a loss of function mutation in most KIRC patients.
   
-Further analysis, based on PID signaling pathways, revealed an “upregulated” and “neutral” subtype. The “upregulated” subtype was mapped to high CD8+ T cell infiltration. These subtypes were commonly found in analysis of the KIRC microenvironment, classifying the infiltrated subtype as immunologically as “hot” and the other one as “cold”. Once again, the immunologically “cold” subtype was associated with better prognosis[@mRNA-Xu-2021]. Nonetheless, the T cell infiltrated subtype showed an increased number of “Tumor free” patients. Since therapeutic procedures are not defined for most patients, additional patient data are needed to assess, whether these observations are truly contradictory or not.
+Further analysis, based on PID signaling pathways, revealed an “upregulated” and “neutral” subtype. The “upregulated” subtype was mapped to high CD8+ T cell infiltration. Additionally, this subtype is characterized by high IL1-expression, which is known to create an inflammatory environment, benefical for tumor progression and proangiogenic [@IL1_Mantovani_2017].
+These subtypes were commonly found in analysis of the KIRC microenvironment, classifying the infiltrated subtype as immunologically as “hot” and the other one as “cold”. Once again, the immunologically “cold” subtype was associated with better prognosis[@mRNA-Xu-2021]. Nonetheless, the T cell infiltrated subtype showed an increased number of “Tumor free” patients. Since therapeutic procedures are not defined for most patients, additional patient data are needed to assess, whether these observations are truly contradictory or not.
 Besides immune signaling pathways, the “upregulated” subtype showed high expression in cell cycle regulators, such as E2F. Considering an association between the IL PI3K pathways and activation of E2F in T cells, proliferation might not only be upregulated in the tumor itself, but in T cells especially, leading to high infiltration rates[@Il2-E2F-Brennan-1997]. 
 Furthermore, immune signaling subtypes were mapped onto metabolic and signaling KEGG clusters. Noticeably, TCA cycle was downregulated in most patients. This observation is associated with the Warburg effect, where glycolysis is used for the main energy generation. This leads to increased lactate production and release, creating a low pH-value, which is known to be immunosuppressive. Additionally, the risk for apoptosis due to lesser mitochondria presence is beneficial for tumor growth[@Warburg-Zheng-2021, @Warburg-Liberti-2016].
 
