@@ -1,6 +1,7 @@
 data
 maja_workspace
 
+<<<<<<< Updated upstream
 # Created by https://www.toptal.com/developers/gitignore/api/macos,r,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,r,windows
 
@@ -123,3 +124,18 @@ maja_workspace.RData
 maja_workspace.RDataTmp
 2022-topic-02-team-02.Rproj
 Plots_anna
+=======
+R Project/.Rproj.user/26AB20E1/sources/s-88AEE678/lock_file
+R Project/.Rproj.user/shared/notebooks/patch-chunk-names
+R Project/R Project.Rproj
+R Project/.Rhistory
+R Project/.Rproj.user/26AB20E1/pcs/source-pane.pper
+R Project/.Rproj.user/26AB20E1/pcs/windowlayoutstate.pper
+R Project/.Rproj.user/26AB20E1/rmd-outputs
+R Project/.Rproj.user/26AB20E1/pcs/workbench-pane.pper
+R Project/.Rproj.user/26AB20E1/saved_source_markers
+R Project/.Rproj.user/26AB20E1/sources/per/t/837EAFF9-contents
+R Project/.Rproj.user/26AB20E1/sources/prop/1D25F2E7
+R Project/.Rproj.user/26AB20E1/sources/per/t/837EAFF9
+R Project/.Rproj.user/26AB20E1/sources/prop/INDEX
+>>>>>>> Stashed changes
