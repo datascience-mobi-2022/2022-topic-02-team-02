@@ -192,7 +192,7 @@ A binary logistic regression model was created based on the pathway activity of 
 
 ### GSEA reveals the similarities and differences of tumor types in pan-cancer analysis (/in pathway activity)
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf}
   \caption{This is a figure.}
 \end{figure}
@@ -219,7 +219,7 @@ Based on PID pathway activities, we conducted a more in-depth analysis of the tu
 
 ### Characterization of metabolic and immune signaling landscape in KIRC
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_Ebene 1.pdf}
   \caption{This is a figure.}
 \end{figure}
@@ -234,7 +234,7 @@ To characterize subtypes within the 72 KIRC patients, we next looked at each gen
 
 #### Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf}
   \caption{This is a figure.}
 \end{figure}
@@ -246,7 +246,7 @@ Additional patient data was provided, such as gender and tumor stage and was exa
 
 #### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
 
-\begin{figure}
+\begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf}
   \caption{This is a figure.}
 \end{figure}
@@ -257,7 +257,7 @@ Moreover, KEGG clusters show similar subdivision of samples as PID clusters. In 
 
 ## Logistic regression 
 
-\begin{figure}
+\begin{figure}[h]-
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/LogReg_panel.png}
   \caption{This is a figure.}
 \end{figure}
