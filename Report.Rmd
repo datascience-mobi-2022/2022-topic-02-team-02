@@ -13,7 +13,7 @@ header-includes:
   - \usepackage[T1]{fontenc}
   - \usepackage{lmodern}
   - \usepackage[onehalfspacing]{setspace}
-  - \usepackage[left=2.50cm, right=2.50cm, top=2.50cm, bottom=2.50cm, bindingoffset=10mm, includehead, includefoot]{geometry}
+  - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,bindingoffset=10mm,includehead,includefoot]{geometry}
   - \usepackage[headsepline]{scrlayer-scrpage}
   - \usepackage{url}
   - \usepackage[backend=biber, style=authoryear, giveninits=true, maxbibnames=99, uniquename=init, maxcitenames=2, hyperref=true, date=year]{biblatex}
@@ -94,7 +94,7 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
 
 # List of abbreviations
 
-  {\Large
+  \normalsize
   	\begin{tabular}{rl}
   		ACC & Adrenocortical carcinoma\\
   		BLCA & Bladder Urothelial Carcinoma\\
@@ -140,7 +140,7 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
       UMAP & uniform manifold approximation and projection\\
       UVM & Uveal Melanoma\\
   		\end{tabular}
-  	}
+
 
 # Introduction
 Cancer is one of the most prevalent diseases in the world and responsible for almost 10 million deaths each year [@cancer_statistics_Ferlay_2021]. Therefore, it is a big interest to further understand the characteristics of cancer in more detail hoping to find new treatment options. 
@@ -335,7 +335,7 @@ The binary logistic regression model predicts immune infiltration in patients ba
 
 \begin{figure}[h]-
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}
-  \caption{}
+  \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID_TCR_PATHWAY$ and $PID_IL1_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
   \label{log}
 \end{figure}
 By taking the exponent of the coefficients in Table \cref{tab}, the returned value implies that for every increase of $1$ in`NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5$%) and $3.206149$($220.6$%), respectively. The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as “Immune infiltrated” \cref{log} $A$. The contribution of each coefficient to the model was evaluated and confirmed with a `Wald’s` test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant. The significance of the whole model in contrast to a null-model was confirmed by McFadden’s `pseudo-$R^2$` ($R_{Mc}^2=0.5074508$) and the p-value of the overall `chi-square` statistic ($p=7.860549e-60$).  
