@@ -1,40 +1,39 @@
 \babel@toc {english}{}\relax 
-\contentsline {chapter}{\numberline {1}Abstract}{2}{chapter.1}%
-\contentsline {chapter}{\numberline {2}List of abbreviations}{5}{chapter.2}%
-\contentsline {chapter}{\numberline {3}Introduction}{7}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Computational Tools}{8}{section.3.1}%
-\contentsline {subsection}{\numberline {3.1.1}Dimension reduction}{8}{subsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.1.1}Principal Component analysis (PCA)}{8}{subsubsection.3.1.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.1.2}Uniform Manifold Approximation and Projection (UMAP)}{8}{subsubsection.3.1.1.2}%
-\contentsline {subsection}{\numberline {3.1.2}Statistical analysis}{8}{subsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.2.1}Shapiro-Wilks test}{8}{subsubsection.3.1.2.1}%
-\contentsline {subsubsection}{\numberline {3.1.2.2}Wilcoxon rank-sum and signed-rank test}{8}{subsubsection.3.1.2.2}%
-\contentsline {subsubsection}{\numberline {3.1.2.3}Kruksal-Wallis}{9}{subsubsection.3.1.2.3}%
-\contentsline {subsubsection}{\numberline {3.1.2.4}Bonferroni correction}{9}{subsubsection.3.1.2.4}%
-\contentsline {subsection}{\numberline {3.1.3}Clustering}{9}{subsection.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.1.3.1}K-means}{9}{subsubsection.3.1.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.3.2}Hierarchical clustering}{9}{subsubsection.3.1.3.2}%
-\contentsline {subsection}{\numberline {3.1.4}Immune deconvolution}{10}{subsection.3.1.4}%
-\contentsline {subsection}{\numberline {3.1.5}GSEA}{10}{subsection.3.1.5}%
-\contentsline {subsection}{\numberline {3.1.6}Binary logistic regression}{10}{subsection.3.1.6}%
-\contentsline {chapter}{\numberline {4}Materials and Methods}{12}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Data cleaning}{12}{section.4.1}%
-\contentsline {section}{\numberline {4.2}TCGA pan-cancer analysis}{12}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Focused Analysis: Identifying subtypes in KIRC}{13}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Predicting immune infiltration with logistic regression}{13}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Packages}{13}{section.4.5}%
-\contentsline {chapter}{\numberline {5}Results}{14}{chapter.5}%
-\contentsline {section}{\numberline {5.1}TCGA pan-cancer analysis}{14}{section.5.1}%
-\contentsline {subsection}{\numberline {5.1.1}GSEA reveals similarities and differences of tumor types based on immune signaling and metabolic pathway expression}{14}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Identification of immune signaling subtypes in 24 tumor types}{16}{subsection.5.1.2}%
-\contentsline {section}{\numberline {5.2}Focused analysis on KIRC}{17}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{17}{subsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{17}{subsubsection.5.2.1.1}%
-\contentsline {subsection}{\numberline {5.2.2}Identification of two KIRC subtypes that differ in pathways related to immune signaling and cell cycle regulators}{18}{subsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.2.1}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{20}{subsubsection.5.2.2.1}%
-\contentsline {section}{\numberline {5.3}Logistic regression}{21}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Discussion}{23}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{26}{chapter.7}%
-\contentsline {chapter}{\numberline {8}References}{27}{chapter.8}%
-\contentsline {chapter}{\numberline {9}Appendix}{30}{chapter.9}%
+\contentsline {chapter}{\numberline {1}List of abbreviations}{4}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Introduction}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Computational Tools}{7}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Dimension reduction}{7}{subsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.1.1}Principal Component analysis (PCA)}{7}{subsubsection.2.1.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.1.2}Uniform Manifold Approximation and Projection (UMAP)}{7}{subsubsection.2.1.1.2}%
+\contentsline {subsection}{\numberline {2.1.2}Statistical analysis}{7}{subsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.2.1}Shapiro-Wilks test}{7}{subsubsection.2.1.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.2.2}Wilcoxon rank-sum and signed-rank test}{7}{subsubsection.2.1.2.2}%
+\contentsline {subsubsection}{\numberline {2.1.2.3}Kruksal-Wallis}{8}{subsubsection.2.1.2.3}%
+\contentsline {subsubsection}{\numberline {2.1.2.4}Bonferroni correction}{8}{subsubsection.2.1.2.4}%
+\contentsline {subsection}{\numberline {2.1.3}Clustering}{8}{subsection.2.1.3}%
+\contentsline {subsubsection}{\numberline {2.1.3.1}K-means}{8}{subsubsection.2.1.3.1}%
+\contentsline {subsubsection}{\numberline {2.1.3.2}Hierarchical clustering}{8}{subsubsection.2.1.3.2}%
+\contentsline {subsection}{\numberline {2.1.4}Immune deconvolution}{8}{subsection.2.1.4}%
+\contentsline {subsection}{\numberline {2.1.5}GSEA}{9}{subsection.2.1.5}%
+\contentsline {subsection}{\numberline {2.1.6}Binary logistic regression}{9}{subsection.2.1.6}%
+\contentsline {chapter}{\numberline {3}Materials and Methods}{10}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Data cleaning}{10}{section.3.1}%
+\contentsline {section}{\numberline {3.2}TCGA pan-cancer analysis}{10}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Focused Analysis: Identifying subtypes in KIRC}{11}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Predicting immune infiltration with logistic regression}{11}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Packages}{11}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Results}{12}{chapter.4}%
+\contentsline {section}{\numberline {4.1}TCGA pan-cancer analysis}{12}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}GSEA reveals similarities and differences of tumor types based on immune signaling and metabolic pathway expression}{12}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Identification of immune signaling subtypes in 24 tumor types}{14}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Focused analysis on KIRC}{15}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{15}{subsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{15}{subsubsection.4.2.1.1}%
+\contentsline {subsection}{\numberline {4.2.2}Identification of two KIRC subtypes that differ in pathways related to immune signaling and cell cycle regulators}{16}{subsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.2.1}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{17}{subsubsection.4.2.2.1}%
+\contentsline {section}{\numberline {4.3}Logistic regression}{18}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Discussion}{20}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Concluding remarks/Outlook}{23}{chapter.6}%
+\contentsline {chapter}{\numberline {7}References}{24}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Appendix}{26}{chapter.8}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

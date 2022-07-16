@@ -13,7 +13,7 @@ header-includes:
   - \usepackage[T1]{fontenc}
   - \usepackage{lmodern}
   - \usepackage[onehalfspacing]{setspace}
-  - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,bindingoffset=10mm,includehead,includefoot]{geometry}
+  - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,includehead,includefoot]{geometry}
   - \usepackage[headsepline]{scrlayer-scrpage}
   - \usepackage{url}
   - \usepackage[backend=biber, style=authoryear, giveninits=true, maxbibnames=99, uniquename=init, maxcitenames=2, hyperref=true, date=year]{biblatex}
@@ -85,12 +85,7 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
 	\vspace{\stretch{1}}
 
 \end{titlepage}
-
-# Abstract
-<!-- add your chapters here -->
 \tableofcontents
-
-<!-- Introduction -->
 
 # List of abbreviations
 
@@ -116,8 +111,6 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
       LUAD & Lung adenocarcinoma\\
       LUSC & Lung squamous cell carcinoma\\
       MESO & Mesothelioma\\
-      MMR & Mismatch-repair\\
-      MSI & Microsatellite instability\\
       OV & Ovarian serous cystadenocarcinoma\\
       PAAD & Pancreatic adenocarcinoma\\
       PC & Principal component\\
@@ -140,8 +133,7 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
       UMAP & uniform manifold approximation and projection\\
       UVM & Uveal Melanoma\\
   		\end{tabular}
-
-
+  		
 # Introduction
 Cancer is one of the most prevalent diseases in the world and responsible for almost 10 million deaths each year [@cancer_statistics_Ferlay_2021]. Therefore, it is a big interest to further understand the characteristics of cancer in more detail hoping to find new treatment options. 
 Pan cancer analysis aims to find similarities and differences across different tumor types. These types of analysis are often based on The Cancer Genome Atlas (TCGA) which is a comprehensive genome sequencing database consisting of bulk samples of over 11 000 tumors from the 33 most prevalent forms of cancer[@TCGA_Cooper_2018]. 
@@ -163,7 +155,6 @@ Principal component analysis is used to reduce a multidimensional set of data to
 
 #### Uniform Manifold Approximation and Projection (UMAP)
 `UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well. For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset. The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have. From that, the low-dimensional graph is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019]. 
-
 
 ### Statistical analysis
 
