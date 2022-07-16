@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  16 JUL 2022 14:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  16 JUL 2022 16:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1057,40 +1057,22 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 28
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [8] [9] [10] [11] [12] [13] [14]
 chapter 4.
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 485.
-(c:/Users/crazy/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-Underfull \hbox (badness 10000) in paragraph at lines 463--488
-\T1/lmr/m/n/14.4 were iden-ti-fied us-ing \T1/lmtt/m/n/14.4 Kruksal-Wallis\TS1/lmtt/m/n/14.4 ` \T1/lmtt/m/n/14.4 test\TS1/lmtt/m/n/14.4 ` \T1/lmtt/m/n/14.4 ($FDR$: $5$%)
+
+Underfull \hbox (badness 10000) in paragraph at lines 463--489
+\T1/lmtt/m/n/14.4 and\T1/lmr/m/n/14.4 Bonferroni\T1/lmtt/m/n/14.4 correction.   For all KIRC patients of\T1/lmr/m/n/14.4 DF1\T1/lmtt/m/n/14.4 the
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 463--488
-\T1/lmtt/m/n/14.4 and\T1/lmr/m/n/14.4 Bonferroni`\T1/lmtt/m/n/14.4 correction.   For all KIRC patients of\T1/lmr/m/n/14.4 DF1\T1/lmtt/m/n/14.4 the
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 463--488
+Underfull \hbox (badness 10000) in paragraph at lines 463--489
 \T1/lmtt/m/n/14.4 immune cell fractions of the bulk samples were estimated
  []
 
 [15
 
-]
-Underfull \hbox (badness 4441) in paragraph at lines 493--518
-\T1/lmr/m/n/14.4 First, dif-fer-en-tial gene ex-pres-sion in tu-mor tis-sue com-pared
- []
-
-
-Underfull \hbox (badness 3460) in paragraph at lines 493--518
-\T1/lmr/m/n/14.4 to nor-mal tis-sue was an-a-lyzed by cal-cu-la-tion of Fold-change
- []
-
-[16] [17] [18]
+] [16] [17] [18]
 chapter 5.
 
-LaTeX Warning: File `~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf' not found on input line 549.
+LaTeX Warning: File `~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf' not found on input line 550.
 
 
 ! Package pdftex.def Error: File `~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf' not found: using draft setting.
@@ -1099,14 +1081,14 @@ See the pdftex.def package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.549 ...02-team-02/09_figures/Panel0_Ebene 1.pdf}
+l.550 ...02-team-02/09_figures/Panel0_Ebene 1.pdf}
                                                    
 Here is how much of TeX's memory you used:
- 29264 strings out of 479953
- 570502 string characters out of 5884592
- 1556754 words of memory out of 5000000
- 46995 multiletter control sequences out of 15000+600000
- 527264 words of font info for 73 fonts, out of 8000000 for 9000
+ 29226 strings out of 479953
+ 569820 string characters out of 5884592
+ 1556785 words of memory out of 5000000
+ 46961 multiletter control sequences out of 15000+600000
+ 526958 words of font info for 72 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  108i,21n,106p,10629b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
