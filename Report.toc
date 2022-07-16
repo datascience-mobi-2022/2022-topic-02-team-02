@@ -26,15 +26,15 @@
 \contentsline {chapter}{\numberline {5}Results}{14}{chapter.5}%
 \contentsline {section}{\numberline {5.1}TCGA pan-cancer analysis}{14}{section.5.1}%
 \contentsline {subsection}{\numberline {5.1.1}GSEA reveals the similarities and differences of tumor types in pan-cancer analysis (/in pathway activity)}{14}{subsection.5.1.1}%
-\contentsline {subsection}{\numberline {5.1.2}Identifying immune signaling (expression pattern) subtypes in 24 tumor types}{15}{subsection.5.1.2}%
-\contentsline {section}{\numberline {5.2}Focused analysis on KIRC}{17}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{17}{subsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{18}{subsubsection.5.2.1.1}%
-\contentsline {subsubsection}{\numberline {5.2.1.2}Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration}{18}{subsubsection.5.2.1.2}%
-\contentsline {subsubsection}{\numberline {5.2.1.3}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{19}{subsubsection.5.2.1.3}%
-\contentsline {section}{\numberline {5.3}Logistic regression}{20}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Discussion}{23}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{27}{chapter.7}%
-\contentsline {chapter}{\numberline {8}References}{28}{chapter.8}%
-\contentsline {chapter}{\numberline {9}Appendix}{31}{chapter.9}%
+\contentsline {subsection}{\numberline {5.1.2}Identifying immune signaling subtypes in 24 tumor types}{16}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}Focused analysis on KIRC}{18}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{18}{subsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{19}{subsubsection.5.2.1.1}%
+\contentsline {subsubsection}{\numberline {5.2.1.2}Identification of two KIRC subtypes that differ in pathways related to cell cycle and immune infiltration}{19}{subsubsection.5.2.1.2}%
+\contentsline {subsubsection}{\numberline {5.2.1.3}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{20}{subsubsection.5.2.1.3}%
+\contentsline {section}{\numberline {5.3}Logistic regression}{21}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Discussion}{24}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Concluding remarks/Outlook}{28}{chapter.7}%
+\contentsline {chapter}{\numberline {8}References}{29}{chapter.8}%
+\contentsline {chapter}{\numberline {9}Appendix}{32}{chapter.9}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
