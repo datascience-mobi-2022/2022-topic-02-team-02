@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 22:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 22:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -399,7 +399,72 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
 File: bkm-pdftex.def 2020-11-06 v1.29 bookmark driver for pdfTeX (HO)
 \BKM@id=\count286
-)) (/usr/local/texlive/2022/texmf-dist/tex/latex/graphics/graphicx.sty
+)) (/usr/local/texlive/2022/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
+\LTleft=\skip69
+\LTright=\skip70
+\LTpre=\skip71
+\LTpost=\skip72
+\LTchunksize=\count287
+\LTcapwidth=\dimen153
+\LT@head=\box55
+\LT@firsthead=\box56
+\LT@foot=\box57
+\LT@lastfoot=\box58
+\LT@gbox=\box59
+\LT@cols=\count288
+\LT@rows=\count289
+\c@LT@tables=\count290
+\c@LT@chunks=\count291
+\LT@p@ftn=\toks25
+)
+Class scrreprt Info: longtable captions redefined on input line 49.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen154
+\lightrulewidth=\dimen155
+\cmidrulewidth=\dimen156
+\belowrulesep=\dimen157
+\belowbottomsep=\dimen158
+\aboverulesep=\dimen159
+\abovetopsep=\dimen160
+\cmidrulesep=\dimen161
+\cmidrulekern=\dimen162
+\defaultaddspace=\dimen163
+\@cmidla=\count292
+\@cmidlb=\count293
+\@aboverulesep=\dimen164
+\@belowrulesep=\dimen165
+\@thisruleclass=\count294
+\@lastruleclass=\count295
+\@thisrulewidth=\dimen166
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/tools/array.sty
+Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen167
+\ar@mcellbox=\box60
+\extrarowheight=\dimen168
+\NC@list=\toks26
+\extratabsurround=\skip73
+\backup@length=\skip74
+\ar@cellbox=\box61
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count296
+\calc@Bcount=\count297
+\calc@Adimen=\dimen169
+\calc@Bdimen=\dimen170
+\calc@Askip=\skip75
+\calc@Bskip=\skip76
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count298
+\calc@Cskip=\skip77
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/footnotehyper/footnotehyper.sty
+Package: footnotehyper 2021/08/13 v1.1e hyperref aware footnote.sty (JFB)
+\FNH@notes=\box62
+\FNH@width=\dimen171
+\FNH@toks=\toks27
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
 (/usr/local/texlive/2022/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
@@ -410,32 +475,20 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 107.
 )
-\Gin@req@height=\dimen153
-\Gin@req@width=\dimen154
+\Gin@req@height=\dimen172
+\Gin@req@width=\dimen173
 )
-\cslhangindent=\skip69
-\csllabelwidth=\skip70
-\cslentryspacingunit=\skip71
-(/usr/local/texlive/2022/texmf-dist/tex/latex/tools/calc.sty
-Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count287
-\calc@Bcount=\count288
-\calc@Adimen=\dimen155
-\calc@Bdimen=\dimen156
-\calc@Askip=\skip72
-\calc@Bskip=\skip73
-LaTeX Info: Redefining \setlength on input line 80.
-LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count289
-\calc@Cskip=\skip74
-) (/usr/local/texlive/2022/texmf-dist/tex/generic/babel/babel.sty
+\cslhangindent=\skip78
+\csllabelwidth=\skip79
+\cslentryspacingunit=\skip80
+(/usr/local/texlive/2022/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2022/02/26 3.73 The Babel package
-\babel@savecnt=\count290
-\U@D=\dimen157
+\babel@savecnt=\count299
+\U@D=\dimen174
 \l@unhyphenated=\language87
 (/usr/local/texlive/2022/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read2
-\bbl@dirlevel=\count291
+\bbl@dirlevel=\count300
 Package babel Info: Main language set with 'main='. Except if you have
 (babel)             problems, prefer the default mechanism for setting
 (babel)             the main language. Reported on input line 4219.
@@ -461,18 +514,18 @@ Package: geometry 2020/01/02 v5.9 Page Geometry
 (/usr/local/texlive/2022/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
-\Gm@cnth=\count292
-\Gm@cntv=\count293
-\c@Gm@tempcnt=\count294
-\Gm@bindingoffset=\dimen158
-\Gm@wd@mp=\dimen159
-\Gm@odd@mp=\dimen160
-\Gm@even@mp=\dimen161
-\Gm@layoutwidth=\dimen162
-\Gm@layoutheight=\dimen163
-\Gm@layouthoffset=\dimen164
-\Gm@layoutvoffset=\dimen165
-\Gm@dimlist=\toks25
+\Gm@cnth=\count301
+\Gm@cntv=\count302
+\c@Gm@tempcnt=\count303
+\Gm@bindingoffset=\dimen175
+\Gm@wd@mp=\dimen176
+\Gm@odd@mp=\dimen177
+\Gm@even@mp=\dimen178
+\Gm@layoutwidth=\dimen179
+\Gm@layoutheight=\dimen180
+\Gm@layouthoffset=\dimen181
+\Gm@layoutvoffset=\dimen182
+\Gm@dimlist=\toks28
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/koma-script/scrlayer-scrpage.st
 y
 Package: scrlayer-scrpage 2021/11/13 v3.35 KOMA-Script package (end user interf
@@ -496,68 +549,68 @@ Package scrlayer-scrpage Info: auto-selection of `pagestyleset=KOMA-Script'.
 Package: biblatex 2022/02/02 v3.17 programmable bibliographies (PK/MW)
 (/usr/local/texlive/2022/texmf-dist/tex/latex/logreq/logreq.sty
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count295
+\lrq@indent=\count304
 (/usr/local/texlive/2022/texmf-dist/tex/latex/logreq/logreq.def
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 )) (/usr/local/texlive/2022/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2020/11/24 v1.1c Standard LaTeX ifthen package (DPC)
 )
-\c@tabx@nest=\count296
-\c@listtotal=\count297
-\c@listcount=\count298
-\c@liststart=\count299
-\c@liststop=\count300
-\c@citecount=\count301
-\c@citetotal=\count302
-\c@multicitecount=\count303
-\c@multicitetotal=\count304
-\c@instcount=\count305
-\c@maxnames=\count306
-\c@minnames=\count307
-\c@maxitems=\count308
-\c@minitems=\count309
-\c@citecounter=\count310
-\c@maxcitecounter=\count311
-\c@savedcitecounter=\count312
-\c@uniquelist=\count313
-\c@uniquename=\count314
-\c@refsection=\count315
-\c@refsegment=\count316
-\c@maxextratitle=\count317
-\c@maxextratitleyear=\count318
-\c@maxextraname=\count319
-\c@maxextradate=\count320
-\c@maxextraalpha=\count321
-\c@abbrvpenalty=\count322
-\c@highnamepenalty=\count323
-\c@lownamepenalty=\count324
-\c@maxparens=\count325
-\c@parenlevel=\count326
-\blx@tempcnta=\count327
-\blx@tempcntb=\count328
-\blx@tempcntc=\count329
-\c@blx@maxsection=\count330
-\c@blx@maxsegment@0=\count331
-\blx@notetype=\count332
-\blx@parenlevel@text=\count333
-\blx@parenlevel@foot=\count334
-\c@blx@sectionciteorder@0=\count335
-\blx@entrysetcounter=\count336
-\blx@biblioinstance=\count337
-\labelnumberwidth=\skip75
-\labelalphawidth=\skip76
-\biblabelsep=\skip77
-\bibitemsep=\skip78
-\bibnamesep=\skip79
-\bibinitsep=\skip80
-\bibparsep=\skip81
-\bibhang=\skip82
+\c@tabx@nest=\count305
+\c@listtotal=\count306
+\c@listcount=\count307
+\c@liststart=\count308
+\c@liststop=\count309
+\c@citecount=\count310
+\c@citetotal=\count311
+\c@multicitecount=\count312
+\c@multicitetotal=\count313
+\c@instcount=\count314
+\c@maxnames=\count315
+\c@minnames=\count316
+\c@maxitems=\count317
+\c@minitems=\count318
+\c@citecounter=\count319
+\c@maxcitecounter=\count320
+\c@savedcitecounter=\count321
+\c@uniquelist=\count322
+\c@uniquename=\count323
+\c@refsection=\count324
+\c@refsegment=\count325
+\c@maxextratitle=\count326
+\c@maxextratitleyear=\count327
+\c@maxextraname=\count328
+\c@maxextradate=\count329
+\c@maxextraalpha=\count330
+\c@abbrvpenalty=\count331
+\c@highnamepenalty=\count332
+\c@lownamepenalty=\count333
+\c@maxparens=\count334
+\c@parenlevel=\count335
+\blx@tempcnta=\count336
+\blx@tempcntb=\count337
+\blx@tempcntc=\count338
+\c@blx@maxsection=\count339
+\c@blx@maxsegment@0=\count340
+\blx@notetype=\count341
+\blx@parenlevel@text=\count342
+\blx@parenlevel@foot=\count343
+\c@blx@sectionciteorder@0=\count344
+\blx@entrysetcounter=\count345
+\blx@biblioinstance=\count346
+\labelnumberwidth=\skip81
+\labelalphawidth=\skip82
+\biblabelsep=\skip83
+\bibitemsep=\skip84
+\bibnamesep=\skip85
+\bibinitsep=\skip86
+\bibparsep=\skip87
+\bibhang=\skip88
 \blx@bcfin=\read3
 \blx@bcfout=\write3
 \blx@langwohyphens=\language88
-\c@mincomprange=\count338
-\c@maxcomprange=\count339
-\c@mincompwidth=\count340
+\c@mincomprange=\count347
+\c@maxcomprange=\count348
+\c@mincompwidth=\count349
 Package biblatex Info: Trying to load biblatex default data model...
 Package biblatex Info: ... file 'blx-dm.def' found.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/biblatex/blx-dm.def
@@ -567,88 +620,88 @@ Package biblatex Info: Trying to load biblatex style data model...
 Package biblatex Info: ... file 'authoryear.dbx' not found.
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
-\c@afterword=\count341
-\c@savedafterword=\count342
-\c@annotator=\count343
-\c@savedannotator=\count344
-\c@author=\count345
-\c@savedauthor=\count346
-\c@bookauthor=\count347
-\c@savedbookauthor=\count348
-\c@commentator=\count349
-\c@savedcommentator=\count350
-\c@editor=\count351
-\c@savededitor=\count352
-\c@editora=\count353
-\c@savededitora=\count354
-\c@editorb=\count355
-\c@savededitorb=\count356
-\c@editorc=\count357
-\c@savededitorc=\count358
-\c@foreword=\count359
-\c@savedforeword=\count360
-\c@holder=\count361
-\c@savedholder=\count362
-\c@introduction=\count363
-\c@savedintroduction=\count364
-\c@namea=\count365
-\c@savednamea=\count366
-\c@nameb=\count367
-\c@savednameb=\count368
-\c@namec=\count369
-\c@savednamec=\count370
-\c@translator=\count371
-\c@savedtranslator=\count372
-\c@shortauthor=\count373
-\c@savedshortauthor=\count374
-\c@shorteditor=\count375
-\c@savedshorteditor=\count376
-\c@labelname=\count377
-\c@savedlabelname=\count378
-\c@institution=\count379
-\c@savedinstitution=\count380
-\c@lista=\count381
-\c@savedlista=\count382
-\c@listb=\count383
-\c@savedlistb=\count384
-\c@listc=\count385
-\c@savedlistc=\count386
-\c@listd=\count387
-\c@savedlistd=\count388
-\c@liste=\count389
-\c@savedliste=\count390
-\c@listf=\count391
-\c@savedlistf=\count392
-\c@location=\count393
-\c@savedlocation=\count394
-\c@organization=\count395
-\c@savedorganization=\count396
-\c@origlocation=\count397
-\c@savedoriglocation=\count398
-\c@origpublisher=\count399
-\c@savedorigpublisher=\count400
-\c@publisher=\count401
-\c@savedpublisher=\count402
-\c@language=\count403
-\c@savedlanguage=\count404
-\c@origlanguage=\count405
-\c@savedoriglanguage=\count406
-\c@pageref=\count407
-\c@savedpageref=\count408
-\shorthandwidth=\skip83
-\shortjournalwidth=\skip84
-\shortserieswidth=\skip85
-\shorttitlewidth=\skip86
-\shortauthorwidth=\skip87
-\shorteditorwidth=\skip88
-\locallabelnumberwidth=\skip89
-\locallabelalphawidth=\skip90
-\localshorthandwidth=\skip91
-\localshortjournalwidth=\skip92
-\localshortserieswidth=\skip93
-\localshorttitlewidth=\skip94
-\localshortauthorwidth=\skip95
-\localshorteditorwidth=\skip96
+\c@afterword=\count350
+\c@savedafterword=\count351
+\c@annotator=\count352
+\c@savedannotator=\count353
+\c@author=\count354
+\c@savedauthor=\count355
+\c@bookauthor=\count356
+\c@savedbookauthor=\count357
+\c@commentator=\count358
+\c@savedcommentator=\count359
+\c@editor=\count360
+\c@savededitor=\count361
+\c@editora=\count362
+\c@savededitora=\count363
+\c@editorb=\count364
+\c@savededitorb=\count365
+\c@editorc=\count366
+\c@savededitorc=\count367
+\c@foreword=\count368
+\c@savedforeword=\count369
+\c@holder=\count370
+\c@savedholder=\count371
+\c@introduction=\count372
+\c@savedintroduction=\count373
+\c@namea=\count374
+\c@savednamea=\count375
+\c@nameb=\count376
+\c@savednameb=\count377
+\c@namec=\count378
+\c@savednamec=\count379
+\c@translator=\count380
+\c@savedtranslator=\count381
+\c@shortauthor=\count382
+\c@savedshortauthor=\count383
+\c@shorteditor=\count384
+\c@savedshorteditor=\count385
+\c@labelname=\count386
+\c@savedlabelname=\count387
+\c@institution=\count388
+\c@savedinstitution=\count389
+\c@lista=\count390
+\c@savedlista=\count391
+\c@listb=\count392
+\c@savedlistb=\count393
+\c@listc=\count394
+\c@savedlistc=\count395
+\c@listd=\count396
+\c@savedlistd=\count397
+\c@liste=\count398
+\c@savedliste=\count399
+\c@listf=\count400
+\c@savedlistf=\count401
+\c@location=\count402
+\c@savedlocation=\count403
+\c@organization=\count404
+\c@savedorganization=\count405
+\c@origlocation=\count406
+\c@savedoriglocation=\count407
+\c@origpublisher=\count408
+\c@savedorigpublisher=\count409
+\c@publisher=\count410
+\c@savedpublisher=\count411
+\c@language=\count412
+\c@savedlanguage=\count413
+\c@origlanguage=\count414
+\c@savedoriglanguage=\count415
+\c@pageref=\count416
+\c@savedpageref=\count417
+\shorthandwidth=\skip89
+\shortjournalwidth=\skip90
+\shortserieswidth=\skip91
+\shorttitlewidth=\skip92
+\shortauthorwidth=\skip93
+\shorteditorwidth=\skip94
+\locallabelnumberwidth=\skip95
+\locallabelalphawidth=\skip96
+\localshorthandwidth=\skip97
+\localshortjournalwidth=\skip98
+\localshortserieswidth=\skip99
+\localshorttitlewidth=\skip100
+\localshortauthorwidth=\skip101
+\localshorteditorwidth=\skip102
 Package biblatex Info: Trying to load compatibility code...
 Package biblatex Info: ... file 'blx-compat.def' found.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/biblatex/blx-compat.def
@@ -658,19 +711,19 @@ Package biblatex Info: Trying to load generic definitions...
 Package biblatex Info: ... file 'biblatex.def' found.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/biblatex/biblatex.def
 File: biblatex.def 2022/02/02 v3.17 biblatex compatibility (PK/MW)
-\c@textcitecount=\count409
-\c@textcitetotal=\count410
-\c@textcitemaxnames=\count411
-\c@biburlbigbreakpenalty=\count412
-\c@biburlbreakpenalty=\count413
-\c@biburlnumpenalty=\count414
-\c@biburlucpenalty=\count415
-\c@biburllcpenalty=\count416
+\c@textcitecount=\count418
+\c@textcitetotal=\count419
+\c@textcitemaxnames=\count420
+\c@biburlbigbreakpenalty=\count421
+\c@biburlbreakpenalty=\count422
+\c@biburlnumpenalty=\count423
+\c@biburlucpenalty=\count424
+\c@biburllcpenalty=\count425
 \biburlbigskip=\muskip18
 \biburlnumskip=\muskip19
 \biburlucskip=\muskip20
 \biburllcskip=\muskip21
-\c@smartand=\count417
+\c@smartand=\count426
 )
 Package biblatex Info: Trying to load bibliography style 'authoryear'...
 Package biblatex Info: ... file 'authoryear.bbx' found.
@@ -680,8 +733,8 @@ Package biblatex Info: Trying to load bibliography style 'standard'...
 Package biblatex Info: ... file 'standard.bbx' found.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
 File: standard.bbx 2022/02/02 v3.17 biblatex bibliography style (PK/MW)
-\c@bbx:relatedcount=\count418
-\c@bbx:relatedtotal=\count419
+\c@bbx:relatedcount=\count427
+\c@bbx:relatedtotal=\count428
 ))
 Package biblatex Info: Trying to load citation style 'authoryear'...
 Package biblatex Info: ... file 'authoryear.cbx' found.
@@ -706,8 +759,8 @@ Package biblatex Info: Document encoding is UTF8 ....
 Package: expl3 2022-02-24 L3 programming layer (loader) 
 (/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count420
-\l__pdf_internal_box=\box55
+\l__color_backend_stack_int=\count429
+\l__pdf_internal_box=\box63
 ))
 Package biblatex Info: ... and expl3
 (biblatex)             2022-02-24 L3 programming layer (loader) 
@@ -735,13 +788,13 @@ LaTeX Info: Redefining \labelcref on input line 2370.
 LaTeX Info: Redefining \labelcpageref on input line 2370.
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/csquotes/csquotes.sty
 Package: csquotes 2021-02-22 v5.2l context-sensitive quotations (JAW)
-\csq@reset=\count421
-\csq@gtype=\count422
-\csq@glevel=\count423
-\csq@qlevel=\count424
-\csq@maxlvl=\count425
-\csq@tshold=\count426
-\csq@ltx@everypar=\toks26
+\csq@reset=\count430
+\csq@gtype=\count431
+\csq@glevel=\count432
+\csq@qlevel=\count433
+\csq@maxlvl=\count434
+\csq@tshold=\count435
+\csq@ltx@everypar=\toks29
 (/usr/local/texlive/2022/texmf-dist/tex/latex/csquotes/csquotes.def
 File: csquotes.def 2021-02-22 v5.2l csquotes generic definitions (JAW)
 )
@@ -750,87 +803,48 @@ Package csquotes Info: ... configuration file loaded successfully.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/csquotes/csquotes.cfg
 File: csquotes.cfg 
 )) (/usr/local/texlive/2022/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count427
-\lst@gtempboxa=\box56
-\lst@token=\toks27
-\lst@length=\count428
-\lst@currlwidth=\dimen166
-\lst@column=\count429
-\lst@pos=\count430
-\lst@lostspace=\dimen167
-\lst@width=\dimen168
-\lst@newlines=\count431
-\lst@lineno=\count432
-\lst@maxwidth=\dimen169
+\lst@mode=\count436
+\lst@gtempboxa=\box64
+\lst@token=\toks30
+\lst@length=\count437
+\lst@currlwidth=\dimen183
+\lst@column=\count438
+\lst@pos=\count439
+\lst@lostspace=\dimen184
+\lst@width=\dimen185
+\lst@newlines=\count440
+\lst@lineno=\count441
+\lst@maxwidth=\dimen186
 (/usr/local/texlive/2022/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
-\c@lstnumber=\count433
-\lst@skipnumbers=\count434
-\lst@framebox=\box57
+\c@lstnumber=\count442
+\lst@skipnumbers=\count443
+\lst@framebox=\box65
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2020/03/24 1.8d listings configuration
 ))
 Package: listings 2020/03/24 1.8d (Carsten Heinz)
-(/usr/local/texlive/2022/texmf-dist/tex/latex/booktabs/booktabs.sty
-Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen170
-\lightrulewidth=\dimen171
-\cmidrulewidth=\dimen172
-\belowrulesep=\dimen173
-\belowbottomsep=\dimen174
-\aboverulesep=\dimen175
-\abovetopsep=\dimen176
-\cmidrulesep=\dimen177
-\cmidrulekern=\dimen178
-\defaultaddspace=\dimen179
-\@cmidla=\count435
-\@cmidlb=\count436
-\@aboverulesep=\dimen180
-\@belowrulesep=\dimen181
-\@thisruleclass=\count437
-\@lastruleclass=\count438
-\@thisrulewidth=\dimen182
-) (/usr/local/texlive/2022/texmf-dist/tex/latex/tools/longtable.sty
-Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
-\LTleft=\skip97
-\LTright=\skip98
-\LTpre=\skip99
-\LTpost=\skip100
-\LTchunksize=\count439
-\LTcapwidth=\dimen183
-\LT@head=\box58
-\LT@firsthead=\box59
-\LT@foot=\box60
-\LT@lastfoot=\box61
-\LT@gbox=\box62
-\LT@cols=\count440
-\LT@rows=\count441
-\c@LT@tables=\count442
-\c@LT@chunks=\count443
-\LT@p@ftn=\toks28
-)
-Class scrreprt Info: longtable captions redefined on input line 103.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
-\multirow@colwidth=\skip101
+\multirow@colwidth=\skip103
 \multirow@cntb=\count444
-\multirow@dima=\skip102
-\bigstrutjot=\dimen184
+\multirow@dima=\skip104
+\bigstrutjot=\dimen187
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/graphics/rotating.sty
 Package: rotating 2016/08/11 v2.16d rotated objects in LaTeX
 \c@r@tfl@t=\count445
-\rotFPtop=\skip103
-\rotFPbot=\skip104
-\rot@float@box=\box63
-\rot@mess@toks=\toks29
+\rotFPtop=\skip105
+\rotFPbot=\skip106
+\rot@float@box=\box66
+\rot@mess@toks=\toks31
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/subfigure/subfigure.sty
 Package: subfigure 2002/03/15 v2.1.5 subfigure package
-\subfigtopskip=\skip105
-\subfigcapskip=\skip106
-\subfigcaptopadj=\dimen185
-\subfigbottomskip=\skip107
-\subfigcapmargin=\dimen186
-\subfiglabelskip=\skip108
+\subfigtopskip=\skip107
+\subfigcapskip=\skip108
+\subfigcaptopadj=\dimen188
+\subfigbottomskip=\skip109
+\subfigcapmargin=\dimen189
+\subfiglabelskip=\skip110
 \c@subfigure=\count446
 \c@lofdepth=\count447
 \c@subtable=\count448
@@ -839,15 +853,15 @@ Package: subfigure 2002/03/15 v2.1.5 subfigure package
 * Local config file subfigure.cfg used *
 ****************************************
 (/usr/local/texlive/2022/texmf-dist/tex/latex/subfigure/subfigure.cfg)
-\subfig@top=\skip109
-\subfig@bottom=\skip110
+\subfig@top=\skip111
+\subfig@bottom=\skip112
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count450
-\float@exts=\toks30
-\float@box=\box64
-\@float@everytoks=\toks31
-\@floatcapt=\box65
+\float@exts=\toks32
+\float@box=\box67
+\@float@everytoks=\toks33
+\@floatcapt=\box68
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/acronym/acronym.sty
 Package: acronym 2020/04/17 v1.47 Support for acronyms (Tobias Oetiker)
 (/usr/local/texlive/2022/texmf-dist/tex/latex/bigfoot/suffix.sty
@@ -859,7 +873,7 @@ al/texlive/2022/texmf-dist/tex/generic/xstring/xstring.tex
 )
 Package: xstring 2021/07/21 v1.84 String manipulations (CT)
 )
-\AC@clearlist=\toks32
+\AC@clearlist=\toks34
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/lipsum/lipsum.sty (/usr/local/t
 exlive/2022/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
 Package: l3keys2e 2022-01-12 LaTeX2e option processing using LaTeX3 keys
@@ -906,42 +920,49 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
 LaTeX Warning: Unused global option(s):
     [10.5pt].
 
-(./Report.aux)
+(./Report.aux
+
+LaTeX Warning: Label `tuk' multiply defined.
+
+
+LaTeX Warning: Label `tuk@cref' multiply defined.
+
+)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 131.
-LaTeX Font Info:    ... okay on input line 131.
-Package scrbase Info: activating english \contentsname on input line 131.
-Package scrbase Info: activating english \listfigurename on input line 131.
-Package scrbase Info: activating english \listtablename on input line 131.
-LaTeX Info: Redefining \microtypecontext on input line 131.
-Package microtype Info: Applying patch `item' on input line 131.
-Package microtype Info: Applying patch `toc' on input line 131.
-Package microtype Info: Applying patch `eqnum' on input line 131.
-Package microtype Info: Applying patch `footnote' on input line 131.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 145.
+LaTeX Font Info:    ... okay on input line 145.
+Package scrbase Info: activating english \contentsname on input line 145.
+Package scrbase Info: activating english \listfigurename on input line 145.
+Package scrbase Info: activating english \listtablename on input line 145.
+LaTeX Info: Redefining \microtypecontext on input line 145.
+Package microtype Info: Applying patch `item' on input line 145.
+Package microtype Info: Applying patch `toc' on input line 145.
+Package microtype Info: Applying patch `eqnum' on input line 145.
+Package microtype Info: Applying patch `footnote' on input line 145.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 131.
+LaTeX Info: Redefining \showhyphens on input line 145.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -951,16 +972,16 @@ File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman
 ) (/usr/local/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count456
-\scratchdimen=\dimen187
-\scratchbox=\box66
+\scratchdimen=\dimen190
+\scratchbox=\box69
 \nofMPsegments=\count457
 \nofMParguments=\count458
-\everyMPshowfont=\toks33
+\everyMPshowfont=\toks35
 \MPscratchCnt=\count459
-\MPscratchDim=\dimen188
+\MPscratchDim=\dimen191
 \MPnumerator=\count460
 \makeMPintoPDFobject=\count461
-\everyMPtoPDFconversion=\toks34
+\everyMPtoPDFconversion=\toks36
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -969,7 +990,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 131.
+Package hyperref Info: Link coloring OFF on input line 145.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/usr/local/texlive/2022/texmf-dist/tex/latex/refcount/refcount.sty
@@ -981,9 +1002,14 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count462
 )
-LaTeX Info: Redefining \ref on input line 131.
-LaTeX Info: Redefining \pageref on input line 131.
-LaTeX Info: Redefining \nameref on input line 131.
+LaTeX Info: Redefining \ref on input line 145.
+LaTeX Info: Redefining \pageref on input line 145.
+LaTeX Info: Redefining \nameref on input line 145.
+Package footnotehyper Info: Using the \@makefntext{} approach (see doc).
+(footnotehyper)    In case of dysfunctional footnote environments, you can
+(footnotehyper)    try sending the author a small illustrative document.
+(footnotehyper)    To turn off this message, add \footnotehyperwarnfalse
+(footnotehyper)    to the preamble.
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -1045,12 +1071,12 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'Report.bbl' not found.
 No file Report.bbl.
-Package biblatex Info: Reference section=0 on input line 131.
-Package biblatex Info: Reference segment=0 on input line 131.
+Package biblatex Info: Reference section=0 on input line 145.
+Package biblatex Info: Reference segment=0 on input line 145.
 \c@lstlisting=\count463
-Package scrhack Info: undefining \float@addtolists on input line 131.
+Package scrhack Info: undefining \float@addtolists on input line 145.
 LaTeX Font Info:    Trying to load font information for T1+lmss on input line 1
-41.
+55.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -1059,39 +1085,39 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-57.
+71.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-57.
+71.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-157.
+171.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-157.
+171.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 157.
+(Font)              <14.4> on input line 171.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 157.
+(Font)              <10> on input line 171.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 157.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 157
+(Font)              <7> on input line 171.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 171
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 157
+LaTeX Font Info:    Trying to load font information for U+msb on input line 171
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -1107,16 +1133,14 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/10.95'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 190.
+(Font)              <10.95> on input line 204.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 190.
+(Font)              <8> on input line 204.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 190.
-[2
-
-]
-Package tocbasic Info: character protrusion at toc deactivated on input line 19
-0.
+(Font)              <6> on input line 204.
+[2]
+Package tocbasic Info: character protrusion at toc deactivated on input line 20
+4.
 (./Report.toc)
 \tf@toc=\write4
 \openout4 = `Report.toc'.
@@ -1133,32 +1157,30 @@ Overfull \vbox (62.31712pt too high) has occurred while \output is active []
 [5]
 chapter 1.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-02.
+19.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [6
 
-] [7] [8]
+] [7]
 chapter 2.
-[9
-
-] [10]
+[8] [9] [10]
 chapter 3.
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=140, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=139, 
 555.35109pt x 184.65593pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l0_Ebene 1.pdf  used on input line 557.
+l0_Ebene 1.pdf  used on input line 574.
 (pdftex.def)             Requested size: 512.18333pt x 170.30252pt.
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf, id=14
-3, 364.71552pt x 173.9927pt>
+2, 364.71552pt x 173.9927pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf G
 raphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l6_v2_Ebene 1.pdf  used on input line 575.
+l6_v2_Ebene 1.pdf  used on input line 592.
 (pdftex.def)             Requested size: 364.72574pt x 173.99756pt.
 [11
 
@@ -1167,13 +1189,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.612 
+l.629 
       
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.612 
+l.629 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0
 _Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures
 /Panel6_v2_Ebene 1.pdf
@@ -1188,7 +1210,7 @@ File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l3_Ebene 1.pdf  used on input line 618.
+l3_Ebene 1.pdf  used on input line 635.
 (pdftex.def)             Requested size: 512.16656pt x 265.97514pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1200,7 +1222,7 @@ File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf G
 raphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l4_v2_Ebene 1.pdf  used on input line 684.
+l4_v2_Ebene 1.pdf  used on input line 701.
 (pdftex.def)             Requested size: 350.96945pt x 217.1923pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -1210,14 +1232,14 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.3.3})
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.698 
+l.715 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3
 _Ebene 1.pdf>] [14
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.4}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.727 ...une-signaling-and-cell-cycle-regulators}}
+l.744 ...une-signaling-and-cell-cycle-regulators}}
                                                    </Users/timwenzel/Desktop/Gi
 tHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>]
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf, id=233, 
@@ -1226,14 +1248,14 @@ File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l1_Ebene 1.pdf  used on input line 730.
+l1_Ebene 1.pdf  used on input line 747.
 (pdftex.def)             Requested size: 512.19154pt x 374.71263pt.
 [15
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.5}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.763 
+l.780 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1
 _Ebene 1.pdf>]
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=273, 
@@ -1242,130 +1264,161 @@ File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l2_Ebene 1.pdf  used on input line 770.
+l2_Ebene 1.pdf  used on input line 787.
 (pdftex.def)             Requested size: 512.18446pt x 167.49593pt.
 [16
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.6}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.804 ...-infiltration-based-on-pathway-activity}}
+l.821 ...-infiltration-based-on-pathway-activity}}
                                                    </Users/timwenzel/Desktop/Gi
 tHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf, id=301, 423.5744
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf, id=300, 423.5744
 8pt x 176.37482pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf Graphic file
  (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l7.pdf  used on input line 831.
+l7.pdf  used on input line 849.
 (pdftex.def)             Requested size: 423.5799pt x 176.37706pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 832.
-
-LaTeX Warning: Reference `tab' on page 1 undefined on input line 836.
-
+(Font)              <5> on input line 850.
 [17
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.864 
+l.882 
       
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.7}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.864 
+l.882 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7
-.pdf>] [18]
+.pdf>]
 chapter 4.
-[19
-
-] [20] [21]
+[18] [19] [20]
 chapter 5.
-[22
+[21
 
-] [23] [24]
+] [22]
 chapter 6.
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf, 
-id=427, 475.0761pt x 171.84721pt>
+id=394, 475.0761pt x 171.84721pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.
 pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.p
 df>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndixPanel6_Ebene 1.pdf  used on input line 1349.
+ndixPanel6_Ebene 1.pdf  used on input line 1369.
 (pdftex.def)             Requested size: 475.08218pt x 171.8494pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf,
- id=428, 504.11319pt x 171.93753pt>
+ id=395, 504.11319pt x 171.93753pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1
 .pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.
 pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndix_Panel4_Ebene 1.pdf  used on input line 1356.
+ndix_Panel4_Ebene 1.pdf  used on input line 1376.
 (pdftex.def)             Requested size: 504.12733pt x 171.94234pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene 1.p
-df, id=429, 574.40059pt x 171.12387pt>
+df, id=396, 574.40059pt x 171.12387pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Eben
 e 1.pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene
  1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndix_tuktuktuk_Ebene 1.pdf  used on input line 1364.
+ndix_tuktuktuk_Ebene 1.pdf  used on input line 1383.
 (pdftex.def)             Requested size: 512.17024pt x 152.58437pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[25
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf, id=397,
+ 586.35762pt x 175.9847pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf Gra
+phic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
+ndix_Panel7.pdf  used on input line 1389.
+(pdftex.def)             Requested size: 512.18484pt x 153.72305pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[23]
+Overfull \hbox (59.42575pt too wide) in alignment at lines 1399--1404
+ [] [] [] 
+ []
 
 
+Overfull \hbox (59.42575pt too wide) in alignment at lines 1404--1408
+ [] [] [] 
+ []
+
+
+Overfull \hbox (59.42575pt too wide) in alignment at lines 1408--1439
+ [] [] [] 
+ []
+
+[24
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1371 
-       
+l.1439 \end{longtable}
+                      
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1371 
-        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appen
-dixPanel6_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/0
-9_figures/Appendix_Panel4_Ebene 1.pdf
+l.1439 \end{longtable}
+                       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/0
+9_figures/AppendixPanel6_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-top
+ic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf
 
 pdfTeX warning: pdflatex (file /Users/timwenzel/Desktop/GitHub/2022-topic-02-te
 am-02/09_figures/Appendix_Panel4_Ebene 1.pdf): PDF inclusion: multiple pdfs wit
 h page group included in a single page
->]
-Overfull \hbox (51.2262pt too wide) in paragraph at lines 1379--1379
-[]\T1/lmtt/m/n/10.95 Package         | Author                  | Application   
-                                       |[] 
- []
-
-[26
+>] [25] [26
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1418 \end{document}
+l.1441 \end{document}
+                     
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6.4}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1441 \end{document}
                       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09
-_figures/Appendix_tuktuktuk_Ebene 1.pdf>] (./Report.aux)
+_figures/Appendix_tuktuktuk_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-
+topic-02-team-02/09_figures/Appendix_Panel7.pdf
 
-LaTeX Warning: There were undefined references.
+pdfTeX warning: pdflatex (file /Users/timwenzel/Desktop/GitHub/2022-topic-02-te
+am-02/09_figures/Appendix_Panel7.pdf): PDF inclusion: multiple pdfs with page g
+roup included in a single page
+>] (./Report.aux)
+
+LaTeX Warning: There were multiply-defined labels.
 
 Package logreq Info: Writing requests to 'Report.run.xml'.
 \openout1 = `Report.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 31523 strings out of 478268
- 606860 string characters out of 5846347
- 1616556 words of memory out of 5000000
- 48906 multiletter control sequences out of 15000+600000
- 555711 words of font info for 195 fonts, out of 8000000 for 9000
+ 31707 strings out of 478268
+ 610801 string characters out of 5846347
+ 1618777 words of memory out of 5000000
+ 49078 multiletter control sequences out of 15000+600000
+ 555783 words of font info for 196 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  108i,20n,106p,10610b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
@@ -1387,10 +1440,10 @@ texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2022/texmf-di
 st/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/t
 ype1/public/lm/lmsy8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public
 /lm/lmtt10.pfb>
-Output written on Report.pdf (26 pages, 4301659 bytes).
+Output written on Report.pdf (26 pages, 4511656 bytes).
 PDF statistics:
- 682 PDF objects out of 1000 (max. 8388607)
- 556 compressed objects within 6 object streams
- 170 named destinations out of 1000 (max. 500000)
- 47395 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 694 PDF objects out of 1000 (max. 8388607)
+ 563 compressed objects within 6 object streams
+ 172 named destinations out of 1000 (max. 500000)
+ 47400 words of extra memory for PDF output out of 51595 (max. 10000000)
 

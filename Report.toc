@@ -10,7 +10,7 @@
 \contentsline {subsection}{\numberline {1.1.5}Immune deconvolution}{7}{subsection.1.1.5}%
 \contentsline {subsection}{\numberline {1.1.6}Gene Set Enrichment Analysis}{8}{subsection.1.1.6}%
 \contentsline {subsection}{\numberline {1.1.7}Binary logistic regression}{8}{subsection.1.1.7}%
-\contentsline {chapter}{\numberline {2}Materials and Methods}{9}{chapter.2}%
+\contentsline {chapter}{\numberline {2}Materials and Methods}{8}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Data cleaning}{9}{section.2.1}%
 \contentsline {section}{\numberline {2.2}TCGA pan-cancer analysis}{9}{section.2.2}%
 \contentsline {section}{\numberline {2.3}Focused Analysis: Identifying subtypes in KIRC}{9}{section.2.3}%
@@ -26,9 +26,9 @@
 \contentsline {subsection}{\numberline {3.2.2}Identification of two KIRC subtypes that differ in pathways related to immune signaling and cell cycle regulators}{15}{subsection.3.2.2}%
 \contentsline {subsubsection}{\numberline {3.2.2.1}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{16}{subsubsection.3.2.2.1}%
 \contentsline {section}{\numberline {3.3}Binary logistic regression model to predict immune infiltration based on pathway activity}{17}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Discussion}{19}{chapter.4}%
-\contentsline {chapter}{\numberline {5}References}{22}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Appendix}{25}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Supplementary figures}{25}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Packages}{26}{section.6.2}%
+\contentsline {chapter}{\numberline {4}Discussion}{18}{chapter.4}%
+\contentsline {chapter}{\numberline {5}References}{21}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Appendix}{23}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Supplementary figures}{23}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Packages}{24}{section.6.2}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
