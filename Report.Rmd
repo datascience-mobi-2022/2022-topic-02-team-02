@@ -501,6 +501,7 @@ Immune signaling pathway panels could be broadly introduced in cancer diagnostic
 
 # References
 
+
 ::: {#refs}
 :::
 
@@ -561,7 +562,7 @@ The result of the function is the probability between $0$ and $1$ for each data 
 For the evaluation of the regression model $R^2$-values and statistical tests can be considered.
 Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
 A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
-
+\clearpage
 ## Supplementary figures
 
 
@@ -592,9 +593,7 @@ A Wald-test and a $chi2$-test can be performed to test for the significance of e
 \end{figure}
 
 
-\pagebreak
-
-
+\clearpage
 ## Packages
 
 Table: Packages used for analysis

@@ -29,6 +29,5 @@
 \contentsline {subsection}{\numberline {6.1.5}Immune deconvolution}{19}{subsection.6.1.5}%
 \contentsline {subsection}{\numberline {6.1.6}Gene Set Enrichment Analysis}{20}{subsection.6.1.6}%
 \contentsline {subsection}{\numberline {6.1.7}Binary logistic regression}{20}{subsection.6.1.7}%
-\contentsline {section}{\numberline {6.2}Supplementary figures}{20}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Packages}{21}{section.6.3}%
+\contentsline {section}{\numberline {6.2}Packages}{23}{section.6.2}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
