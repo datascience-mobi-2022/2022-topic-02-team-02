@@ -307,6 +307,9 @@ Packages that have been used are listed in Appendix **????** <!-- Results -->
 
 ### GSEA deciphers differences in immune and metabolic signaling across tumor types
 
+```{r UMAP1, echo=F, fig.align="center", out.width="60%", fig.cap="**Clustering of 33 tumor types based on gene expression** (A) `UMAP` besed on gene expression levels show clustering between different tumor types (B) Venn-diagram shows overlap between the significantly differentially expressed genes and genes in the gene sets Hallmark, KEGG and PID"}
+knitr::include_graphics("Panel0_Ebene 1.pdf")
+```
 
 ```{=tex}
 \begin{figure}[h]
@@ -477,7 +480,7 @@ Both independent variables significantly contribute to the model as can be seen 
 ```{=tex}
 \begin{figure}[t]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}
-  \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID_TCR_PATHWAY$ and $PID_IL1_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
+  \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID\_TCR\_PATHWAY$ and $PID\_IL1\_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
   \label{log}
 \end{figure}
 ```
