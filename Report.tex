@@ -4,7 +4,7 @@
 %
 \documentclass[
   parskip,
-  oneside]{scrreprt}
+  openany]{scrreprt}
 \author{}
 \date{\vspace{-2.5em}}
 
@@ -43,6 +43,16 @@
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -185,6 +195,7 @@ Therefore, we created a highly accurate model, to facilitate treatment
 decisions, characterizing immune infiltrated subtypes as more
 perceivable towards immune therapy. \tableofcontents
 
+\let\cleardoublepage\clearpage
 \addchap{List of Abbreviations}
 
 \small
@@ -527,8 +538,7 @@ The dependent variable to be predicted was the ``Immune infiltration''
 of samples. The independent variables were pathways chosen from the most
 differentially significantly expressed PID pathways between the three
 clusters that have emerged in the PID clustering of KIRC patients in
-\texttt{DF1}. The list of independent variables can be seen in Appendix
-\textbf{???} All patients of the cluster with highest pathway activity
+\texttt{DF1}. All patients of the cluster with highest pathway activity
 were marked as immune infiltrated with a ``\(1\)'' and all other
 patients with a ``\(0\).'' The logistic regression was performed to
 predict the immune infiltration in the samples of \texttt{DF2}. The
@@ -539,7 +549,7 @@ ROC-curve with computation of the AUC-value.
 \section{Packages}\label{packages}}
 
 The analysis was performed using Rversion 4.2.0 and Rstudio. Packages
-that have been used are listed in Appendix \textbf{????}
+that have been used are listed in Appendix (see Table 6.1)
 
 \hypertarget{results}{%
 \chapter{Results}\label{results}}
@@ -810,6 +820,7 @@ independent variables significantly contribute to the model as can be
 seen in Table \Cref{tab}, which depicts the model properties.
 
 \begin{table}[ht]
+  \begin{center}
  \begin{tabular}{ |p{4.5cm}||p{3cm}|p{3cm}|p{3cm}|  }
   \hline
   \multicolumn{4}{|c|}{Logistic regression model results} \\
@@ -821,11 +832,12 @@ seen in Table \Cref{tab}, which depicts the model properties.
   PID\_IL1\_PATHWAY & $1.1651$ & $0.1934$ &  $1.70e-09$\\
  \hline
  \end{tabular}
+ \end{center}
  \label{tab}
 \end{table}
 
-\begin{figure}[t]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}
+\begin{figure}[ht]
+  \scalebox{.5}{\input{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}}
   \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID\_TCR\_PATHWAY$ and $PID\_IL1\_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
   \label{log}
 \end{figure}
@@ -841,9 +853,9 @@ infiltrated'' (see \Cref{log} \(A\)). The contribution of each
 coefficient to the model was evaluated and confirmed with a
 \texttt{Wald’s} test, where both TCR (\(p= 1.590e-06\)) and IL-1 pathway
 (\(p= 1.701e-09\)) were significant. The significance of the whole model
-in contrast to a null-model was confirmed by McFadden's
-\texttt{pseudo-\$R\^{}2\$} (\(R_{Mc}^2=0.5074508\)) and the p-value of
-the overall \texttt{chi-square} statistic (\(p=7.860549e-60\)).\\
+in contrast to a null-model was confirmed by McFadden's pseudo-\(R^2\)
+(\(R_{Mc}^2=0.5074508\)) and the p-value of the overall
+\texttt{chi-square} statistic (\(p=7.860549e-60\)).\\
 The model was tested on KIRC patients in \texttt{DF2} and classified
 \(42\) out of \(72\) patients with a probability threshold of
 \(p > 0.5\) as ``Immune infiltrated.'' The accuracy of the model was
@@ -1007,7 +1019,7 @@ alterations associated with tumor progression. Correlations between
 survival could enhance both reliability and significance of our analysis
 as well.
 
-\subesction*{Outlook}
+\section*{Outlook}
 
 Immune signaling pathway panels could be broadly introduced in cancer
 diagnostics and are already used for reliable subtyping. Based on these
@@ -1063,10 +1075,24 @@ Cornel, AM, Mimpen, IL, and Nierkens, S (2020). MHC class i
 downregulation in cancer: Underlying mechanisms and potential targets
 for cancer immunotherapy. Cancers (Basel) 12.
 
+\leavevmode\vadjust pre{\hypertarget{ref-ggdendro}{}}%
+de Vries, A, and Ripley, BD (2022). Ggdendro: Create dendrograms and
+tree diagrams using 'ggplot2'.
+
 \leavevmode\vadjust pre{\hypertarget{ref-cross-omics_KIRC_Dimitrieva_2016}{}}%
 Dimitrieva, S, Schlapbach, R, and Rehrauer, H (2016). Prognostic value
 of cross-omics screening for kidney clear cell renal cancer survival.
 Biol Direct 11, 68.
+
+\leavevmode\vadjust pre{\hypertarget{ref-msigdbr}{}}%
+Dolgalev, I (2022). Msigdbr: MSigDB gene sets for multiple organisms in
+a tidy data format.
+
+\leavevmode\vadjust pre{\hypertarget{ref-BioMart}{}}%
+Durinck, S, Moreau, Y, Kasprzyk, A, Davis, S, De Moor, B, Brazma, A, and
+Huber, W (2005). BioMart and bioconductor: A powerful link between
+biological databases and microarray data analysis. Bioinformatics 21,
+3439--3440.
 
 \leavevmode\vadjust pre{\hypertarget{ref-cancer_statistics_Ferlay_2021}{}}%
 Ferlay, J, Colombet, M, Soerjomataram, I, Parkin, DM, Piñeros, M, Znaor,
@@ -1088,9 +1114,33 @@ Gordon, SR et al. (2017). PD-1 expression by tumour-associated
 macrophages inhibits phagocytosis and tumour immunity. Nature 545,
 495--499.
 
+\leavevmode\vadjust pre{\hypertarget{ref-ComplexHeatmap}{}}%
+Gu, Z, Eils, R, and Schlesner, M (2016). Complex heatmaps reveal
+patterns and correlations in multidimensional genomic data.
+Bioinformatics.
+
+\leavevmode\vadjust pre{\hypertarget{ref-circlize}{}}%
+Gu, Z, Gu, L, Eils, R, Schlesner, M, and Brors, B (2014). Circlize
+implements and enhances circular visualization in r. Bioinformatics 30,
+2811--2812.
+
 \leavevmode\vadjust pre{\hypertarget{ref-cancer_hallmarks_hanahan_2011}{}}%
 Hanahan, D, and Robert (2011). Hallmarks of cancer: The next generation.
 Cell 144, 646--674.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ggpubr}{}}%
+Kassambara, A (2020). Ggpubr: 'ggplot2' based publication ready plots.
+
+\leavevmode\vadjust pre{\hypertarget{ref-factoextra}{}}%
+Kassambara, A, and Mundt, F (2020). Factoextra: Extract and visualize
+the results of multivariate data analyses.
+
+\leavevmode\vadjust pre{\hypertarget{ref-umap}{}}%
+Konopka, T (2022). Umap: Uniform manifold approximation and projection.
+
+\leavevmode\vadjust pre{\hypertarget{ref-fgsea}{}}%
+Korotkevich, G, Sukhov, V, and Sergushichev, A (2019). Fast gene set
+enrichment analysis. bioRxiv.
 
 \leavevmode\vadjust pre{\hypertarget{ref-Therapy-Chirag-2021}{}}%
 Krishna, C et al. (2021). Single-cell sequencing links multiregional
@@ -1135,6 +1185,10 @@ McFadden, D (1977). {Quantitative Methods for Analyzing Travel Behaviour
 of Individuals: Some Recent Developments}, Cowles Foundation for
 Research in Economics, Yale University.
 
+\leavevmode\vadjust pre{\hypertarget{ref-uwot}{}}%
+Melville, J (2021). Uwot: The uniform manifold approximation and
+projection (UMAP) method for dimensionality reduction.
+
 \leavevmode\vadjust pre{\hypertarget{ref-immunedeconv-merotto-2022}{}}%
 Merotto, L, and Sturm, G (2022). Immunedeconv: Methods for immune cell
 deconvolution.
@@ -1178,6 +1232,14 @@ of metabolic expression subtypes in human cancers. Cell Rep 23,
 Polager, S, and Ginsberg, D (2009). p53 and E2f: Partners in life and
 death. Nature Reviews Cancer 9, 738--748.
 
+\leavevmode\vadjust pre{\hypertarget{ref-grid}{}}%
+R Core Team (2022a). R: A language and environment for statistical
+computing, Vienna, Austria: R Foundation for Statistical Computing.
+
+\leavevmode\vadjust pre{\hypertarget{ref-stats}{}}%
+R Core Team (2022b). R: A language and environment for statistical
+computing, Vienna, Austria: R Foundation for Statistical Computing.
+
 \leavevmode\vadjust pre{\hypertarget{ref-Wilcoxon-Rey2011}{}}%
 Rey, D, and Neuhäuser, M (2011). Wilcoxon-signed-rank test. In:
 International Encyclopedia of Statistical Science, ed. M Lovric, Berlin,
@@ -1211,6 +1273,26 @@ analysis of the E2F transcription factors across cancer types. Oncol Rep
 \leavevmode\vadjust pre{\hypertarget{ref-Metabolism_Warburg_1927}{}}%
 Warburg, O, Wind, F, and Negelein, E (1927). THE METABOLISM OF TUMORS IN
 THE BODY. J Gen Physiol 8, 519--530.
+
+\leavevmode\vadjust pre{\hypertarget{ref-reshape2}{}}%
+Wickham, H (2007). Reshaping data with the {reshape} package. Journal of
+Statistical Software 21, 1--20.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ggplot2}{}}%
+Wickham, H (2016). ggplot2: Elegant graphics for data analysis,
+Springer-Verlag New York.
+
+\leavevmode\vadjust pre{\hypertarget{ref-stringr}{}}%
+Wickham, H (2019). Stringr: Simple, consistent wrappers for common
+string operations.
+
+\leavevmode\vadjust pre{\hypertarget{ref-tidyverse}{}}%
+Wickham, H et al. (2019). Welcome to the {tidyverse}. Journal of Open
+Source Software 4, 1686.
+
+\leavevmode\vadjust pre{\hypertarget{ref-dplyr}{}}%
+Wickham, H, François, R, Henry, L, and Müller, K (2022). Dplyr: A
+grammar of data manipulation.
 
 \leavevmode\vadjust pre{\hypertarget{ref-Wilcoxon-Woolson-2007}{}}%
 Woolson, RF (2007). Wilcoxon signed‐rank test. Wiley Encyclopedia of
@@ -1271,34 +1353,42 @@ cell renal cell carcinoma. Onco Targets Ther 14, 2085--2100.
   \label{tuk}
 \end{figure}
 
+\pagebreak
+
 \hypertarget{packages-1}{%
 \section{Packages}\label{packages-1}}
 
-documentclass\{article\}
-
-\begin{table}[!ht]
-    \centering
-    \begin{tabular}{|l|l|l|}
-    \hline
-        Package & Author & Application \\ \hline
-        biomaRt &{\cite{@BioMart}}& biotype filtering  \\ \hline
-        circlize & [@circlize] & color scaling for heatmaps  \\ \hline
-        ComplexHeatmap & [@ComplexHeatmap] & heatmap plots  \\ \hline
-        dplyr & [@dplyr] & data transformation  \\ \hline
-        factoextra & [@factoextra] & visualization of k-means results  \\ \hline
-        fgsea & [@fgsea] & curation of pathway activity matrix  \\ \hline
-        ggdendro & [@ggdendro] & hierarchical clustering  \\ \hline
-        ggplot2 & [@ggplot2] & plots  \\ \hline
-        ggpubr & [@ggpubr] & r - optimization of heatmap plots  \\ \hline
-        grid & [@grid] & creation of plot panels  \\ \hline
-        msigdbr & [@msigdbr] & curration of pathways  \\ \hline
-        reshape2 & [@reshape2] & data preperation for ggplot  \\ \hline
-        stats & [@stats] & statistical testing  \\ \hline
-        stringr & [@stringr] & text formatting  \\ \hline
-        tidyverse & [@tidyverse] & data transformation  \\ \hline
-        umap & [@umap] & dimension reduction, visualisation of PCA results  \\ \hline
-        uwot & [@uwot] & UMAP, dimension reduction  \\ \hline
-    \end{tabular}
-\end{table}
+\begin{longtable}[]{@{}lll@{}}
+\caption{Packages used for analysis}\tabularnewline
+\toprule
+Package & Author & Application \\
+\midrule
+\endfirsthead
+\toprule
+Package & Author & Application \\
+\midrule
+\endhead
+biomaRt & (Durinck \emph{et al.}, 2005) & biotype filtering \\
+circlize & (Gu \emph{et al.}, 2014) & color scaling for heatmaps \\
+ComplexHeatmap & (Gu \emph{et al.}, 2016) & heatmap plots \\
+dplyr & (Wickham \emph{et al.}, 2022) & data transformation \\
+factoextra & (Kassambara and Mundt, 2020) & visualization of kmeans
+results \\
+fgsea & (Korotkevich \emph{et al.}, 2019) & curration of pathway
+activity matrix \\
+ggdendro & (de Vries and Ripley, 2022) & hierarchical clustering \\
+ggplot2 & (Wickham, 2016) & plots \\
+ggpubr & (Kassambara, 2020) & r - optimization of heat map plots \\
+grid & (R Core Team, 2022a) & creation of plot panels \\
+msigdbr & (Dolgalev, 2022) & curration of pathways \\
+reshape2 & (Wickham, 2007) & data preperation for ggplot \\
+stats & (R Core Team, 2022b) & statistical testing \\
+stringr & (Wickham, 2019) & text formatting \\
+tidyverse & (Wickham \emph{et al.}, 2019) & data transformation \\
+umap & (Konopka, 2022) & dimension reduction, visualisation of PCA
+results \\
+uwot & (Melville, 2021) & UMAP, dimension reduction \\
+\bottomrule
+\end{longtable}
 
 \end{document}

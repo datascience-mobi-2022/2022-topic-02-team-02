@@ -300,7 +300,7 @@ The logistic regression was performed to predict the immune infiltration in the 
 ## Packages
 
 The analysis was performed using Rversion 4.2.0 and Rstudio.
-Packages that have been used are listed in Appendix **????** <!-- Results -->
+Packages that have been used are listed in Appendix (see Table 6.1) <!-- Results -->
 
 # Results
 
@@ -479,7 +479,7 @@ Both independent variables significantly contribute to the model as can be seen 
 ```
 
 ```{=tex}
-\begin{figure}[t]
+\begin{figure}[ht]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf}
   \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID\_TCR\_PATHWAY$ and $PID\_IL1\_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
   \label{log}
@@ -571,7 +571,7 @@ Next steps in the analysis would be to define the coherence between immune syste
 Besides sequencing data, mutational analysis would be needed to gain a deeper insight into the genetic alterations associated with tumor progression.
 Correlations between survival could enhance both reliability and significance of our analysis as well.
 
-\subesction*{Outlook}
+\section*{Outlook}
 
 Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping.
 Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to Immunotherapies such as Immune-Checkpoint-inhibitors [@Therapy-Chirag-2021].
@@ -637,4 +637,5 @@ Table: Packages used for analysis
 | tidyverse      | [@tidyverse]      | data transformation                               |
 | umap           | [@umap]           | dimension reduction, visualisation of PCA results |
 | uwot           | [@uwot]           | UMAP, dimension reduction                         |
+
 
