@@ -294,7 +294,7 @@ A binary logistic regression model was created based on the pathway activity of 
 The dependent variable to be predicted was the "Immune infiltration" of samples.
 The independent variables were pathways chosen from the most differentially significantly expressed PID pathways between the three clusters that have emerged in the PID clustering of KIRC patients in `DF1`.
 The list of independent variables can be seen in Appendix **???** All patients of the cluster with highest pathway activity were marked as immune infiltrated with a "$1$" and all other patients with a "$0$".
-The logistic regression was performed to predict the immune infiltration in the samples of `DF2`.
+The logistic regression was performed to predict the immune infiltration in the samples of `DF2`. The performance was eventually evaluated with statistical tests and an ROC-curve with computation of the AUC-value.
 
 ## Packages
 
@@ -481,11 +481,11 @@ Both independent variables significantly contribute to the model as can be seen 
   \label{log}
 \end{figure}
 ```
-By taking the exponent of the coefficients in Table \Cref{tab}, the returned value implies that for every increase of $1$ in `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$ ($164.5\%$) and $3.206149$ ($220.6\%$), respectively.
+By taking the exponent of the coefficients in Table \Cref{tab}, the returned value implies that for every increase of $1$ in  `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5\%$) and $3.206149$  ($220.6\%$), respectively.
 The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as "Immune infiltrated" (see \Cref{log} $A$).
 The contribution of each coefficient to the model was evaluated and confirmed with a `Wald’s` test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant.
 The significance of the whole model in contrast to a null-model was confirmed by McFadden's `pseudo-$R^2$` ($R_{Mc}^2=0.5074508$) and the p-value of the overall `chi-square` statistic ($p=7.860549e-60$).\
-The model was tested on KIRC patients in `DF2` and classified $42$ out of $72$ patients as "Immune infiltrated".
+The model was tested on KIRC patients in `DF2` and classified $42$ out of $72$ patients with a probability threshold of $p > 0.5$ as "Immune infiltrated".
 The accuracy of the model was verified by the clustering of the patients according to PID pathway activity, which showed two distinct clusters.
 One cluster showed upregulation in immune pathways hence all these patients were assigned to the immune infiltrated group.
 In $94.4$% of the patients the prediction and the cluster assignment corresponded correctly.
