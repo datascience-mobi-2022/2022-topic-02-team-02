@@ -611,11 +611,18 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
         circlize & [@circlize] & color scaling for heatmaps  \\ \hline
         ComplexHeatmap & [@ComplexHeatmap] & heatmap plots  \\ \hline
         dplyr & [@dplyr] & data transformation  \\ \hline
-        factoextra & [@factoextra] & visualization of kmeans results  \\ \hline
-        fgsea & [@fgsea] & curration of pathway activity matrix  \\ \hline
+        factoextra & [@factoextra] & visualization of k-means results  \\ \hline
+        fgsea & [@fgsea] & curation of pathway activity matrix  \\ \hline
         ggdendro & [@ggdendro] & hierarchical clustering  \\ \hline
         ggplot2 & [@ggplot2] & plots  \\ \hline
-        ggpubr & [@ggpubr] & r - optimization of heat map plots  \\ \hline
+        ggpubr & [@ggpubr] & r - optimization of heatmap plots  \\ \hline
         grid & [@grid] & creation of plot panels  \\ \hline
+        msigdbr & [@msigdbr] & curration of pathways  \\ \hline
+        reshape2 & [@reshape2] & data preperation for ggplot  \\ \hline
+        stats & [@stats] & statistical testing  \\ \hline
+        stringr & [@stringr] & text formatting  \\ \hline
+        tidyverse & [@tidyverse] & data transformation  \\ \hline
+        umap & [@umap] & dimension reduction, visualisation of PCA results  \\ \hline
+        uwot & [@uwot] & UMAP, dimension reduction  \\ \hline
     \end{tabular}
 \end{table}
