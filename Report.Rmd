@@ -208,7 +208,9 @@ The alternative hypothesis states that at least two populations show stochastic 
 Multiple statistical testing results in an increased risk for type I errors (false positives).
 `Bonferroni` correction is used to reduce this type I error rate.
 For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
+
 ### Immune deconvolution The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data.
+
 The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
 The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
 An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
@@ -305,12 +307,17 @@ Packages that have been used are listed in Appendix **????** <!-- Results -->
 
 ### GSEA deciphers differences in immune and metabolic signaling across tumor types
 
+
 ```{=tex}
 \begin{figure}[h]
+ \begin{center}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf}
+  \end{center}
   \caption{\textbf{Clustering of 33 tumor types based on gene expression} (A) `UMAP` besed on gene expression levels show clustering between different tumor types (B) Venn-diagram shows overlap between the significantly differentially expressed genes and genes in the gene sets Hallmark, KEGG and PID}
   \label{UMAP}
 \end{figure}
 ```
+
 Visualizing the 33 tumor types based on gene expression using `PCA` and `UMAP` revealed that gene expression landscape is highly diverse.
 Nontheless, tumor types, which all differ severely in their phenotype and histopathology, appear to form clusters upon gene expression (see \Cref{UMAP} $A$).
 To asses the foundation of these clusters, we utilized several gene sets, including hallmark, PID and KEGG, which include `24,7%` of our highly differentially expressed genes and were used for further analysis using `GSEA` (see \Cref{UMAP} $B$).
@@ -318,12 +325,13 @@ To asses the foundation of these clusters, we utilized several gene sets, includ
 ```{=tex}
 \begin{figure}[h]
  \begin{center}
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene_1.pdf}
   \end{center}
   \caption{\textbf{GSEAresults for 33 tumor types} Heatmap showing top 30 variant gene sets}
   \label{hm}
 \end{figure}
 ```
+
 `GSEA` was performed on `DF1` showing diverse pathway patterns across tumor types.
 In order to visualize the enrichment results, heatmaps of the pathway activity matrices were plotted.
 Four main clusters of the 33 tumor types could be identified in the hallmark `GSEA`.
@@ -445,7 +453,7 @@ Moreover, KEGG clusters show similar subdivision of samples as PID clusters.
 In \Cref{kegg} $B$ it can be seen that the "fluctuating" KEGG cluster mainly matches patients of the "upregulated" PID cluster, while the "neutral" KEGG subtype includes mostly patients of the "neutral" PID subtype.
 Additionally, the "upregulated" KEGG cluster corresponds to both PID clusters.
 
-## Logistic regression
+## Binary logistic regression model to predict immune infiltration based on pathway activity
 
 The binary logistic regression model predicts immune infiltration in patients based on the pathway activity (`NES`) of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`.
 Both independent variables significantly contribute to the model as can be seen in Table \Cref{tab}, which depicts the model properties.
@@ -559,7 +567,7 @@ Next steps in the analysis would be to define the coherence between immune syste
 Besides sequencing data, mutational analysis would be needed to gain a deeper insight into the genetic alterations associated with tumor progression.
 Correlations between survival could enhance both reliability and significance of our analysis as well.
 
-## Outlook 
+# Outlook 
 
 Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping.
 Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to Immunotherapies such as Immune-Checkpoint-inhibitors [@Therapy-Chirag-2021].
