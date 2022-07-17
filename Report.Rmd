@@ -500,7 +500,7 @@ It revealed a false-negative rate of $2.5$%, a false-positive rate of $9.4$% and
 The ROC-curve that was plotted for the model \Cref{log}$C$ showed an AUC of $0.9789062$.
 
 <!-- Discussion -->
-
+\clearpage
 # Discussion
 
 Cancer hallmarks define abnormalities in metabolism, immune infiltration, and cell proliferation regardless of the cancer type [@cancer_hallmarks_hanahan_2011].
@@ -606,6 +606,7 @@ Table: Packages used for analysis
 | dplyr           | [@dplyr]                | data transformation                                  |
 | factoextra      | [@factoextra]           | visualization of kmeans results                      |
 | fgsea           | [@fgsea]                | curration of pathway activity matrix and GSEA plots  |
+|         |                | GSEA plots  |
 | GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
 | ggdendro        | [@ggdendro]             | hierarchical clustering                              |
 | ggplot2         | [@ggplot2]              | plots                                                |
