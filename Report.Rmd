@@ -567,7 +567,7 @@ Next steps in the analysis would be to define the coherence between immune syste
 Besides sequencing data, mutational analysis would be needed to gain a deeper insight into the genetic alterations associated with tumor progression.
 Correlations between survival could enhance both reliability and significance of our analysis as well.
 
-# Outlook 
+\subesction*{Outlook}
 
 Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping.
 Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to Immunotherapies such as Immune-Checkpoint-inhibitors [@Therapy-Chirag-2021].

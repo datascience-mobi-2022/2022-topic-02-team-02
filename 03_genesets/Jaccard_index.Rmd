@@ -12,11 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(msigdbr)
 library(biomaRt)
-library(vissE)
 library(GeneOverlap)
-?newGlibrary(dplyr)
 library(ggplot2)
-library(SeqGSEA)
 ```
 
 ```{r}
