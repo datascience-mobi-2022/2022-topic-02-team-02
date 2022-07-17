@@ -600,3 +600,22 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
   \caption{\textbf{Supplement: Identification of differences between healthy and tumorous tissue in KIRC } (A) Volcano plot showing differential gene expression between healthy and tumorous tissue (B) Top 10 most frequently enriched pathways}
   \label{volcanoap}
 \end{figure}
+
+## Packages
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|l|}
+    \hline
+        Package & Author & Application \\ \hline
+        biomaRt & [@BioMart] & biotype filtering  \\ \hline
+        circlize & [@circlize] & color scaling for heatmaps  \\ \hline
+        ComplexHeatmap & [@ComplexHeatmap] & heatmap plots  \\ \hline
+        dplyr & [@dplyr] & data transformation  \\ \hline
+        factoextra & [@factoextra] & visualization of kmeans results  \\ \hline
+        fgsea & [@fgsea] & curration of pathway activity matrix  \\ \hline
+        ggdendro & [@ggdendro] & hierarchical clustering  \\ \hline
+        ggplot2 & [@ggplot2] & plots  \\ \hline
+        ggpubr & [@ggpubr] & r - optimization of heat map plots  \\ \hline
+        grid & [@grid] & creation of plot panels  \\ \hline
+    \end{tabular}
+\end{table}
