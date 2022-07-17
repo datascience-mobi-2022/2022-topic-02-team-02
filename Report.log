@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.1)  17 JUL 2022 19:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 19:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1111,65 +1111,279 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/10.95'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 165.
+(Font)              <10.95> on input line 186.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 165.
+(Font)              <8> on input line 186.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 165.
+(Font)              <6> on input line 186.
 [2
 
 ]
-Package tocbasic Info: character protrusion at toc deactivated on input line 16
-5.
-(./Report.toc)
+Package tocbasic Info: character protrusion at toc deactivated on input line 18
+6.
+(./Report.toc [3
+
+])
 \tf@toc=\write4
 \openout4 = `Report.toc'.
 
-[3
-
-]
+[4]
 chapter without number
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 171.
-[4
+(Font)              <5> on input line 192.
+[5
 
 ]
 Overfull \vbox (9.42711pt too high) has occurred while \output is active []
 
-[5]
+[6]
 chapter 1.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-78.
+99.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [6
+) [7
 
-] [7] [8]
+] [8] [9]
 chapter 2.
-[9
+[10
 
-] [10]
+] [11]
 chapter 3.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=149, 
+555.35109pt x 184.65593pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf Grap
+hic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l0_Ebene 1.pdf  used on input line 556.
+(pdftex.def)             Requested size: 512.18333pt x 170.30252pt.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf, id=15
+2, 364.71552pt x 173.9927pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf G
+raphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l6_v2_Ebene 1.pdf  used on input line 574.
+(pdftex.def)             Requested size: 364.72574pt x 173.99756pt.
 
-LaTeX Warning: File `Panel0_Ebene 1.pdf' not found on input line 535.
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12
 
 
-! Package pdftex.def Error: File `Panel0_Ebene 1.pdf' not found: using draft se
-tting.
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.611 
+       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0
+_Ebene 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf, id=177, 
+568.0295pt x 294.98555pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf Grap
+hic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l3_Ebene 1.pdf  used on input line 617.
+(pdftex.def)             Requested size: 512.16656pt x 265.97514pt.
 
-See the pdftex.def package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.535    \includegraphics{Panel0_Ebene 1.pdf}
-                                              
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[13
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.656 B
+       ased on PID pathway activities, we conducted a more in-depth analysis </
+Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene
+ 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf, id=19
+3, 350.9703pt x 217.19286pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf G
+raphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l4_v2_Ebene 1.pdf  used on input line 683.
+(pdftex.def)             Requested size: 350.96945pt x 217.1923pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[14
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.698 T
+       he most frequently enriched pathways, which showed differential </Users/
+timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf, id=228, 
+574.23775pt x 420.10484pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf Grap
+hic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l1_Ebene 1.pdf  used on input line 729.
+(pdftex.def)             Requested size: 512.19154pt x 374.71263pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[15
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.4}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.762 
+       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4
+_v2_Ebene 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=250, 
+542.22766pt x 177.32076pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf Grap
+hic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l2_Ebene 1.pdf  used on input line 769.
+(pdftex.def)             Requested size: 512.18446pt x 167.49593pt.
+[16
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.5}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.772 \end{figure}
+                   </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_fi
+gures/Panel1_Ebene 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf,
+ id=289, 536.5627pt x 343.85808pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1
+.pdf Graphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.
+pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l7_version3_Ebene 1.pdf  used on input line 827.
+(pdftex.def)             Requested size: 512.20422pt x 328.24785pt.
+[17
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.859 
+       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2
+_Ebene 1.pdf>] [18
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.7}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.861 \chapter{Discussion}\label{discussion}}
+                                              </Users/timwenzel/Desktop/GitHub/
+2022-topic-02-team-02/09_figures/Panel7_version3_Ebene 1.pdf>]
+chapter 4.
+[19
+
+] [20] [21]
+chapter 5.
+[22
+
+]
+chapter 6.
+[23
+
+] [24]
+chapter 7.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf, 
+id=412, 475.0761pt x 171.84721pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.
+pdf Graphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.p
+df>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
+ndixPanel6_Ebene 1.pdf  used on input line 1252.
+(pdftex.def)             Requested size: 475.08218pt x 171.8494pt.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf,
+ id=413, 504.11319pt x 171.93753pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1
+.pdf Graphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.
+pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
+ndix_Panel4_Ebene 1.pdf  used on input line 1259.
+(pdftex.def)             Requested size: 504.12733pt x 171.94234pt.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene 1.p
+df, id=414, 574.40059pt x 171.12387pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Eben
+e 1.pdf Graphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene
+ 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
+ndix_tuktuktuk_Ebene 1.pdf  used on input line 1267.
+(pdftex.def)             Requested size: 512.17024pt x 152.58437pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[25
+
+
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7.1}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1301 \end{document}
+                     
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7.2}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1301 \end{document}
+                      </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09
+_figures/AppendixPanel6_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-topi
+c-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf
+
+pdfTeX warning: pdflatex (file /Users/timwenzel/Desktop/GitHub/2022-topic-02-te
+am-02/09_figures/Appendix_Panel4_Ebene 1.pdf): PDF inclusion: multiple pdfs wit
+h page group included in a single page
+>] [26
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7.3}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.1301 \end{document}
+                      </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09
+_figures/Appendix_tuktuktuk_Ebene 1.pdf>] (./Report.aux)
+Package logreq Info: Writing requests to 'Report.run.xml'.
+\openout1 = `Report.run.xml'.
+
+ ) 
 Here is how much of TeX's memory you used:
- 31195 strings out of 478268
- 597296 string characters out of 5846348
- 1610306 words of memory out of 5000000
- 48775 multiletter control sequences out of 15000+600000
- 547013 words of font info for 158 fonts, out of 8000000 for 9000
+ 31497 strings out of 478268
+ 606950 string characters out of 5846347
+ 1616783 words of memory out of 5000000
+ 48903 multiletter control sequences out of 15000+600000
+ 556042 words of font info for 196 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 108i,20n,106p,10610b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 108i,21n,106p,10610b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/t
+exmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2022/texmf-dist/
+fonts/enc/dvips/lm/lm-mathsy.enc}</usr/local/texlive/2022/texmf-dist/fonts/type
+1/public/lm/lmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/l
+m/lmcsc10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi10.
+pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></usr/l
+ocal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texliv
+e/2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texm
+f-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/font
+s/type1/public/lm/lmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
+ic/lm/lmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10
+.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr
+/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/tex
+live/2022/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texlive/2022/
+texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2022/texmf-di
+st/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/t
+ype1/public/lm/lmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public
+/lm/lmtt10.pfb>
+Output written on Report.pdf (26 pages, 4503312 bytes).
+PDF statistics:
+ 666 PDF objects out of 1000 (max. 8388607)
+ 538 compressed objects within 6 object streams
+ 147 named destinations out of 1000 (max. 500000)
+ 47403 words of extra memory for PDF output out of 51595 (max. 10000000)
 
-!  ==> Fatal error occurred, no output PDF file produced!
