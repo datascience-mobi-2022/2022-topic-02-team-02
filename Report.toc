@@ -29,7 +29,7 @@
 \contentsline {chapter}{\numberline {4}Discussion}{19}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Outlook}{22}{chapter.5}%
 \contentsline {chapter}{\numberline {6}References}{23}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Appendix}{25}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Supplementary figures}{25}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Packages}{25}{section.7.2}%
+\contentsline {chapter}{\numberline {7}Appendix}{26}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Supplementary figures}{26}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Packages}{27}{section.7.2}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

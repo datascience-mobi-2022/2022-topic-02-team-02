@@ -6,7 +6,7 @@ output:
   html_document:
     code_folding: hide
 documentclass: scrreprt
-classoption: [parskip, oneside] # für drucken twoside
+classoption: [parskip, openany] # für drucken twoside
 header-includes:
 
   - \usepackage[ ngerman, main=english]{babel}
@@ -591,8 +591,7 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
   \caption{\textbf{Supplement: `GSEA` results for 33 tumor types} (A) Heatmap showing enrichment of hallmark gene sets in all tumor types (B) Heatmap showing enrichment of KEGG gene sets in all tumor types}
   \label{hmap}
 \end{figure}
-```
-```{=tex}
+
 \begin{figure}[h]
  \begin{center}
    \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf}
@@ -600,8 +599,7 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
   \caption{\textbf{Supplement: Identification of differences between healthy and tumorous tissue in KIRC } (A) Volcano plot showing differential gene expression between healthy and tumorous tissue (B) Top 10 most frequently enriched pathways}
   \label{volcanoap}
 \end{figure}
-```
-```{=tex}
+
 \begin{figure}[h]
  \begin{center}
    \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene 1.pdf}
@@ -609,31 +607,31 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
   \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) } (A) Heatmap showing ES for PID pathways (B) Heatmap showing ES for KEGG pathways
   \label{tuk}
 \end{figure}
-```
 
+```
+\pagebreak
 
 ## Packages
-\begin{table}[!ht]
-    \centering
-    \begin{tabular}{|l|l|l|}
-    \hline
-        Package & Author & Application \\ \hline
-        biomaRt &{\cite{@BioMart}}& biotype filtering  \\ \hline
-        circlize & [@circlize] & color scaling for heatmaps  \\ \hline
-        ComplexHeatmap & [@ComplexHeatmap] & heatmap plots  \\ \hline
-        dplyr & [@dplyr] & data transformation  \\ \hline
-        factoextra & [@factoextra] & visualization of k-means results  \\ \hline
-        fgsea & [@fgsea] & curation of pathway activity matrix  \\ \hline
-        ggdendro & [@ggdendro] & hierarchical clustering  \\ \hline
-        ggplot2 & [@ggplot2] & plots  \\ \hline
-        ggpubr & [@ggpubr] & r - optimization of heatmap plots  \\ \hline
-        grid & [@grid] & creation of plot panels  \\ \hline
-        msigdbr & [@msigdbr] & curration of pathways  \\ \hline
-        reshape2 & [@reshape2] & data preperation for ggplot  \\ \hline
-        stats & [@stats] & statistical testing  \\ \hline
-        stringr & [@stringr] & text formatting  \\ \hline
-        tidyverse & [@tidyverse] & data transformation  \\ \hline
-        umap & [@umap] & dimension reduction, visualisation of PCA results  \\ \hline
-        uwot & [@uwot] & UMAP, dimension reduction  \\ \hline
-    \end{tabular}
-\end{table}
+
+Table: Packages used for analysis
+
+| Package        | Author            | Application                                       |
+|----------------|-------------------|---------------------------------------------------|
+| biomaRt        | [@BioMart]        | biotype filtering                                 |
+| circlize       | [@circlize]       | color scaling for heatmaps                        |
+| ComplexHeatmap | [@ComplexHeatmap] | heatmap plots                                     |
+| dplyr          | [@dplyr]          | data transformation                               |
+| factoextra     | [@factoextra]     | visualization of kmeans results                   |
+| fgsea          | [@fgsea]          | curration of pathway activity matrix              |
+| ggdendro       | [@ggdendro]       | hierarchical clustering                           |
+| ggplot2        | [@ggplot2]        | plots                                             |
+| ggpubr         | [@ggpubr]         | r - optimization of heat map plots                |
+| grid           | [@grid]           | creation of plot panels                           |
+| msigdbr        | [@msigdbr]        | curration of pathways                             |
+| reshape2       | [@reshape2]       | data preperation for ggplot                       |
+| stats          | [@stats]          | statistical testing                               |
+| stringr        | [@stringr]        | text formatting                                   |
+| tidyverse      | [@tidyverse]      | data transformation                               |
+| umap           | [@umap]           | dimension reduction, visualisation of PCA results |
+| uwot           | [@uwot]           | UMAP, dimension reduction                         |
+
