@@ -47,9 +47,9 @@ header-includes:
   - \setkomafont{caption}{\sffamily\small}
   - \setkomafont{captionlabel}{\usekomafont{caption}\bfseries\small}
   - \setkomafont{pagehead}{\normalfont\scshape}
-  - \renewcommand*{\chapterheadstartvskip}{\vspace*{0.1cm}}
-  - \renewcommand*{\chapterheadendvskip}{\vspace*{0.1cm}}
-fontsize: 11pt
+  - \renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
+  - \renewcommand*{\chapterheadendvskip}{\vspace*{0cm}}
+fontsize: 10.5pt
 linestretch: 1.15
 csl: bib/molecular-biology-of-the-cell.csl
 bibliography: [bib/packages.bib, bib/BibTeX.bib]
