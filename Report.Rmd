@@ -8,6 +8,7 @@ output:
 documentclass: scrreprt
 classoption: [parskip, oneside] # für drucken twoside
 header-includes:
+
   - \usepackage[ ngerman, main=english]{babel}
   - \usepackage[utf8]{inputenc}
   - \usepackage[T1]{fontenc}
@@ -94,7 +95,7 @@ editor_options:
 \addchap{Abstract}
 Characterizing the metabolic and immune landscape in tumors is crucial to treatment decisions. Based on gene expression data from 9783 patients we were able to characterize  metabolic structures in 33 cancer types and identified essential alterations in drug metabolism leading to treatment failure as well as clear distinctions regarding immune signaling. Within 24 of 33 cancer types we were able to define immune signaling subtypes, highly associated with CD8+ T cell signaling. Going further, we conducted an analogous analysis for clear cell renal cell cancer and discovered strong correlations between immune signaling pathways and immune infiltration. Using immune deconvolution, we got an insight into the tumor microenvironment of clear cell kidney renal cancer. More precisely, we were able to characterize the tumor microenvironment during tumor progression, where an early stage is associated with macrophage infiltration and progressive CD8+ T cell infiltration. Further, we compared healthy tissue with tumorous tissue of clear cell renal kidney cancer, leading to the identification of a neutral and immune infiltrated subtype, based on CD8+ infiltration. We then successfully predicted this infiltration rate solely based on two immune signaling pathways - interleukin 1 and T cell receptor signaling. Therefore, we created a highly accurate model, to facilitate treatment decisions, characterizing immune infiltrated subtypes as more perceivable towards immune therapy.
 \tableofcontents
-
+\let\cleardoublepage\clearpage
 \addchap{List of Abbreviations}
 
 \small
@@ -612,7 +613,6 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
 
 
 ## Packages
-documentclass{article}
 \begin{table}[!ht]
     \centering
     \begin{tabular}{|l|l|l|}
