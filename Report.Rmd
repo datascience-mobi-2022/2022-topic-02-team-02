@@ -18,7 +18,7 @@ header-includes:
   - \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
   - \makeatother
   #- \usepackage[onehalfspacing]{setspace}
-  - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,includehead,includefoot]{geometry}
+  - \usepackage[left=1.50cm,right=1.2cm,top=1.2cm,bottom=1cm,includehead,includefoot]{geometry}
   - \usepackage[headsepline]{scrlayer-scrpage}
   - \usepackage{url}
   - \usepackage[backend=biber, style=authoryear, giveninits=true, maxbibnames=99, uniquename=init, maxcitenames=2, hyperref=true, date=year]{biblatex}
@@ -53,8 +53,8 @@ header-includes:
   - \setkomafont{pagehead}{\normalfont\scshape}
   - \renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
   - \renewcommand*{\chapterheadendvskip}{\vspace*{0cm}}
-fontsize: 10.5pt
-linestretch: 1.15
+fontsize: 10pt
+linestretch: 1.1
 csl: bib/molecular-biology-of-the-cell.csl
 bibliography: [bib/packages.bib, bib/BibTeX.bib]
 editor_options: 
@@ -186,7 +186,7 @@ While this is relatively successful with an overall survival of 60-70%, the prog
 This can be attributed to RCC being an intratumorally heterogenous form of cancer.
 Additionally, KIRC is resistant to traditional treatment methods like chemotherapy and radiotherapy [@cross-omics_KIRC_Dimitrieva_2016].
 Therefore, novel individualized treatment options need to be developed [@Immune_infiltration_RCC_Zhang_2019].
-
+\clearpage
 <!-- Materials and Methods -->
 
 # Materials and Methods
@@ -504,6 +504,8 @@ Immune signaling pathway panels could be broadly introduced in cancer diagnostic
 ::: {#refs}
 :::
 
+\clearpage
+
 # Appendix
 
 ## Star Methods
@@ -562,7 +564,7 @@ A Wald-test and a $chi2$-test can be performed to test for the significance of e
 
 ## Supplementary figures
 
-```{=tex}
+
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf}
   \caption{\textbf{Supplement: `GSEA` results for 33 tumor types} (A) Heatmap showing enrichment of hallmark gene sets in all tumor types (B) Heatmap showing enrichment of KEGG gene sets in all tumor types}
@@ -589,8 +591,9 @@ A Wald-test and a $chi2$-test can be performed to test for the significance of e
   \label{tuk}
 \end{figure}
 
-```
+
 \pagebreak
+
 
 ## Packages
 
