@@ -417,8 +417,8 @@ Using `hierarchical clustering`, two clusters could be identified, one smaller c
 
 ```{=tex}
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf}
-  \caption{\textbf{Identifying Immune subtypes within KIRC }(A) k-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf}
+  \caption{\textbf{Identifying Immune subtypes within KIRC }(A) k-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster }
   \label{pid}
 \end{figure}
 ```
@@ -428,10 +428,10 @@ To determine signaling pathways that distinguish KIRC tumor tissue from normal t
 These differences include pathways that play an important role in cell cycle regulation, such as E2F and P53 pathway [@p53-and-E2f-Poalger-2009].
 Noticeably, a majority of significantly differently pathways are related to immune response as interleukin pathways (e.g. IL1, IL2) or T cell specific receptor signaling.
 More precisely, top significant pathways refer to CD8+ T cells, thus potentially differential numbers of these cells between both clusters.
-This lead was confirmed by immune deconvolution, where the "upregulated" subtype is associated with higher CD8+ T cell fractions (see \Cref{pid} $D$).
+This lead was confirmed by immune deconvolution, where the "upregulated" subtype is associated with higher CD8+ T cell fractions (see \Cref{pid} $C$).
 Consequently, the "upregulated" cluster shows higher CD8+ T cell infiltration compared to the "neutral" subtype characterizing two different TMEs.\
 Additional patient data was provided, such as gender and tumor stage and was examined with regard to PID clusters.
-Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the "upregulated" cluster are tumor free, while in the "neutral" cluster, only $28.1\%$ of patients characterize as tumor free (see \Cref{pid} $C$).
+Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the "upregulated" cluster are tumor free, while in the "neutral" cluster, only $28.1\%$ of patients characterize as tumor free (see \Cref{pid} $D$).
 
 #### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
 
@@ -587,7 +587,6 @@ Immune signaling pathway panels could be broadly introduced in cancer diagnostic
   \label{tuk}
 \end{figure}
 
-
 ```
 \pagebreak
 
@@ -605,8 +604,8 @@ Table: Packages used for analysis
 | ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
 | dplyr           | [@dplyr]                | data transformation                                  |
 | factoextra      | [@factoextra]           | visualization of kmeans results                      |
-| fgsea           | [@fgsea]                | curration of pathway activity matrix and GSEA plots  |
-|         |                | GSEA plots  |
+| fgsea           | [@fgsea]                | curration of pathway activity matrix and             |
+|                 |                         | GSEA plots                                           |
 | GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
 | ggdendro        | [@ggdendro]             | hierarchical clustering                              |
 | ggplot2         | [@ggplot2]              | plots                                                |

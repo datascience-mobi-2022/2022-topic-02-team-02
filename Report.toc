@@ -25,10 +25,10 @@
 \contentsline {subsubsection}{\numberline {3.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{14}{subsubsection.3.2.1.1}%
 \contentsline {subsection}{\numberline {3.2.2}Identification of two KIRC subtypes that differ in pathways related to immune signaling and cell cycle regulators}{15}{subsection.3.2.2}%
 \contentsline {subsubsection}{\numberline {3.2.2.1}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{16}{subsubsection.3.2.2.1}%
-\contentsline {section}{\numberline {3.3}Binary logistic regression model to predict immune infiltration based on pathway activity}{17}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Discussion}{19}{chapter.4}%
-\contentsline {chapter}{\numberline {5}References}{22}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Appendix}{24}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Supplementary figures}{24}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Packages}{25}{section.6.2}%
+\contentsline {section}{\numberline {3.3}Binary logistic regression model to predict immune infiltration based on pathway activity}{16}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Discussion}{18}{chapter.4}%
+\contentsline {chapter}{\numberline {5}References}{21}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Appendix}{23}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Supplementary figures}{23}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Packages}{24}{section.6.2}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
