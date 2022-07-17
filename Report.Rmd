@@ -247,7 +247,36 @@ The logistic regression was performed to predict the immune infiltration in the 
 ## Packages
 
 The analysis was performed using Rversion 4.2.0 and Rstudio.
-Packages that have been used are listed in Appendix (see Table 6.1) <!-- Results -->
+Packages that have been used are listed in Table 2.1.
+
+Table: Packages used for analysis
+  Package         | Author                  | Application                                          |
+|-----------------|-------------------------|------------------------------------------------------|
+| biomaRt         | [@BioMart]              | biotype filtering                                    |
+| car             | [@car-package]          | statistical tests                                    |
+| cvms            | [@cvms-package]         | plotting confusion matrix                            |
+| circlize        | [@circlize]             | color scaling for heatmaps                           |
+| ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
+| dplyr           | [@dplyr]                | data transformation                                  |
+| factoextra      | [@factoextra]           | visualization of kmeans results                      |
+| fgsea           | [@fgsea]                | curration of pathway activity matrix and             |
+|                 |                         | GSEA plots                                           |
+| GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
+| ggdendro        | [@ggdendro]             | hierarchical clustering                              |
+| ggplot2         | [@ggplot2]              | plots                                                |
+| ggpubr          | [@ggpubr]               | r - optimization of heat map plots                   |
+| gplots          | [@gplots-package]       | plotting data                                        |
+| grid            | [@grid]                 | creation of plot panels                              |
+| msigdbr         | [@msigdbr]              | curration of pathways                                |
+| org.Hs.eg.db    | [@org-package]          | converting gene IDs                                  |
+| reshape2        | [@reshape2]             | data preperation for ggplot                          |
+| ROCR            | [@ROCR-package]         | evaluating performance of regression model           |
+| stats           | [@stats]                | statistical testing and logistic regression          |
+| stringr         | [@stringr]              | text formatting                                      |
+| tibble          | [@tibble-package]       | preparation of tables and data frames                |
+| tidyverse       | [@tidyverse]            | data transformation                                  |
+| uwot            | [@uwot]                 | UMAP, dimension reduction                            |
+
 \clearpage
 
 # Results
@@ -435,17 +464,17 @@ Both independent variables significantly contribute to the model as can be seen 
   \label{log}
 \end{figure}
 ```
-By taking the exponent of the coefficients in Table 3.1, the returned value implies that for every increase of $1$ in  `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5\%$) and $3.206149$  ($220.6\%$), respectively.
+By taking the exponent of the coefficients in Table 3.1, the returned value implies that for every increase of $1$ in  `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.6451$($164.5\%$) and $3.2061$  ($220.6\%$), respectively.
 The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as "Immune infiltrated" (see Table 6.2 $A$ and $B$).
 The contribution of each coefficient to the model was evaluated and confirmed with a `Wald’s` test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant.
-The significance of the whole model in contrast to a null-model was confirmed by McFadden's pseudo-$R^2$ ($R_{Mc}^2=0.5074508$) and the p-value of the overall `chi-square` statistic ($p=7.860549e-60$).\
+The significance of the whole model in contrast to a null-model was confirmed by McFadden's pseudo-$R^2$ ($R_{Mc}^2=0.5074$) and the p-value of the overall `chi-square` statistic ($p=7.8605e-60$).\
 The model was tested on KIRC patients in `DF2` and classified $42$ out of $72$ patients with a probability threshold of $p > 0.5$ as "Immune infiltrated".
 The accuracy of the model was verified by the clustering of the patients according to PID pathway activity, which showed two distinct clusters.
 One cluster showed upregulation in immune pathways hence all these patients were assigned to the immune infiltrated group.
 In $94.4$% of the patients the prediction and the cluster assignment corresponded correctly.
 Moreover, the performance of the model was evaluated with a confusion table that compares predictions and immune infiltration according to the cluster as well.
 It revealed a false-negative rate of $2.5$%, a false-positive rate of $9.4$% and a true-positive rate (recall) of $97.5$% (see \Cref{log} $B$).
-The ROC-curve that was plotted for the model \Cref{log}$C$ showed an AUC of $0.9789062$.
+The ROC-curve that was plotted for the model \Cref{log}$C$ showed an AUC of $0.9789$.
 
 <!-- Discussion -->
 \clearpage
@@ -591,37 +620,3 @@ A Wald-test and a $chi2$-test can be performed to test for the significance of e
   \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) Regression model for Il1 pathway (B) Regression model for TCR pathway}
   \label{tuk}
 \end{figure}
-
-
-\clearpage
-## Packages
-
-Table: Packages used for analysis
-
-
-  Package         | Author                  | Application                                          |
-|-----------------|-------------------------|------------------------------------------------------|
-| biomaRt         | [@BioMart]              | biotype filtering                                    |
-| car             | [@car-package]          | statistical tests                                    |
-| cvms            | [@cvms-package]         | plotting confusion matrix                            |
-| circlize        | [@circlize]             | color scaling for heatmaps                           |
-| ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
-| dplyr           | [@dplyr]                | data transformation                                  |
-| factoextra      | [@factoextra]           | visualization of kmeans results                      |
-| fgsea           | [@fgsea]                | curration of pathway activity matrix and             |
-|                 |                         | GSEA plots                                           |
-| GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
-| ggdendro        | [@ggdendro]             | hierarchical clustering                              |
-| ggplot2         | [@ggplot2]              | plots                                                |
-| ggpubr          | [@ggpubr]               | r - optimization of heat map plots                   |
-| gplots          | [@gplots-package]       | plotting data                                        |
-| grid            | [@grid]                 | creation of plot panels                              |
-| msigdbr         | [@msigdbr]              | curration of pathways                                |
-| org.Hs.eg.db    | [@org-package]          | converting gene IDs                                  |
-| reshape2        | [@reshape2]             | data preperation for ggplot                          |
-| ROCR            | [@ROCR-package]         | evaluating performance of regression model           |
-| stats           | [@stats]                | statistical testing and logistic regression          |
-| stringr         | [@stringr]              | text formatting                                      |
-| tibble          | [@tibble-package]       | preparation of tables and data frames                |
-| tidyverse       | [@tidyverse]            | data transformation                                  |
-| uwot            | [@uwot]                 | UMAP, dimension reduction                            |
