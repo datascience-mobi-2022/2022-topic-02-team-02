@@ -622,24 +622,28 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
 
 Table: Packages used for analysis
 
-| Package        | Author            | Application                                       |
-|----------------|-------------------|---------------------------------------------------|
-| biomaRt        | [@BioMart]        | biotype filtering                                 |
-| circlize       | [@circlize]       | color scaling for heatmaps                        |
-| ComplexHeatmap | [@ComplexHeatmap] | heatmap plots                                     |
-| dplyr          | [@dplyr]          | data transformation                               |
-| factoextra     | [@factoextra]     | visualization of kmeans results                   |
-| fgsea          | [@fgsea]          | curration of pathway activity matrix              |
-| ggdendro       | [@ggdendro]       | hierarchical clustering                           |
-| ggplot2        | [@ggplot2]        | plots                                             |
-| ggpubr         | [@ggpubr]         | r - optimization of heat map plots                |
-| grid           | [@grid]           | creation of plot panels                           |
-| msigdbr        | [@msigdbr]        | curration of pathways                             |
-| reshape2       | [@reshape2]       | data preperation for ggplot                       |
-| stats          | [@stats]          | statistical testing                               |
-| stringr        | [@stringr]        | text formatting                                   |
-| tidyverse      | [@tidyverse]      | data transformation                               |
-| umap           | [@umap]           | dimension reduction, visualisation of PCA results |
-| uwot           | [@uwot]           | UMAP, dimension reduction                         |
-
-
+    Package         | Author                  | Application                                          |
+  |-----------------|-------------------------|------------------------------------------------------|
+  | biomaRt         | [@BioMart]              | biotype filtering                                    |
+  | car             | [@car-package]          | statistical tests                                    |
+  | cvms            | [@cvms-package]         | plotting confusion matrix                            |
+  | circlize        | [@circlize]             | color scaling for heatmaps                           |
+  | ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
+  | dplyr           | [@dplyr]                | data transformation                                  |
+  | factoextra      | [@factoextra]           | visualization of kmeans results                      |
+  | fgsea           | [@fgsea]                | curration of pathway activity matrix and GSEA plots  |
+  | GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
+  | ggdendro        | [@ggdendro]             | hierarchical clustering                              |
+  | ggplot2         | [@ggplot2]              | plots                                                |
+  | ggpubr          | [@ggpubr]               | r - optimization of heat map plots                   |
+  | gplots          | [@gplots-package]       | plotting data                                        |
+  | grid            | [@grid]                 | creation of plot panels                              |
+  | msigdbr         | [@msigdbr]              | curration of pathways                                |
+  | org.Hs.eg.db    | [@org-package]          | converting gene IDs                                  |
+  | reshape2        | [@reshape2]             | data preperation for ggplot                          |
+  | ROCR            | [@ROCR-package]         | evaluating performance of regression model           |
+  | stats           | [@stats]                | statistical testing and logistic regression          |
+  | stringr         | [@stringr]              | text formatting                                      |
+  | tibble          | [@tibble-package]       | preparation of tables and data frames                |
+  | tidyverse       | [@tidyverse]            | data transformation                                  |
+  | uwot            | [@uwot]                 | UMAP, dimension reduction                            |
