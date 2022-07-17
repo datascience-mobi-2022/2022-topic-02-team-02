@@ -126,6 +126,7 @@ bibliography: [bib/packages.bib, bib/BibTeX.bib]
       SARC & Sarcoma\\
       SKCM & Skin Cutaneous Melanoma\\
       STAD & Stomach adenocarcinoma\\
+      SW & Shapiro-Wilks\\
       TCGA & The cancer genome atlas\\
       TGCT & Testicular Germ Cell Tumors\\
       THCA & Thyroid carcinoma\\
@@ -158,7 +159,7 @@ Principal component analysis is used to reduce a multidimensional set of data to
 `UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well. For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset. The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have. From that, the low-dimensional representation is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019]. 
 
 ### Shapiro-Wilks test
-Shapiro-Wilks (`SW`) test is a normality test based on regression and correlation. It tests the null hypothesis that the data follows a normal distribution. Small values of SW test statistic indicate no normality of the data thus the null hypothesis is rejected. `SW` values of one suggest normality [@Shapiro-Yap-2011].
+Shapiro-Wilks (`SW`) test is a normality test based on regression and correlation. It tests the null hypothesis that the data follows a normal distribution. Small values of `SW` test statistic indicate no normality of the data thus the null hypothesis is rejected. `SW` values of one suggest normality [@Shapiro-Yap-2011].
 
 ### Wilcoxon rank-sum and signed-rank test
 `Wilcoxon` rank-sum test and `Wilcoxon` signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution. `Wilcoxon` signed-rank test is used to analyze matched-pair or one-sample data. It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero. The test is based on ranked absolute values of differences [@`Wilcoxon`-Woolson-2007]. `Wilcoxon` rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values. The null hypothesis states that there is no association between the two samples [@`Wilcoxon`-Rey2011]. 
