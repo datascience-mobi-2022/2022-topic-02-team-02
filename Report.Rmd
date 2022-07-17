@@ -209,9 +209,9 @@ Multiple statistical testing results in an increased risk for type I errors (fal
 `Bonferroni` correction is used to reduce this type I error rate.
 For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
 
-### Immune deconvolution The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data.
+### Immune deconvolution 
 
-The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
+The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
 The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
 An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
 The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively.
