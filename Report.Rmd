@@ -187,63 +187,11 @@ This can be attributed to RCC being an intratumorally heterogenous form of cance
 Additionally, KIRC is resistant to traditional treatment methods like chemotherapy and radiotherapy [@cross-omics_KIRC_Dimitrieva_2016].
 Therefore, novel individualized treatment options need to be developed [@Immune_infiltration_RCC_Zhang_2019].
 
-## Star Methods
-
-### Uniform Manifold Approximation and Projection
-
-`UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well.
-For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset.
-The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have.
-From that, the low-dimensional representation is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019].
-
-### Wilcoxon rank-sum and signed-rank test
-
-`Wilcoxon` rank-sum test and `Wilcoxon` signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.
-`Wilcoxon` signed-rank test is used to analyze matched-pair or one-sample data.
-It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero.
-The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007].
-`Wilcoxon` rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values.
-The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011].
-
-### Kruksal-Wallis
-
-`Kruksal-Wallis` test is a rank-based non-parametric hypothesis test.
-It is an extension of `Wilcoxon` rank-sum test and allows comparing more than two independent datasets.
-`Kruksal-Wallis` test tests the null hypothesis that there is no difference in distributions of all $k$ data sets.
-The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998].
-
-### Bonferroni correction
-
-Multiple statistical testing results in an increased risk for type I errors (false positives).
-`Bonferroni` correction is used to reduce this type I error rate.
-For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
-
-### Immune deconvolution 
-
-The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
-The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
-An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
-The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively.
-The output using the `quanTIseq` method is a matrix containing the immune cell fractions for each sample that have been re-normalized to sum up to one [@Immune-deconvolution-Finotello-2018].
-
-### Gene Set Enrichment Analysis
-
-Gene set enrichment analysis (`GSEA`) is algorithm used for interpretation of gene expression data based on assembly of genes with similar biological functions, a so called gene set S. `GSEA` compares gene expression data between two different phenotypic  groups. Based on these phenotypic labels a ranked list of genes using a ranking metric is computed, with the goal of identifying gene sets that are not randomly distributed among the ranked gene list. For this purpose, 3 main steps are performed.
-Firstly, the Enrichment Score (`ES`) is calculated using random walk: Whenever a gene of the gene set is present in the ranked gene list, the running-sum increases. Whenever, this is not the case, the running-sum decreases. Increase and decrease are weighted upon the rank of each gene. The `ES(S)` of the gene set is equal to the maximum difference from zero. Secondly, `Kolmogorov-Smirnov`test is used to compare the distribution of the genes in a gene set to the distribution of genes not included in the gene set. Additionally, the input data is permuted, creating a null distribution of ES. By comparing the observed `ES(S)` to the null distribution, the $p-value$ is determined. Observed `ES(S)` and null distribution are normalized by diving by each mean. For this purpose, positive and negatives scores are treated separately.
-Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant[@GSEA].
-
-### Binary logistic regression
-
-Binary logistic regression is a statistical method used to predict a dichotomous dependent variable from one or several independent predictors, which does not require a linear relationship between the independent and the dependent variable. A logistic regression model is created by training on one dataset and testing it on another independent one.
-First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is calculated using the logit function $log(odds)=log(\frac{p}{1-p})$. A regression line is now fitted to these data points and these are projected onto the fitted line and thus get a new $log(odds)$-value.In order to plot the sigmoidal logistic graph, the new $log(odds)$ value of each data point is inserted into the logistic function, which can be derived by rearranging the $log(odds)$-equation $p=\frac{e^{log(odds)}}{1+e^{log(odds)}}$.\
-The result of the function is the probability between $0$ and $1$ for each data point to have a $1$ as the outcome of the dependent variable. The best fitting linear regression line can be found using the "maximum likelihood" that is computed with the probabilities of each point. The calculation of the likelihood is made for all possible regression lines, by rotating the line minimally for every new computation. The best fitting line is the one with the maximum value of the likelihood.\
-For the evaluation of the regression model $R^2$-values and statistical tests can be considered.
-Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
-A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
-
 <!-- Materials and Methods -->
 
 # Materials and Methods
+
+Statistical and computational methods that were used for further analysis are listed and are described in detail in the appendix under 'Star methods'.
 
 ## Data cleaning
 
@@ -557,6 +505,60 @@ Immune signaling pathway panels could be broadly introduced in cancer diagnostic
 :::
 
 # Appendix
+
+## Star Methods
+
+### Uniform Manifold Approximation and Projection
+
+`UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well.
+For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset.
+The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have.
+From that, the low-dimensional representation is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019].
+
+### Wilcoxon rank-sum and signed-rank test
+
+`Wilcoxon` rank-sum test and `Wilcoxon` signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.
+`Wilcoxon` signed-rank test is used to analyze matched-pair or one-sample data.
+It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero.
+The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007].
+`Wilcoxon` rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values.
+The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011].
+
+### Kruksal-Wallis
+
+`Kruksal-Wallis` test is a rank-based non-parametric hypothesis test.
+It is an extension of `Wilcoxon` rank-sum test and allows comparing more than two independent datasets.
+`Kruksal-Wallis` test tests the null hypothesis that there is no difference in distributions of all $k$ data sets.
+The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998].
+
+### Bonferroni correction
+
+Multiple statistical testing results in an increased risk for type I errors (false positives).
+`Bonferroni` correction is used to reduce this type I error rate.
+For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
+
+### Immune deconvolution 
+
+The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
+The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
+An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
+The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively.
+The output using the `quanTIseq` method is a matrix containing the immune cell fractions for each sample that have been re-normalized to sum up to one [@Immune-deconvolution-Finotello-2018].
+
+### Gene Set Enrichment Analysis
+
+Gene set enrichment analysis (`GSEA`) is algorithm used for interpretation of gene expression data based on assembly of genes with similar biological functions, a so called gene set S. `GSEA` compares gene expression data between two different phenotypic  groups. Based on these phenotypic labels a ranked list of genes using a ranking metric is computed, with the goal of identifying gene sets that are not randomly distributed among the ranked gene list. For this purpose, 3 main steps are performed.
+Firstly, the Enrichment Score (`ES`) is calculated using random walk: Whenever a gene of the gene set is present in the ranked gene list, the running-sum increases. Whenever, this is not the case, the running-sum decreases. Increase and decrease are weighted upon the rank of each gene. The `ES(S)` of the gene set is equal to the maximum difference from zero. Secondly, `Kolmogorov-Smirnov`test is used to compare the distribution of the genes in a gene set to the distribution of genes not included in the gene set. Additionally, the input data is permuted, creating a null distribution of ES. By comparing the observed `ES(S)` to the null distribution, the $p-value$ is determined. Observed `ES(S)` and null distribution are normalized by diving by each mean. For this purpose, positive and negatives scores are treated separately.
+Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant[@GSEA].
+
+### Binary logistic regression
+
+Binary logistic regression is a statistical method used to predict a dichotomous dependent variable from one or several independent predictors, which does not require a linear relationship between the independent and the dependent variable. A logistic regression model is created by training on one dataset and testing it on another independent one.
+First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is calculated using the logit function $log(odds)=log(\frac{p}{1-p})$. A regression line is now fitted to these data points and these are projected onto the fitted line and thus get a new $log(odds)$-value.In order to plot the sigmoidal logistic graph, the new $log(odds)$ value of each data point is inserted into the logistic function, which can be derived by rearranging the $log(odds)$-equation $p=\frac{e^{log(odds)}}{1+e^{log(odds)}}$.\
+The result of the function is the probability between $0$ and $1$ for each data point to have a $1$ as the outcome of the dependent variable. The best fitting linear regression line can be found using the "maximum likelihood" that is computed with the probabilities of each point. The calculation of the likelihood is made for all possible regression lines, by rotating the line minimally for every new computation. The best fitting line is the one with the maximum value of the likelihood.\
+For the evaluation of the regression model $R^2$-values and statistical tests can be considered.
+Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
+A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
 
 ## Supplementary figures
 
