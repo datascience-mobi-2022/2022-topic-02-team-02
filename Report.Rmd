@@ -201,7 +201,7 @@ The null hypothesis states that there is no association between the two samples 
 `Kruksal-Wallis` test is a rank-based non-parametric hypothesis test.
 It is an extension of `Wilcoxon` rank-sum test and allows comparing more than two independent datasets.
 `Kruksal-Wallis` test tests the null hypothesis that there is no difference in distributions of all $k$ data sets.
-The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-Wallis-test-Vargha-1998].
+The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998].
 
 ### Bonferroni correction
 
