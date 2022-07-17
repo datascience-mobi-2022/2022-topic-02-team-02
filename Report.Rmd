@@ -250,6 +250,7 @@ The analysis was performed using Rversion 4.2.0 and Rstudio.
 Packages that have been used are listed in Table 2.1.
 
 Table: Packages used for analysis
+
   Package         | Author                  | Application                                          |
 |-----------------|-------------------------|------------------------------------------------------|
 | biomaRt         | [@BioMart]              | biotype filtering                                    |
