@@ -13,7 +13,7 @@ header-includes:
   - \usepackage[utf8]{inputenc}
   - \usepackage[T1]{fontenc}
   - \usepackage{lmodern}
-  - \usepackage[onehalfspacing]{setspace}
+  #- \usepackage[onehalfspacing]{setspace}
   - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,includehead,includefoot]{geometry}
   - \usepackage[headsepline]{scrlayer-scrpage}
   - \usepackage{url}
@@ -47,6 +47,10 @@ header-includes:
   - \setkomafont{caption}{\sffamily\small}
   - \setkomafont{captionlabel}{\usekomafont{caption}\bfseries\small}
   - \setkomafont{pagehead}{\normalfont\scshape}
+  - \renewcommand*{\chapterheadstartvskip}{\vspace*{0.1cm}}
+  - \renewcommand*{\chapterheadendvskip}{\vspace*{0.1cm}}
+fontsize: 11pt
+linestretch: 1.15
 csl: bib/molecular-biology-of-the-cell.csl
 bibliography: [bib/packages.bib, bib/BibTeX.bib]
 editor_options: 
@@ -98,7 +102,6 @@ Characterizing the metabolic and immune landscape in tumors is crucial to treatm
 \let\cleardoublepage\clearpage
 \addchap{List of Abbreviations}
 
-\small
 
 ```{=tex}
 \begin{tabular}{rl}
@@ -457,7 +460,7 @@ Additionally, the "upregulated" KEGG cluster corresponds to both PID clusters.
 ## Binary logistic regression model to predict immune infiltration based on pathway activity
 
 The binary logistic regression model predicts immune infiltration in patients based on the pathway activity (`NES`) of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`.
-Both independent variables significantly contribute to the model as can be seen in Table \Cref{tab}, which depicts the model properties.
+Both independent variables significantly contribute to the model as can be seen in Table \Cref{tab:regression}, which depicts the model properties.
 
 ```{=tex}
 \begin{table}[ht]
@@ -473,8 +476,9 @@ Both independent variables significantly contribute to the model as can be seen 
   PID\_IL1\_PATHWAY & $1.1651$ & $0.1934$ &  $1.70e-09$\\
  \hline
  \end{tabular}
+ \caption{Logistic Regression model properties}
  \end{center}
- \label{tab}
+ \label{tab:regression}
 \end{table}
 ```
 
