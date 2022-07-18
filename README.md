@@ -8,11 +8,15 @@ The aim of this analysis was to determine differences in gene expression and pat
 #### Cloning of the repository and data preparation
 First, you need to clone the repository using the following link:
 
-git clone <destination> https://github.com/datascience-mobi-2022/2022-topic-02-team-02.git
+<destination> https://github.com/datascience-mobi-2022/2022-topic-02-team-02.git
 
 To run the project, you have to download the following files, including raw and cleaned data, and safe them in the "data" folder:
 
 https://drive.google.com/drive/folders/1O_FXvpRdk7OZJzjisJosr5GLPRRxdUz6
+DF1: https://figshare.com/s/3c2bf4d766181a17a2e0
+DF1 annotations: https://figshare.com/s/eed44ff6fdcf451cebd9
+DF2: https://doi.org/10.6084/m9.figshare.19608252
+
 
 Next, you need to make sure that you can easily access the data. Therefore you will create a new Rstudio project within the repository. This allows accessing all data and files by relative paths. 
 <br />
@@ -39,7 +43,7 @@ You will find the analysis divided into several steps, which are organized in th
 &rarr; PCA (`DF1`, `DF2`) and UMAP (`DF1`)
 
 6. Clustering <br />
-&rarr; Hierarchial clustering on PID geneset (`DF1`) <br />
+&rarr; Hierarchial clustering on PID genesets (`DF1`) <br />
 &rarr; K-means clustering on Hallmark, PID, KEGG and all combined gene sets and comparison of PID and KEGG subtypes (`DF2`)
 
 7. Immune deconvolution <br />
