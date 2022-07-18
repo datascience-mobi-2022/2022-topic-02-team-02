@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 22:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.16)  17 JUL 2022 23:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -35,17 +35,22 @@ Package: tocbasic 2021/11/13 v3.35 KOMA-Script package (handling toc-files)
 )
 Package tocbasic Info: babel extension for `toc' omitted
 (tocbasic)             because of missing \bbl@set@language on input line 137.
+Package scrreprt Info: You've used standard option `10pt'.
+(scrreprt)             This is correct!
+(scrreprt)             Internally I'm using `fontsize=10pt'.
+(scrreprt)             If you'd like to set the option with \KOMAoptions,
+(scrreprt)             you'd have to use `fontsize=10pt' there
+(scrreprt)             instead of `10pt', too.
 Class scrreprt Info: You've used standard option `openany'.
 (scrreprt)           This is correct!
 (scrreprt)           Internally I'm using `open=any'.
 (scrreprt)           If you'd like to set the option with \KOMAoptions,
 (scrreprt)           you'd have to use `open=any' there
 (scrreprt)           instead of `openany', too.
-Class scrreprt Info: File `scrsize11pt.clo' used instead of
-(scrreprt)           file `scrsize11.clo' to setup font sizes on input line 248
-7.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/koma-script/scrsize11pt.clo
-File: scrsize11pt.clo 2021/11/13 v3.35 KOMA-Script font size class option (11pt
+Class scrreprt Info: File `scrsize10pt.clo' used to setup font sizes on input l
+ine 2487.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/koma-script/scrsize10pt.clo
+File: scrsize10pt.clo 2021/11/13 v3.35 KOMA-Script font size class option (10pt
 )
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/koma-script/typearea.sty
 Package: typearea 2021/11/13 v3.35 KOMA-Script package (type area)
@@ -56,21 +61,21 @@ Package: typearea 2021/11/13 v3.35 KOMA-Script package (type area)
 \ta@temp=\skip51
 \footheight=\skip52
 Package typearea Info: These are the values describing the layout:
-(typearea)             DIV  = 10
+(typearea)             DIV  = 8
 (typearea)             BCOR = 0.0pt
 (typearea)             \paperwidth      = 597.50793pt
-(typearea)              \textwidth      = 418.25555pt
-(typearea)              DIV departure   = -6%
-(typearea)              \evensidemargin = 17.3562pt
-(typearea)              \oddsidemargin  = 17.3562pt
+(typearea)              \textwidth      = 373.44246pt
+(typearea)              DIV departure   = -4%
+(typearea)              \evensidemargin = 39.76274pt
+(typearea)              \oddsidemargin  = 39.76274pt
 (typearea)             \paperheight     = 845.04694pt
-(typearea)              \textheight     = 595.80026pt
-(typearea)              \topmargin      = -25.16531pt
-(typearea)              \headheight     = 17.0pt
-(typearea)              \headsep        = 20.40001pt
-(typearea)              \topskip        = 11.0pt
-(typearea)              \footskip       = 47.6pt
-(typearea)              \baselineskip   = 13.6pt
+(typearea)              \textheight     = 538.0pt
+(typearea)              \topmargin      = 0.36087pt
+(typearea)              \headheight     = 15.0pt
+(typearea)              \headsep        = 18.0pt
+(typearea)              \topskip        = 10.0pt
+(typearea)              \footskip       = 42.0pt
+(typearea)              \baselineskip   = 12.0pt
 (typearea)              on input line 1743.
 )
 \c@part=\count186
@@ -916,10 +921,6 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
-
-LaTeX Warning: Unused global option(s):
-    [10.5pt].
-
 (./Report.aux
 
 LaTeX Warning: Label `tuk' multiply defined.
@@ -1018,23 +1019,23 @@ Package footnotehyper Info: Using the \@makefntext{} approach (see doc).
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: includehead includefoot 
-* h-part:(L,W,R)=(42.67912pt, 512.14969pt, 42.67912pt)
-* v-part:(T,H,B)=(42.67912pt, 759.68869pt, 42.67912pt)
+* h-part:(L,W,R)=(42.67912pt, 520.6856pt, 34.14322pt)
+* v-part:(T,H,B)=(34.14322pt, 782.45097pt, 28.45274pt)
 * \paperwidth=597.50793pt
 * \paperheight=845.04694pt
-* \textwidth=512.14969pt
-* \textheight=674.68867pt
+* \textwidth=520.6856pt
+* \textheight=707.45097pt
 * \oddsidemargin=-29.59087pt
 * \evensidemargin=-29.59087pt
-* \topmargin=-29.59087pt
-* \headheight=17.0pt
-* \headsep=20.40001pt
-* \topskip=11.0pt
-* \footskip=47.6pt
-* \marginparwidth=59.7508pt
+* \topmargin=-38.12677pt
+* \headheight=15.0pt
+* \headsep=18.0pt
+* \topskip=10.0pt
+* \footskip=42.0pt
+* \marginparwidth=74.68849pt
 * \marginparsep=12.8401pt
 * \columnsep=10.0pt
-* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
 * \hoffset=0.0pt
 * \voffset=0.0pt
 * \mag=1000
@@ -1130,14 +1131,10 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 chapter without number
 Package microtype Info: Character `029' is missing
-(microtype)             in font `T1/lmr/m/sc/10.95'.
+(microtype)             in font `T1/lmr/m/sc/10'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 204.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 204.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 204.
+(Font)              <5> on input line 204.
 [2]
 Package tocbasic Info: character protrusion at toc deactivated on input line 20
 4.
@@ -1152,50 +1149,49 @@ chapter without number
 [4
 
 ]
-Overfull \vbox (62.31712pt too high) has occurred while \output is active []
-
-[5]
 chapter 1.
+[5
+
+]
+chapter 2.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
-19.
+25.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [6
 
 ] [7]
-chapter 2.
-[8] [9] [10]
 chapter 3.
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=139, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf, id=112, 
 555.35109pt x 184.65593pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l0_Ebene 1.pdf  used on input line 574.
-(pdftex.def)             Requested size: 512.18333pt x 170.30252pt.
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf, id=14
-2, 364.71552pt x 173.9927pt>
+l0_Ebene 1.pdf  used on input line 482.
+(pdftex.def)             Requested size: 520.71661pt x 173.13986pt.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf, id=11
+5, 364.71552pt x 173.9927pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf G
 raphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l6_v2_Ebene 1.pdf  used on input line 592.
+l6_v2_Ebene 1.pdf  used on input line 500.
 (pdftex.def)             Requested size: 364.72574pt x 173.99756pt.
-[11
+[8
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.629 
+l.537 
       
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.629 
+l.537 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0
 _Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures
 /Panel6_v2_Ebene 1.pdf
@@ -1204,200 +1200,181 @@ pdfTeX warning: pdflatex (file /Users/timwenzel/Desktop/GitHub/2022-topic-02-te
 am-02/09_figures/Panel6_v2_Ebene 1.pdf): PDF inclusion: multiple pdfs with page
  group included in a single page
 >]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf, id=172, 
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf, id=143, 
 568.0295pt x 294.98555pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l3_Ebene 1.pdf  used on input line 635.
-(pdftex.def)             Requested size: 512.16656pt x 265.97514pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[12]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf, id=18
-3, 350.9703pt x 217.19286pt>
-File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf G
-raphic file (type pdf)
-<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>
-Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l4_v2_Ebene 1.pdf  used on input line 701.
-(pdftex.def)             Requested size: 350.96945pt x 217.1923pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[13
+l3_Ebene 1.pdf  used on input line 543.
+(pdftex.def)             Requested size: 520.70398pt x 270.40874pt.
+[9
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.715 
+l.581 
        </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3
-_Ebene 1.pdf>] [14
+_Ebene 1.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf, id=17
+9, 350.9703pt x 217.19286pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf G
+raphic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>
+Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
+l4_v2_Ebene 1.pdf  used on input line 609.
+(pdftex.def)             Requested size: 350.96945pt x 217.1923pt.
+[10
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.4}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.744 ...une-signaling-and-cell-cycle-regulators}}
+l.634 ...lmark-pathways-form-subclusters-in-kirc}}
                                                    </Users/timwenzel/Desktop/Gi
 tHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf, id=233, 
-574.23775pt x 420.10484pt>
-File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf Grap
-hic file (type pdf)
-<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf>
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf, id=199,
+ 541.31146pt x 188.00862pt>
+File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf Gra
+phic file (type pdf)
+<use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l1_Ebene 1.pdf  used on input line 747.
-(pdftex.def)             Requested size: 512.19154pt x 374.71263pt.
-[15
-pdfTeX warning (ext4): destination with the same identifier (name{figure.3.5}) 
-has been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.780 
-       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1
-_Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=273, 
+l1_verison2.pdf  used on input line 655.
+(pdftex.def)             Requested size: 520.74338pt x 180.86488pt.
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf, id=205, 
 542.22766pt x 177.32076pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf Grap
 hic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l2_Ebene 1.pdf  used on input line 787.
-(pdftex.def)             Requested size: 512.18446pt x 167.49593pt.
-[16
-pdfTeX warning (ext4): destination with the same identifier (name{figure.3.6}) 
+l2_Ebene 1.pdf  used on input line 695.
+(pdftex.def)             Requested size: 520.71466pt x 170.2855pt.
+[11
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.5}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.821 ...-infiltration-based-on-pathway-activity}}
-                                                   </Users/timwenzel/Desktop/Gi
-tHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf>]
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf, id=300, 423.5744
+l.698 \end{figure}
+                   </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_fi
+gures/Panel1_verison2.pdf>]
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf, id=234, 423.5744
 8pt x 176.37482pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf Graphic file
  (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Pane
-l7.pdf  used on input line 849.
+l7.pdf  used on input line 757.
 (pdftex.def)             Requested size: 423.5799pt x 176.37706pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 850.
-[17
+(Font)              <9> on input line 758.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6> on input line 758.
+[12
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3.6}) 
+has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.790 
+      
 pdfTeX warning (ext4): destination with the same identifier (name{table.3.1}) h
 as been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.882 
-      
+l.790 
+       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2
+_Ebene 1.pdf>] [13
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3.7}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.882 
-       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7
-.pdf>]
+l.791 \clearpage
+                 </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09_figu
+res/Panel7.pdf>]
 chapter 4.
-[18] [19] [20]
-chapter 5.
-[21
+[14
 
-] [22]
+] [15]
+chapter 5.
+[16
+
+] [17] [18]
 chapter 6.
+[19
+
+] [20]
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf, 
-id=394, 475.0761pt x 171.84721pt>
+id=395, 475.0761pt x 171.84721pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.
 pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.p
 df>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndixPanel6_Ebene 1.pdf  used on input line 1369.
+ndixPanel6_Ebene 1.pdf  used on input line 1402.
 (pdftex.def)             Requested size: 475.08218pt x 171.8494pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf,
- id=395, 504.11319pt x 171.93753pt>
+ id=396, 504.11319pt x 171.93753pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1
 .pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.
 pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndix_Panel4_Ebene 1.pdf  used on input line 1376.
+ndix_Panel4_Ebene 1.pdf  used on input line 1409.
 (pdftex.def)             Requested size: 504.12733pt x 171.94234pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene 1.p
-df, id=396, 574.40059pt x 171.12387pt>
+df, id=397, 574.40059pt x 171.12387pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Eben
 e 1.pdf Graphic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene
  1.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndix_tuktuktuk_Ebene 1.pdf  used on input line 1383.
-(pdftex.def)             Requested size: 512.17024pt x 152.58437pt.
+ndix_tuktuktuk_Ebene 1.pdf  used on input line 1416.
+(pdftex.def)             Requested size: 520.707pt x 155.12761pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf, id=397,
+<~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf, id=398,
  586.35762pt x 175.9847pt>
 File: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf Gra
 phic file (type pdf)
 <use ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf>
 Package pdftex.def Info: ~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appe
-ndix_Panel7.pdf  used on input line 1389.
-(pdftex.def)             Requested size: 512.18484pt x 153.72305pt.
+ndix_Panel7.pdf  used on input line 1422.
+(pdftex.def)             Requested size: 520.72037pt x 156.28484pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[23]
-Overfull \hbox (59.42575pt too wide) in alignment at lines 1399--1404
- [] [] [] 
- []
+[21
 
 
-Overfull \hbox (59.42575pt too wide) in alignment at lines 1404--1408
- [] [] [] 
- []
-
-
-Overfull \hbox (59.42575pt too wide) in alignment at lines 1408--1439
- [] [] [] 
- []
-
-[24
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1439 \end{longtable}
-                      
+l.1427 \end{document}
+                     
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1439 \end{longtable}
-                       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/0
-9_figures/AppendixPanel6_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-top
-ic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf
+l.1427 \end{document}
+                      </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09
+_figures/AppendixPanel6_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-topi
+c-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf
 
 pdfTeX warning: pdflatex (file /Users/timwenzel/Desktop/GitHub/2022-topic-02-te
 am-02/09_figures/Appendix_Panel4_Ebene 1.pdf): PDF inclusion: multiple pdfs wit
 h page group included in a single page
->] [25] [26
+>] [22
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.3}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1441 \end{document}
+l.1427 \end{document}
                      
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6.4}) 
 has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1441 \end{document}
+l.1427 \end{document}
                       </Users/timwenzel/Desktop/GitHub/2022-topic-02-team-02/09
 _figures/Appendix_tuktuktuk_Ebene 1.pdf> </Users/timwenzel/Desktop/GitHub/2022-
 topic-02-team-02/09_figures/Appendix_Panel7.pdf
@@ -1414,36 +1391,38 @@ Package logreq Info: Writing requests to 'Report.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 31707 strings out of 478268
- 610801 string characters out of 5846347
- 1618777 words of memory out of 5000000
- 49078 multiletter control sequences out of 15000+600000
- 555783 words of font info for 196 fonts, out of 8000000 for 9000
+ 31666 strings out of 478268
+ 610116 string characters out of 5846347
+ 1621493 words of memory out of 5000000
+ 49057 multiletter control sequences out of 15000+600000
+ 551199 words of font info for 185 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  108i,20n,106p,10610b,2367s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
-texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/t
-exmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2022/texmf-dist/
-fonts/enc/dvips/lm/lm-mathsy.enc}</usr/local/texlive/2022/texmf-dist/fonts/type
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/
+texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/20
+22/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2022/texmf-d
+ist/fonts/enc/dvips/lm/lm-ec.enc}</usr/local/texlive/2022/texmf-dist/fonts/type
 1/public/lm/lmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/l
 m/lmcsc10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi10.
-pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/l
-ocal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texliv
-e/2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texm
-f-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/font
-s/type1/public/lm/lmr6.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
-ic/lm/lmr8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10
-.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr
-/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/tex
-live/2022/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texlive/2022/
-texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2022/texmf-di
-st/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/t
-ype1/public/lm/lmsy8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public
-/lm/lmtt10.pfb>
-Output written on Report.pdf (26 pages, 4511656 bytes).
+pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></usr/l
+ocal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texliv
+e/2022/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></usr/local/texlive/2022/texm
+f-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/font
+s/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/pub
+lic/lm/lmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr7.
+pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/lo
+cal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texliv
+e/2022/texmf-dist/fonts/type1/public/lm/lmss10.pfb></usr/local/texlive/2022/tex
+mf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/texlive/2022/texmf-dist/fo
+nts/type1/public/lm/lmss17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/
+public/lm/lmss9.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/l
+mssbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmsy10.pf
+b></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/loc
+al/texlive/2022/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on Report.pdf (22 pages, 4092196 bytes).
 PDF statistics:
- 694 PDF objects out of 1000 (max. 8388607)
- 563 compressed objects within 6 object streams
- 172 named destinations out of 1000 (max. 500000)
- 47400 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 664 PDF objects out of 1000 (max. 8388607)
+ 536 compressed objects within 6 object streams
+ 162 named destinations out of 1000 (max. 500000)
+ 45336 words of extra memory for PDF output out of 51595 (max. 10000000)
 

@@ -18,7 +18,7 @@ header-includes:
   - \patchcmd{\scr@startchapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
   - \makeatother
   #- \usepackage[onehalfspacing]{setspace}
-  - \usepackage[left=1.50cm,right=1.50cm,top=1.50cm,bottom=1.50cm,includehead,includefoot]{geometry}
+  - \usepackage[left=1.50cm,right=1.2cm,top=1.2cm,bottom=1cm,includehead,includefoot]{geometry}
   - \usepackage[headsepline]{scrlayer-scrpage}
   - \usepackage{url}
   - \usepackage[backend=biber, style=authoryear, giveninits=true, maxbibnames=99, uniquename=init, maxcitenames=2, hyperref=true, date=year]{biblatex}
@@ -53,8 +53,8 @@ header-includes:
   - \setkomafont{pagehead}{\normalfont\scshape}
   - \renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
   - \renewcommand*{\chapterheadendvskip}{\vspace*{0cm}}
-fontsize: 10.5pt
-linestretch: 1.15
+fontsize: 10pt
+linestretch: 1.1
 csl: bib/molecular-biology-of-the-cell.csl
 bibliography: [bib/packages.bib, bib/BibTeX.bib]
 editor_options: 
@@ -186,64 +186,12 @@ While this is relatively successful with an overall survival of 60-70%, the prog
 This can be attributed to RCC being an intratumorally heterogenous form of cancer.
 Additionally, KIRC is resistant to traditional treatment methods like chemotherapy and radiotherapy [@cross-omics_KIRC_Dimitrieva_2016].
 Therefore, novel individualized treatment options need to be developed [@Immune_infiltration_RCC_Zhang_2019].
-
-## Star Methods
-
-### Uniform Manifold Approximation and Projection
-
-`UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well.
-For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset.
-The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have.
-From that, the low-dimensional representation is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019].
-
-### Wilcoxon rank-sum and signed-rank test
-
-`Wilcoxon` rank-sum test and `Wilcoxon` signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.
-`Wilcoxon` signed-rank test is used to analyze matched-pair or one-sample data.
-It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero.
-The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007].
-`Wilcoxon` rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values.
-The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011].
-
-### Kruksal-Wallis
-
-`Kruksal-Wallis` test is a rank-based non-parametric hypothesis test.
-It is an extension of `Wilcoxon` rank-sum test and allows comparing more than two independent datasets.
-`Kruksal-Wallis` test tests the null hypothesis that there is no difference in distributions of all $k$ data sets.
-The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998].
-
-### Bonferroni correction
-
-Multiple statistical testing results in an increased risk for type I errors (false positives).
-`Bonferroni` correction is used to reduce this type I error rate.
-For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
-
-### Immune deconvolution 
-
-The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
-The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
-An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
-The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively.
-The output using the `quanTIseq` method is a matrix containing the immune cell fractions for each sample that have been re-normalized to sum up to one [@Immune-deconvolution-Finotello-2018].
-
-### Gene Set Enrichment Analysis
-
-Gene set enrichment analysis (`GSEA`) is algorithm used for interpretation of gene expression data based on assembly of genes with similar biological functions, a so called gene set S. `GSEA` compares gene expression data between two different phenotypic  groups. Based on these phenotypic labels a ranked list of genes using a ranking metric is computed, with the goal of identifying gene sets that are not randomly distributed among the ranked gene list. For this purpose, 3 main steps are performed.
-Firstly, the Enrichment Score (`ES`) is calculated using random walk: Whenever a gene of the gene set is present in the ranked gene list, the running-sum increases. Whenever, this is not the case, the running-sum decreases. Increase and decrease are weighted upon the rank of each gene. The `ES(S)` of the gene set is equal to the maximum difference from zero. Secondly, `Kolmogorov-Smirnov`test is used to compare the distribution of the genes in a gene set to the distribution of genes not included in the gene set. Additionally, the input data is permuted, creating a null distribution of ES. By comparing the observed `ES(S)` to the null distribution, the $p-value$ is determined. Observed `ES(S)` and null distribution are normalized by diving by each mean. For this purpose, positive and negatives scores are treated separately.
-Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant[@GSEA].
-
-### Binary logistic regression
-
-Binary logistic regression is a statistical method used to predict a dichotomous dependent variable from one or several independent predictors, which does not require a linear relationship between the independent and the dependent variable. A logistic regression model is created by training on one dataset and testing it on another independent one.
-First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is calculated using the logit function $log(odds)=log(\frac{p}{1-p})$. A regression line is now fitted to these data points and these are projected onto the fitted line and thus get a new $log(odds)$-value.In order to plot the sigmoidal logistic graph, the new $log(odds)$ value of each data point is inserted into the logistic function, which can be derived by rearranging the $log(odds)$-equation $p=\frac{e^{log(odds)}}{1+e^{log(odds)}}$.\
-The result of the function is the probability between $0$ and $1$ for each data point to have a $1$ as the outcome of the dependent variable. The best fitting linear regression line can be found using the "maximum likelihood" that is computed with the probabilities of each point. The calculation of the likelihood is made for all possible regression lines, by rotating the line minimally for every new computation. The best fitting line is the one with the maximum value of the likelihood.\
-For the evaluation of the regression model $R^2$-values and statistical tests can be considered.
-Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
-A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
-
+\clearpage
 <!-- Materials and Methods -->
 
 # Materials and Methods
+
+Statistical and computational methods that were used for further analysis are listed and are described in detail in the appendix under 'Star methods'.
 
 ## Data cleaning
 
@@ -299,7 +247,37 @@ The logistic regression was performed to predict the immune infiltration in the 
 ## Packages
 
 The analysis was performed using Rversion 4.2.0 and Rstudio.
-Packages that have been used are listed in Appendix (see Table 6.1) <!-- Results -->
+Packages that have been used are listed in Table 2.1.
+
+Table: Packages used for analysis
+
+  Package         | Author                  | Application                                          |
+|-----------------|-------------------------|------------------------------------------------------|
+| biomaRt         | [@BioMart]              | biotype filtering                                    |
+| car             | [@car-package]          | statistical tests                                    |
+| cvms            | [@cvms-package]         | plotting confusion matrix                            |
+| circlize        | [@circlize]             | color scaling for heatmaps                           |
+| ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
+| dplyr           | [@dplyr]                | data transformation                                  |
+| factoextra      | [@factoextra]           | visualization of kmeans results                      |
+| fgsea           | [@fgsea]                | curration of pathway activity matrix and             |
+|                 |                         | GSEA plots                                           |
+| GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
+| ggdendro        | [@ggdendro]             | hierarchical clustering                              |
+| ggplot2         | [@ggplot2]              | plots                                                |
+| ggpubr          | [@ggpubr]               | r - optimization of heat map plots                   |
+| gplots          | [@gplots-package]       | plotting data                                        |
+| grid            | [@grid]                 | creation of plot panels                              |
+| msigdbr         | [@msigdbr]              | curration of pathways                                |
+| org.Hs.eg.db    | [@org-package]          | converting gene IDs                                  |
+| reshape2        | [@reshape2]             | data preperation for ggplot                          |
+| ROCR            | [@ROCR-package]         | evaluating performance of regression model           |
+| stats           | [@stats]                | statistical testing and logistic regression          |
+| stringr         | [@stringr]              | text formatting                                      |
+| tibble          | [@tibble-package]       | preparation of tables and data frames                |
+| tidyverse       | [@tidyverse]            | data transformation                                  |
+| uwot            | [@uwot]                 | UMAP, dimension reduction                            |
+
 \clearpage
 
 # Results
@@ -417,8 +395,8 @@ Using `hierarchical clustering`, two clusters could be identified, one smaller c
 
 ```{=tex}
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_Ebene 1.pdf}
-  \caption{\textbf{Identifying Immune subtypes within KIRC }(A) k-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf}
+  \caption{\textbf{Identifying Immune subtypes within KIRC }(A) k-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster }
   \label{pid}
 \end{figure}
 ```
@@ -428,10 +406,10 @@ To determine signaling pathways that distinguish KIRC tumor tissue from normal t
 These differences include pathways that play an important role in cell cycle regulation, such as E2F and P53 pathway [@p53-and-E2f-Poalger-2009].
 Noticeably, a majority of significantly differently pathways are related to immune response as interleukin pathways (e.g. IL1, IL2) or T cell specific receptor signaling.
 More precisely, top significant pathways refer to CD8+ T cells, thus potentially differential numbers of these cells between both clusters.
-This lead was confirmed by immune deconvolution, where the "upregulated" subtype is associated with higher CD8+ T cell fractions (see \Cref{pid} $D$).
+This lead was confirmed by immune deconvolution, where the "upregulated" subtype is associated with higher CD8+ T cell fractions (see \Cref{pid} $C$).
 Consequently, the "upregulated" cluster shows higher CD8+ T cell infiltration compared to the "neutral" subtype characterizing two different TMEs.\
 Additional patient data was provided, such as gender and tumor stage and was examined with regard to PID clusters.
-Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the "upregulated" cluster are tumor free, while in the "neutral" cluster, only $28.1\%$ of patients characterize as tumor free (see \Cref{pid} $C$).
+Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the "upregulated" cluster are tumor free, while in the "neutral" cluster, only $28.1\%$ of patients characterize as tumor free (see \Cref{pid} $D$).
 
 #### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
 
@@ -487,35 +465,30 @@ Both independent variables significantly contribute to the model as can be seen 
   \label{log}
 \end{figure}
 ```
-By taking the exponent of the coefficients in Table 3.1, the returned value implies that for every increase of $1$ in  `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.64517$($164.5\%$) and $3.206149$  ($220.6\%$), respectively.
+By taking the exponent of the coefficients in Table 3.1, the returned value implies that for every increase of $1$ in  `NES` of the TCR and the IL-1 pathway, the odds-ratio for a patient being immune infiltrated increases by the factor $2.6451$($164.5\%$) and $3.2061$  ($220.6\%$), respectively.
 The logistic function plots of each independent variable show that a higher enrichment score indicates a higher probability of a patient being classified as "Immune infiltrated" (see Table 6.2 $A$ and $B$).
 The contribution of each coefficient to the model was evaluated and confirmed with a `Wald’s` test, where both TCR ($p= 1.590e-06$) and IL-1 pathway ($p= 1.701e-09$) were significant.
-The significance of the whole model in contrast to a null-model was confirmed by McFadden's pseudo-$R^2$ ($R_{Mc}^2=0.5074508$) and the p-value of the overall `chi-square` statistic ($p=7.860549e-60$).\
+The significance of the whole model in contrast to a null-model was confirmed by McFadden's pseudo-$R^2$ ($R_{Mc}^2=0.5074$) and the p-value of the overall `chi-square` statistic ($p=7.8605e-60$).\
 The model was tested on KIRC patients in `DF2` and classified $42$ out of $72$ patients with a probability threshold of $p > 0.5$ as "Immune infiltrated".
 The accuracy of the model was verified by the clustering of the patients according to PID pathway activity, which showed two distinct clusters.
 One cluster showed upregulation in immune pathways hence all these patients were assigned to the immune infiltrated group.
 In $94.4$% of the patients the prediction and the cluster assignment corresponded correctly.
 Moreover, the performance of the model was evaluated with a confusion table that compares predictions and immune infiltration according to the cluster as well.
 It revealed a false-negative rate of $2.5$%, a false-positive rate of $9.4$% and a true-positive rate (recall) of $97.5$% (see \Cref{log} $B$).
-The ROC-curve that was plotted for the model \Cref{log}$C$ showed an AUC of $0.9789062$.
+The ROC-curve that was plotted for the model \Cref{log}$C$ showed an AUC of $0.9789$.
 
 <!-- Discussion -->
-
+\clearpage
 # Discussion
 
 Cancer hallmarks define abnormalities in metabolism, immune infiltration, and cell proliferation regardless of the cancer type [@cancer_hallmarks_hanahan_2011].
 Since all these aspects are rather complex and (de-)regulation takes place on transcription as well as (post-) translational levels, we tried to assess whether bulk sequencing data allow us to observe these alterations.
 Therefore, we utilized 3 different gene sets, more precisely hallmark, PID and KEGG.
-Notably, even though tumor pathology differs strongly among the 33 tumor types of interest, tumors always tend to cluster based on the aspects of metabolism and immune signaling.
+Even though tumor pathology differs strongly among the 33 tumor types of interest, tumors always tend to cluster based on the aspects of metabolism and immune signaling.
 Contrary to expectations, many essential hallmark gene sets, such as angiogenesis were not enriched throughout the tumor types at all [@transcriptomic-landscape-2017].
 Notably high E2F upregulation was observed in TGCT and THYM, which is associated with cell transformation and beneficial for both tumor cell proliferation, as well as immune cell proliferation in the TME [@E2F-Yang-1995].
-However, downregulation of E2F in KIRP could not be confirmed with literature [@E2F-Wang-2020].
 
-To gain deeper insights into tumor metabolism, KEGG pathways revealed upregulation of O-glycan biosynthesis in all 33 tumor types.
-This pathway is crucial in cancer cell transformation and therefore is representative for metabolic alterations [@Oglycan-Brockhausen-1999].
-Beyond that higher drug metabolism in some cancer types could imply higher drug resistance and selective advantages for tumor cells [@Drug-metabolism-Michael-2005], increasing the necessity for alternative treatment options.
-Downregulation of antigen presentation in some cancer types is consistent with immune evasion according to literature [@MHC-Cornel-2020] Following the lead, we used PID signaling pathways to examine the influence of immune cells in the TME.
-Hence, subclusters based on PID signaling pathways were identified within each tumor type and mapped to immune cell related expression patterns in 24 out of 33 tumor types.
+To gain deeper insights into tumor metabolism, KEGG pathways revealed upregulation of O-glycan biosynthesis in all 33 tumor types. This pathway is crucial in cancer cell transformation and therefore is representative for metabolic alterations [@Oglycan-Brockhausen-1999]. Beyond that, higher drug metabolism in some cancer types could imply higher drug resistance and selective advantages for tumor cells [@Drug-metabolism-Michael-2005], increasing the necessity for alternative treatment options. Downregulation of antigen presentation in some cancer types is consistent with immune evasion according to literature [@MHC-Cornel-2020] Following the lead, we used PID signaling pathways to examine the influence of immune cells in the TME. Hence, subclusters based on PID signaling pathways were identified within each tumor type and mapped to immune cell related expression patterns in 24 out of 33 tumor types.
 These tumor types were divided in "upregulated", "downregulated" and "neutral" subtypes.
 
 To determine the foundation of the subtypes, we looked at KIRC in more detail.
@@ -524,14 +497,12 @@ These characteristics can be mapped to different compositions of the TME during 
 Early stage KIRC is often associated with macrophage M2 infiltration, also known as tumor-associated macrophages, which create an immunosuppressive microenvironment.
 This tumor stage is equivalent to the "neutral" type we discovered in KIRC.
 KIRC progression, however, is characterized by increased CD8+ T cell infiltration, which we observed in the "upregulated cluster" [@LandscapeKIRC-Zheng-2021].
-Considering the coexistence of macrophages in this cluster, which are known for expression of immune checkpoints like PDL-1, these T cells are most likely to be exhausted, losing their anti-tumorous capacity [@TAM-Gordon-2017].
-Contrary to most tumor types, macrophage and T cell infiltration correlate with poor prognosis in KIRC[@Prognosis-Fridman-2017].
-The "downregulated" subtype we discovered was mainly characterized by high neutrophil expression.
+Considering the coexistence of macrophages in this cluster, which are known for expression of immune checkpoints like PDL-1, these T cells are most likely to be exhausted, losing their anti-tumorous capacity [@TAM-Gordon-2017]. Contrary to most tumor types, macrophage and T cell infiltration correlate with poor prognosis in KIRC[@Prognosis-Fridman-2017]. The "downregulated" subtype we discovered was mainly characterized by high neutrophil expression.
 Neutrophil expression in KIRC was associated with lung metastasis and therefore poor prognosis as well[@Neutrohpil-ML-Nishida-2020].
 
 Since immune infiltration and the composition of the TME fluctuates among tumor types, no general conclusion regarding prognosis can be drawn from the 24 immune signaling pathways.
 Further analysis on the immune cells present in each tumor type using immune deconvolution remains to be performed.
-Additionally, Z-scoring across one gene for all samples as a substituting method for the fold change might have synthetically produced 3 subtypes.
+Additionally, Z-scoring across one gene for all samples as a substituting method for the fold change might have artificially produced 3 subtypes.
 Nonetheless, immune deconvolution, performed on the TPM values was used to confirm parts of our results.
 The strict cutoff (`FDR`: 5%) used for filtering the `GSEA` results is another factor, which led to rather sparse pathway activity matrices might have created the "neutral" subtype as well.
 Consequently, mean pathway expression values could have been distorted, either creating expression pattern clusters between the tumor types or cause them to vanish.
@@ -540,58 +511,91 @@ Beyond the relative differences within KIRC, tumorous tissue was compared with h
 Noticeably, allograft rejection and interferon gamma response as well as cell cycle regulator upregulation were the most commonly enriched pathways, distinguishing tumorous from healthy tissue.
 These pathways characterize an aggressive and often metastatic KIRC subtype [@Allograft-E2F-Lin-2022].
 Since these hallmark pathways are upregulated in the majority of KIRC patients, the dominance of this subtype is standing to reason and is supported by further analysis.
-On the first look KRAS appeared to be downregulated, which is rather untypical for an oncogene, especially since KRAS is effected in the majority of tumors.
-The `Hallmark KRAS signaling DN` pathway, however, consists of genes, which are downregulated in presence of KRAS activation, which is concurrent to literature [@RAS-Kumar-2018].
-Even though no mutational analysis was performed, this pathway hints at a loss of function mutation in most KIRC patients.
+On the first look KRAS appeared to be downregulated, which is rather untypical for an oncogene, especially since KRAS is effected in the majority of tumors. The `Hallmark KRAS signaling DN` pathway, however, consists of genes, which are downregulated in presence of KRAS activation, which is concurrent to literature [@RAS-Kumar-2018]. Even though no mutational analysis was performed, this pathway hints at a loss of function mutation in most KIRC patients.
 
 Further analysis, based on PID signaling pathways, revealed an "upregulated" and "neutral" subtype.
 The "upregulated" subtype was mapped to high CD8+ T cell infiltration.
-Additionally, this subtype is characterized by high IL1-expression, which is known to create an inflammatory environment, beneficial for tumor progression and proangiogenic [@IL1_Manovani_2017].
-These subtypes were commonly found in analysis of the KIRC TME, classifying the infiltrated subtype as immunologically "hot" and the other one as "cold".
-Once again, the immunologically "cold" subtype was associated with better prognosis[@mRNA-Xu-2021].
-Nonetheless, the T cell infiltrated subtype showed an increased number of "Tumor free" patients.
-Since therapeutic procedures are not defined for most patients, additional patient data are needed to be assess, whether these observations are truly contradictory or not.
-Besides immune signaling pathways, the "upregulated" subtype showed high expression in cell cycle regulators, such as E2F.
-Considering an association between the IL PI3K pathways and activation of E2F in T cells, proliferation might not only be upregulated in the tumor itself, but in T cells especially, leading to high infiltration rates[@Il2-E2F-Brennan-1997].
-Furthermore, immune signaling subtypes were mapped onto metabolic and signaling KEGG clusters.
-Noticeably, TCA cycle was downregulated in most patients.
-This observation is associated with the Warburg effect, where glycolysis is used as a main energy source.
-This leads to increased lactate production and release, creating a low pH-value, which is known to be immunosuppressive.
-Additionally, the risk for apoptosis due to lesser mitochondria presence is beneficial for tumor growth[@Warburg-Zheng-2021, @Warburg-Liberti-2016].
+Additionally, this subtype is characterized by high IL1-expression, which is known to create an inflammatory environment, proangiogenic and beneficial for tumor progression [@IL1_Manovani_2017].
+These subtypes were commonly found in analysis of the KIRC TME, classifying the infiltrated subtype as immunologically "hot" and the other one as "cold". Once again, the immunologically "cold" subtype was associated with better prognosis [@mRNA-Xu-2021]. Nonetheless, the T cell infiltrated subtype showed an increased number of "Tumor free" patients. Since therapeutic procedures are not defined for most patients, additional patient data is needed to be assessed, whether these observations are truly contradictory or not.
+Besides immune signaling pathways, the "upregulated" subtype showed high expression in cell cycle regulators, such as E2F. Considering an association between the IL PI3K pathways and activation of E2F in T cells, proliferation might not only be upregulated in the tumor itself, but in T cells especially, leading to high infiltration rates[@Il2-E2F-Brennan-1997]. Furthermore, immune signaling subtypes were mapped onto metabolic and signaling KEGG clusters. The TCA cycle was downregulated in most patients and is associated with the Warburg effect, where glycolysis is used as a main energy source. This leads to increased lactate production and release, creating a low pH-value, which is known to be immunosuppressive [@Warburg-Liberti-2016].
 
-Lastly, a tumor regression model was built to determine, whether a random KIRC patient shows expression patterns of the infiltrated or not infiltrated subtypes based on the expression of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`. This led to a very significant model confirmed by McFadden's $R^2$ (0.51), which indicates an "excellent model" with values between 0.2-0.4 [@McFadden-1977].
-In the training data frame (`DF1`) medium and low expression patterns were merged and thus no differentiation between "neutral" and "downregulated" considered.
-Accuracy of prediction was compared to cluster number.
-Since clustering was based on PID pathways, some patients could be clustered to "immune infiltrated" due to differential expression of cell cycle regulators etc.
-However, both factors did not appear to lower the significance of the model.
-Training on bigger sample size (here: 531) could significantly improve the model either, lowering both FPR and FNR.
+Lastly, a tumor regression model was built to determine, whether a random KIRC patient shows expression patterns of the infiltrated or not infiltrated subtypes based on the expression of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`. This led to a very significant model confirmed by McFadden's $R^2$ (0.51), which indicates an "excellent model" with values between 0.2-0.4 [@McFadden-1977]. In the training data frame (`DF1`) medium and low expression patterns were merged and thus no differentiation between "neutral" and "downregulated" considered. The accuracy of prediction was compared to the cluster number and since clustering was not only based on immunological pathways, some patients could be assigned to the infiltrated cluster due to enrichment in other pathways as well. The model could be improved by training on  a bigger sample size, lowering both FPR and FNR.
 
-Challenges, we encountered in both pan-cancer and KIRC-specific analysis, were sparse pathway activity matrices as described above.
-Further, bulk sequencing data made it hard to map certain pathway activities to the cells present in the TME.
-Next steps in the analysis would be to define the coherence between immune system and metabolic pathways in KIRC more precisely and project these results on our pan-cancer analysis, ideally allowing us to characterize the 24 immune signaling subtypes in depth.
-Besides sequencing data, mutational analysis would be needed to gain a deeper insight into the genetic alterations associated with tumor progression.
-Correlations between survival could enhance both reliability and significance of our analysis as well.
+Challenges, we encountered in both pan-cancer and KIRC-specific analysis, were sparse pathway activity matrices as described above. Further, bulk sequencing data made it hard to map certain pathway activities to the cells present in the TME. Next steps in the analysis would be to define the coherence between immune system and metabolic pathways in KIRC more precisely and project these results on our pan-cancer analysis, ideally allowing us to characterize immune signaling subtypes in 24 cancer types in depth.
 
 \section*{Outlook}
 
-Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping.
-Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to Immunotherapies such as Immune-Checkpoint-inhibitors [@Therapy-Chirag-2021].
-This could lead to more successful treatments in early stages of the cancer.
-Moreover, using mutational analysis and proteomics, neopeptide antigens could be identified.
-In case of broadly similar antigens, mRNA vaccines are standing to reason, which would be especially beneficial for the immunologically "cold" phenotype, offering possible therapeutic procedures, individual for each subtype and adding prophylactic treatments as the goal of cancer treatment[@mRNA-Xu-2021].
+Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping. Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to immunotherapies such as immune-checkpoint-inhibitors [@Therapy-Chirag-2021]. This could lead to more successful treatments in early stages of the cancer. Moreover, using mutational analysis and proteomics, neopeptide antigens could be identified. In case of broadly similar antigens, mRNA vaccines are standing to reason, which would be especially beneficial for the immunologically "cold" phenotype, offering possible therapeutic procedures, individual for each subtype and adding prophylactic treatments as the goal of cancer treatment[@mRNA-Xu-2021].
 
 \clearpage
 
 # References
 
+
 ::: {#refs}
 :::
 
+\clearpage
+
 # Appendix
 
+## Star Methods
+
+### Uniform Manifold Approximation and Projection
+
+`UMAP` is a new developed dimensionality reduction technique which is very fast and can preserve global structure of data very well.
+For that `UMAP` constructs a high-dimensional graph which is then used to create a low-dimensional graph to visualize the dataset.
+The initial graph is created based on the calculation of Similarity Scores dependent on the number of nearest neighbors each data point should have.
+From that, the low-dimensional representation is created and iteratively optimized so the structure of the initial dataset is preserved best which is also done by calculating Similarity Scores [@UMAP_McInnes_2018; @UMAP_Becht_2019].
+
+### Wilcoxon rank-sum and signed-rank test
+
+`Wilcoxon` rank-sum test and `Wilcoxon` signed-rank test both are non-parametric statistical hypothesis tests that can be used when the data does not follow a normal distribution.
+`Wilcoxon` signed-rank test is used to analyze matched-pair or one-sample data.
+It tests the null hypothesis that there is no difference in probability distribution of first and second sample, hence the distribution of pairwise differences is centered at zero.
+The test is based on ranked absolute values of differences [@Wilcoxon-Woolson-2007].
+`Wilcoxon` rank-sum test is performed when analyzing unpaired-data and is likewise based on ranked values.
+The null hypothesis states that there is no association between the two samples [@Wilcoxon-Rey2011].
+
+### Kruksal-Wallis
+
+`Kruksal-Wallis` test is a rank-based non-parametric hypothesis test.
+It is an extension of `Wilcoxon` rank-sum test and allows comparing more than two independent datasets.
+`Kruksal-Wallis` test tests the null hypothesis that there is no difference in distributions of all $k$ data sets.
+The alternative hypothesis states that at least two populations show stochastic heterogeneity [@Kruksal-Wallis-ostertagova-2014; @Kruksal-wallis-test-Vargha-1998].
+
+### Bonferroni correction
+
+Multiple statistical testing results in an increased risk for type I errors (false positives).
+`Bonferroni` correction is used to reduce this type I error rate.
+For this, the significance level is adjusted by dividing the `False decovery rate` (`FDR`) by the number of tests [@Bonferroni-Amstrong-2014].
+
+### Immune deconvolution 
+
+The immune deconvolution package [@immunedeconv-merotto-2022] is used to obtain immune cell fractions from bulk RNA-sequencing data. The input is a matrix with genes as rows and samples as columns, containing gene expression values as transcripts per million (TPM).
+The deconvolution algorithm models the expression of a single gene as a linear combination of the expression of that gene across the different cell types.
+An equation for each gene is set up that contains terms of the matrix multiplication of a signature matrix $S$ and an immune cell fraction vector $F$.
+The signature matrix $S$ contains all average gene expression profiles for each gene in the immune cell types, respectively.
+The output using the `quanTIseq` method is a matrix containing the immune cell fractions for each sample that have been re-normalized to sum up to one [@Immune-deconvolution-Finotello-2018].
+
+### Gene Set Enrichment Analysis
+
+Gene set enrichment analysis (`GSEA`) is algorithm used for interpretation of gene expression data based on assembly of genes with similar biological functions, a so called gene set S. `GSEA` compares gene expression data between two different phenotypic  groups. Based on these phenotypic labels a ranked list of genes using a ranking metric is computed, with the goal of identifying gene sets that are not randomly distributed among the ranked gene list. For this purpose, 3 main steps are performed.
+Firstly, the Enrichment Score (`ES`) is calculated using random walk: Whenever a gene of the gene set is present in the ranked gene list, the running-sum increases. Whenever, this is not the case, the running-sum decreases. Increase and decrease are weighted upon the rank of each gene. The `ES(S)` of the gene set is equal to the maximum difference from zero. Secondly, `Kolmogorov-Smirnov`test is used to compare the distribution of the genes in a gene set to the distribution of genes not included in the gene set. Additionally, the input data is permuted, creating a null distribution of ES. By comparing the observed `ES(S)` to the null distribution, the $p-value$ is determined. Observed `ES(S)` and null distribution are normalized by diving by each mean. For this purpose, positive and negatives scores are treated separately.
+Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant[@GSEA].
+
+### Binary logistic regression
+
+Binary logistic regression is a statistical method used to predict a dichotomous dependent variable from one or several independent predictors, which does not require a linear relationship between the independent and the dependent variable. A logistic regression model is created by training on one dataset and testing it on another independent one.
+First, the observations of the dependent variable of the training dataset are converted into $0$ an $1$ for each outcome, respectively. These data points can be plotted into a coordinate system and subsequently be moved to positive and negative infinity through a $log(odds)$-transformation. The odds ratio is calculated using the logit function $log(odds)=log(\frac{p}{1-p})$. A regression line is now fitted to these data points and these are projected onto the fitted line and thus get a new $log(odds)$-value.In order to plot the sigmoidal logistic graph, the new $log(odds)$ value of each data point is inserted into the logistic function, which can be derived by rearranging the $log(odds)$-equation $p=\frac{e^{log(odds)}}{1+e^{log(odds)}}$.\
+The result of the function is the probability between $0$ and $1$ for each data point to have a $1$ as the outcome of the dependent variable. The best fitting linear regression line can be found using the "maximum likelihood" that is computed with the probabilities of each point. The calculation of the likelihood is made for all possible regression lines, by rotating the line minimally for every new computation. The best fitting line is the one with the maximum value of the likelihood.\
+For the evaluation of the regression model $R^2$-values and statistical tests can be considered.
+Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
+A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
+\clearpage
 ## Supplementary figures
 
-```{=tex}
+
 \begin{figure}[h]
   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf}
   \caption{\textbf{Supplement: `GSEA` results for 33 tumor types} (A) Heatmap showing enrichment of hallmark gene sets in all tumor types (B) Heatmap showing enrichment of KEGG gene sets in all tumor types}
@@ -617,38 +621,3 @@ In case of broadly similar antigens, mRNA vaccines are standing to reason, which
   \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) Regression model for Il1 pathway (B) Regression model for TCR pathway}
   \label{tuk}
 \end{figure}
-
-
-```
-\pagebreak
-
-## Packages
-
-Table: Packages used for analysis
-
-
-  Package         | Author                  | Application                                          |
-|-----------------|-------------------------|------------------------------------------------------|
-| biomaRt         | [@BioMart]              | biotype filtering                                    |
-| car             | [@car-package]          | statistical tests                                    |
-| cvms            | [@cvms-package]         | plotting confusion matrix                            |
-| circlize        | [@circlize]             | color scaling for heatmaps                           |
-| ComplexHeatmap  | [@ComplexHeatmap]       | heatmap plots                                        |
-| dplyr           | [@dplyr]                | data transformation                                  |
-| factoextra      | [@factoextra]           | visualization of kmeans results                      |
-| fgsea           | [@fgsea]                | curration of pathway activity matrix and GSEA plots  |
-| GeneOverlap     | [@GeneOverlap-package]  | computation of Jaccard index                         |
-| ggdendro        | [@ggdendro]             | hierarchical clustering                              |
-| ggplot2         | [@ggplot2]              | plots                                                |
-| ggpubr          | [@ggpubr]               | r - optimization of heat map plots                   |
-| gplots          | [@gplots-package]       | plotting data                                        |
-| grid            | [@grid]                 | creation of plot panels                              |
-| msigdbr         | [@msigdbr]              | curration of pathways                                |
-| org.Hs.eg.db    | [@org-package]          | converting gene IDs                                  |
-| reshape2        | [@reshape2]             | data preperation for ggplot                          |
-| ROCR            | [@ROCR-package]         | evaluating performance of regression model           |
-| stats           | [@stats]                | statistical testing and logistic regression          |
-| stringr         | [@stringr]              | text formatting                                      |
-| tibble          | [@tibble-package]       | preparation of tables and data frames                |
-| tidyverse       | [@tidyverse]            | data transformation                                  |
-| uwot            | [@uwot]                 | UMAP, dimension reduction                            |
