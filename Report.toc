@@ -5,7 +5,7 @@
 \contentsline {chapter}{\numberline {2}Materials and Methods}{6}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Data cleaning}{6}{section.2.1}%
 \contentsline {section}{\numberline {2.2}TCGA pan-cancer analysis}{6}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Focused Analysis: Identifying subtypes in KIRC}{6}{section.2.3}%
+\contentsline {section}{\numberline {2.3}Identifying subtypes in KIRC}{6}{section.2.3}%
 \contentsline {section}{\numberline {2.4}Predicting immune infiltration with logistic regression}{7}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Packages}{7}{section.2.5}%
 \contentsline {chapter}{\numberline {3}Results}{8}{chapter.3}%
@@ -16,8 +16,8 @@
 \contentsline {subsection}{\numberline {3.2.1}Characterization of metabolic and immune signaling landscape in KIRC}{10}{subsection.3.2.1}%
 \contentsline {subsubsection}{\numberline {3.2.1.1}Cancer hallmark pathways form subclusters in KIRC}{11}{subsubsection.3.2.1.1}%
 \contentsline {subsection}{\numberline {3.2.2}Identification of two KIRC subtypes that differ in pathways related to immune signaling and cell cycle regulators}{11}{subsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.2.1}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{12}{subsubsection.3.2.2.1}%
-\contentsline {section}{\numberline {3.3}Binary logistic regression model to predict immune infiltration based on pathway activity}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.2.3}Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways}{12}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}Binary logistic regression model to predict immune infiltration based on pathway activity}{13}{section.3.3}%
 \contentsline {chapter}{\numberline {4}Discussion}{14}{chapter.4}%
 \contentsline {chapter}{\numberline {5}References}{16}{chapter.5}%
 \contentsline {chapter}{\numberline {6}Appendix}{19}{chapter.6}%
@@ -29,4 +29,5 @@
 \contentsline {subsection}{\numberline {6.1.5}Immune deconvolution}{19}{subsection.6.1.5}%
 \contentsline {subsection}{\numberline {6.1.6}Gene Set Enrichment Analysis}{20}{subsection.6.1.6}%
 \contentsline {subsection}{\numberline {6.1.7}Binary logistic regression}{20}{subsection.6.1.7}%
+\contentsline {section}{\numberline {6.2}Supplementary figures}{21}{section.6.2}%
 \providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

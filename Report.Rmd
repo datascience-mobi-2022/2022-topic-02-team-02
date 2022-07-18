@@ -161,7 +161,7 @@ Characterizing the metabolic and immune landscape in tumors is crucial to treatm
 Cancer is one of the most prevalent diseases in the world and responsible for almost 10 million deaths each year [@cancer_statistics_Ferlay_2021].
 Therefore, it is a big interest to further understand the characteristics of cancer in more detail hoping to find new treatment options.
 Pan cancer analysis aims to find similarities and differences across different tumor types.
-These types of analysis are often based on The Cancer Genome Atlas (TCGA) which is a comprehensive genome sequencing database consisting of bulk samples of over 11 000 tumors from the 33 most prevalent forms of cancer[@TCGA_Cooper_2018].
+These types of analysis are often based on The Cancer Genome Atlas (TCGA) which is a comprehensive genome sequencing database consisting of bulk samples of over 11 000 tumors from the 33 most prevalent forms of cancer [@TCGA_Cooper_2018].
 
 It is known that cancer cells have certain characteristics that distinguish them from normal cells, the so-called hallmarks of cancer.
 These enable them to evade human protection mechanisms and sustain uncontrolled cell proliferation.
@@ -208,7 +208,7 @@ Furthermore, constantly expressed genes only were removed in `DF2`, resulting in
 
 After the data cleaning, as described above, the pan-cancer analysis was performed on `DF1`.
 The dimension reduction methods `PCA` and `UMAP` were used to visualize patients from all tumor types in a two-dimensional space.
-For further analysis, hallmarks, KEGG and PID gene sets were currated from the Molecular Signature Database[@MSigDB]
+For further analysis, hallmarks, KEGG and PID gene sets were currated from the Molecular Signature Database [@MSigDB]
 In order to determine the activity of these genesets in each patient, `GSEA` was carried out for each tumor type, respectively.
 Genes were ranked according to the $z$-score after $z$-normalization of each gene across all samples within every tumor type according to [@PENG].
 Pathways with an adjusted $FDR$ $>0.05$ using `Benjamini & Hochberg` correction method were considered as non-significant and their `NES` was set to zero.
@@ -220,7 +220,7 @@ Significantly different enriched pathways between the resulting clusters were id
 For all KIRC patients of `DF1` the immune cell fractions of the bulk samples were estimated using the `ìmmunedeconv` package.
 The `quanTIseq` method was used and therefore normalized gene expression values were transformed back into TPM.
 
-## Focused Analysis: Identifying subtypes in KIRC
+## Identifying subtypes in KIRC
 
 For focused analysis, KIRC was examined in more detail.
 The analysis was based on `DF2`.
@@ -290,7 +290,7 @@ Table: Packages used for analysis
 ```{=tex}
 \begin{figure}[h]
  \begin{center}
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel0_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/UMAP_Venn.pdf}
   \end{center}
   \caption{\textbf{Clustering of 33 tumor types based on gene expression} (A) `UMAP` besed on gene expression levels show clustering between different tumor types (B) Venn-diagram shows overlap between the significantly differentially expressed genes and genes in the gene sets Hallmark, KEGG and PID}
   \label{UMAP}
@@ -304,7 +304,7 @@ To asses the foundation of these clusters, we utilized several gene sets, includ
 ```{=tex}
 \begin{figure}[h]
  \begin{center}
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel6_v2_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Top30_Variant.pdf}
   \end{center}
   \caption{\textbf{GSEAresults for 33 tumor types} Heatmap showing top 30 variant gene sets}
   \label{hm}
@@ -332,7 +332,7 @@ CHOL showed a unique pattern as well with high `NES` in interferon- and inflamma
 
 ```{=tex}
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel3_Ebene 1.pdf}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/PID_Subcluster_DF1.pdf}
   \caption{\textbf{Immune signaling subtypes identified in 24 tumor types and association with immune infiltration in KIRC} (A) Ratio of "High", "Low" and "Neutral" immune signaling expression over all patients and per tumor type (B) Heatmap showing exemplary results of clustering for KIRC (C) Heatmap showing immune infiltration in KIRC}
   \label{pengplot}
 \end{figure}
@@ -369,7 +369,7 @@ Consequently, the subtypes differ not in immune infiltration in general, as the 
 ```{=tex}
 \begin{figure}[h]
  \begin{center}
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel4_v2_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/HM_DF2.pdf}
   \end{center}
   \caption{\textbf{Identification of differences between healthy and tumorous tissue in KIRC } Heatmap showing differentially expressed hallmark pathways}
   \label{volcano}
@@ -395,7 +395,7 @@ Using `hierarchical clustering`, two clusters could be identified, one smaller c
 
 ```{=tex}
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel1_verison2.pdf}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/PID_Cluster_DF2.pdf}
   \caption{\textbf{Identifying Immune subtypes within KIRC }(A) k-means clustering of KIRC based on PID pathways (B) Heatmap showing differentially expressed pathways between both clusters (C) Proportion of "Tumor free" patients within each PID cluster (D) Fractions of CD8+ infiltration within each PID cluster }
   \label{pid}
 \end{figure}
@@ -411,11 +411,11 @@ Consequently, the "upregulated" cluster shows higher CD8+ T cell infiltration co
 Additional patient data was provided, such as gender and tumor stage and was examined with regard to PID clusters.
 Only a correlation between PID subtypes and tumor stage could be observed, as $70.0\%$ of patients in the "upregulated" cluster are tumor free, while in the "neutral" cluster, only $28.1\%$ of patients characterize as tumor free (see \Cref{pid} $D$).
 
-#### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
+### Immune infiltration subtypes can be projected to KEGG signaling and metabolic pathways
 
 ```{=tex}
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel2_Ebene 1.pdf}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/KEGG_cluster.pdf}
   \caption{\textbf{Identifying Metabolic and Signaling subtypes within KIRC} (A) k-means clustering based on KEGG pathways (B) Mapping of PID clusters onto KEGG clusters}
   \label{kegg}
 \end{figure}
@@ -439,7 +439,8 @@ Both independent variables significantly contribute to the model as can be seen 
 
 ```{=tex}
 \begin{table}[ht]
-  \begin{center}
+ \begin{center}
+ \caption{Logistic regression properties} 
  \begin{tabular}{ |p{4.5cm}||p{3cm}|p{3cm}|p{3cm}|  }
   \hline
   \multicolumn{4}{|c|}{Logistic regression model results} \\
@@ -451,7 +452,6 @@ Both independent variables significantly contribute to the model as can be seen 
   PID\_IL1\_PATHWAY & $1.1651$ & $0.1934$ &  $1.70e-09$\\
  \hline
  \end{tabular}
- \caption{Logistic Regression model properties}
  \end{center}
  \label{tab:regression}
 \end{table}
@@ -460,8 +460,8 @@ Both independent variables significantly contribute to the model as can be seen 
 ```{=tex}
 \begin{figure}[ht]
   \centering
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Panel7.pdf}
-  \caption{Logistic regression for prediction of immune infiltration (A) Regression model for $PID\_TCR\_PATHWAY$ and $PID\_IL1\_PATHWAY$ (B) Confusion Table (C) ROC-curve for model performance}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Logistic_Reg.pdf}
+  \caption{Logistic regression for prediction of immune infiltration (A) Regression model for PID\_TCR\_PATHWAY and PID\_IL1\_PATHWAY (B) Confusion Table (C) ROC-curve for model performance}
   \label{log}
 \end{figure}
 ```
@@ -497,8 +497,8 @@ These characteristics can be mapped to different compositions of the TME during 
 Early stage KIRC is often associated with macrophage M2 infiltration, also known as tumor-associated macrophages, which create an immunosuppressive microenvironment.
 This tumor stage is equivalent to the "neutral" type we discovered in KIRC.
 KIRC progression, however, is characterized by increased CD8+ T cell infiltration, which we observed in the "upregulated cluster" [@LandscapeKIRC-Zheng-2021].
-Considering the coexistence of macrophages in this cluster, which are known for expression of immune checkpoints like PDL-1, these T cells are most likely to be exhausted, losing their anti-tumorous capacity [@TAM-Gordon-2017]. Contrary to most tumor types, macrophage and T cell infiltration correlate with poor prognosis in KIRC[@Prognosis-Fridman-2017]. The "downregulated" subtype we discovered was mainly characterized by high neutrophil expression.
-Neutrophil expression in KIRC was associated with lung metastasis and therefore poor prognosis as well[@Neutrohpil-ML-Nishida-2020].
+Considering the coexistence of macrophages in this cluster, which are known for expression of immune checkpoints like PDL-1, these T cells are most likely to be exhausted, losing their anti-tumorous capacity [@TAM-Gordon-2017]. Contrary to most tumor types, macrophage and T cell infiltration correlate with poor prognosis in KIRC [@Prognosis-Fridman-2017]. The "downregulated" subtype we discovered was mainly characterized by high neutrophil expression.
+Neutrophil expression in KIRC was associated with lung metastasis and therefore poor prognosis as well [@Neutrohpil-ML-Nishida-2020].
 
 Since immune infiltration and the composition of the TME fluctuates among tumor types, no general conclusion regarding prognosis can be drawn from the 24 immune signaling pathways.
 Further analysis on the immune cells present in each tumor type using immune deconvolution remains to be performed.
@@ -511,13 +511,13 @@ Beyond the relative differences within KIRC, tumorous tissue was compared with h
 Noticeably, allograft rejection and interferon gamma response as well as cell cycle regulator upregulation were the most commonly enriched pathways, distinguishing tumorous from healthy tissue.
 These pathways characterize an aggressive and often metastatic KIRC subtype [@Allograft-E2F-Lin-2022].
 Since these hallmark pathways are upregulated in the majority of KIRC patients, the dominance of this subtype is standing to reason and is supported by further analysis.
-On the first look KRAS appeared to be downregulated, which is rather untypical for an oncogene, especially since KRAS is effected in the majority of tumors. The `Hallmark KRAS signaling DN` pathway, however, consists of genes, which are downregulated in presence of KRAS activation, which is concurrent to literature [@RAS-Kumar-2018]. Even though no mutational analysis was performed, this pathway hints at a loss of function mutation in most KIRC patients.
+On the first look KRAS appeared to be downregulated, which is rather untypical for an oncogene, especially since KRAS is effected in the majority of tumors. The `HALLMARK_KRAS_SIGNALING_DN` pathway, however, consists of genes, which are downregulated in presence of KRAS activation, which is concurrent to literature [@RAS-Kumar-2018]. Even though no mutational analysis was performed, this pathway hints at a loss of function mutation in most KIRC patients.
 
 Further analysis, based on PID signaling pathways, revealed an "upregulated" and "neutral" subtype.
 The "upregulated" subtype was mapped to high CD8+ T cell infiltration.
 Additionally, this subtype is characterized by high IL1-expression, which is known to create an inflammatory environment, proangiogenic and beneficial for tumor progression [@IL1_Manovani_2017].
 These subtypes were commonly found in analysis of the KIRC TME, classifying the infiltrated subtype as immunologically "hot" and the other one as "cold". Once again, the immunologically "cold" subtype was associated with better prognosis [@mRNA-Xu-2021]. Nonetheless, the T cell infiltrated subtype showed an increased number of "Tumor free" patients. Since therapeutic procedures are not defined for most patients, additional patient data is needed to be assessed, whether these observations are truly contradictory or not.
-Besides immune signaling pathways, the "upregulated" subtype showed high expression in cell cycle regulators, such as E2F. Considering an association between the IL PI3K pathways and activation of E2F in T cells, proliferation might not only be upregulated in the tumor itself, but in T cells especially, leading to high infiltration rates[@Il2-E2F-Brennan-1997]. Furthermore, immune signaling subtypes were mapped onto metabolic and signaling KEGG clusters. The TCA cycle was downregulated in most patients and is associated with the Warburg effect, where glycolysis is used as a main energy source. This leads to increased lactate production and release, creating a low pH-value, which is known to be immunosuppressive [@Warburg-Liberti-2016].
+Besides immune signaling pathways, the "upregulated" subtype showed high expression in cell cycle regulators, such as E2F. Considering an association between the IL PI3K pathways and activation of E2F in T cells, proliferation might not only be upregulated in the tumor itself, but in T cells especially, leading to high infiltration rates [@Il2-E2F-Brennan-1997]. Furthermore, immune signaling subtypes were mapped onto metabolic and signaling KEGG clusters. The TCA cycle was downregulated in most patients and is associated with the Warburg effect, where glycolysis is used as a main energy source. This leads to increased lactate production and release, creating a low pH-value, which is known to be immunosuppressive [@Warburg-Liberti-2016].
 
 Lastly, a tumor regression model was built to determine, whether a random KIRC patient shows expression patterns of the infiltrated or not infiltrated subtypes based on the expression of `PID_TCR_PATHWAY` and `PID_IL1_PATHWAY`. This led to a very significant model confirmed by McFadden's $R^2$ (0.51), which indicates an "excellent model" with values between 0.2-0.4 [@McFadden-1977]. In the training data frame (`DF1`) medium and low expression patterns were merged and thus no differentiation between "neutral" and "downregulated" considered. The accuracy of prediction was compared to the cluster number and since clustering was not only based on immunological pathways, some patients could be assigned to the infiltrated cluster due to enrichment in other pathways as well. The model could be improved by training on  a bigger sample size, lowering both FPR and FNR.
 
@@ -525,12 +525,11 @@ Challenges, we encountered in both pan-cancer and KIRC-specific analysis, were s
 
 \section*{Outlook}
 
-Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping. Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to immunotherapies such as immune-checkpoint-inhibitors [@Therapy-Chirag-2021]. This could lead to more successful treatments in early stages of the cancer. Moreover, using mutational analysis and proteomics, neopeptide antigens could be identified. In case of broadly similar antigens, mRNA vaccines are standing to reason, which would be especially beneficial for the immunologically "cold" phenotype, offering possible therapeutic procedures, individual for each subtype and adding prophylactic treatments as the goal of cancer treatment[@mRNA-Xu-2021].
+Immune signaling pathway panels could be broadly introduced in cancer diagnostics and are already used for reliable subtyping. Based on these results, the predicted immune infiltration could be used for therapeutic application, since the immune infiltrated subtype is known to be more perceivable to immunotherapies such as immune-checkpoint-inhibitors [@Therapy-Chirag-2021]. This could lead to more successful treatments in early stages of the cancer. Moreover, using mutational analysis and proteomics, neopeptide antigens could be identified. In case of broadly similar antigens, mRNA vaccines are standing to reason, which would be especially beneficial for the immunologically "cold" phenotype, offering possible therapeutic procedures, individual for each subtype and adding prophylactic treatments as the goal of cancer treatment [@mRNA-Xu-2021].
 
 \clearpage
 
-# References
-
+# References  
 
 ::: {#refs}
 :::
@@ -582,7 +581,7 @@ The output using the `quanTIseq` method is a matrix containing the immune cell f
 
 Gene set enrichment analysis (`GSEA`) is algorithm used for interpretation of gene expression data based on assembly of genes with similar biological functions, a so called gene set S. `GSEA` compares gene expression data between two different phenotypic  groups. Based on these phenotypic labels a ranked list of genes using a ranking metric is computed, with the goal of identifying gene sets that are not randomly distributed among the ranked gene list. For this purpose, 3 main steps are performed.
 Firstly, the Enrichment Score (`ES`) is calculated using random walk: Whenever a gene of the gene set is present in the ranked gene list, the running-sum increases. Whenever, this is not the case, the running-sum decreases. Increase and decrease are weighted upon the rank of each gene. The `ES(S)` of the gene set is equal to the maximum difference from zero. Secondly, `Kolmogorov-Smirnov`test is used to compare the distribution of the genes in a gene set to the distribution of genes not included in the gene set. Additionally, the input data is permuted, creating a null distribution of ES. By comparing the observed `ES(S)` to the null distribution, the $p-value$ is determined. Observed `ES(S)` and null distribution are normalized by diving by each mean. For this purpose, positive and negatives scores are treated separately.
-Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant[@GSEA].
+Lastly, an adjustment for multiple hypothesis testing is added. Therefore, `Benjamini-Hochberg` (`BH`) correction is used.  `BH` correction ranks the $p-values$ of the ES in increasing order and then calculated a correction factor by dividing the rank of the $p-value$ by the number of tests performed and the `false discovery rate` (`FDR`). Only is both correction factor and p-value are smaller than a self-imposed cutoff, the corresponding `ES` can be considered significant [@GSEA].
 
 ### Binary logistic regression
 
@@ -593,31 +592,32 @@ For the evaluation of the regression model $R^2$-values and statistical tests ca
 Since the residuals cannot be used to compute $R^2$ in logistic regression, several pseudo-$R^2$, such as the "McFadden's" were introduced, which compare the maximum likelihood of the model to a null model.
 A Wald-test and a $chi2$-test can be performed to test for the significance of each coefficient and of the overall model [@LogReg-Sperandei-2014; @LogReg-Peng-2002].
 \clearpage
+
 ## Supplementary figures
 
 
 \begin{figure}[h]
-  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/AppendixPanel6_Ebene 1.pdf}
+  \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_HM_KEGG_DF1.pdf}
   \caption{\textbf{Supplement: `GSEA` results for 33 tumor types} (A) Heatmap showing enrichment of hallmark gene sets in all tumor types (B) Heatmap showing enrichment of KEGG gene sets in all tumor types}
   \label{hmap}
 \end{figure}
 
 \begin{figure}[h]
  \begin{center}
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel4_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Volcano_DF2.pdf}
   \end{center}
   \caption{\textbf{Supplement: Identification of differences between healthy and tumorous tissue in KIRC } (A) Volcano plot showing differential gene expression between healthy and tumorous tissue (B) Top 10 most frequently enriched pathways}
   \label{volcanoap}
 \end{figure}
 
 \begin{figure}[h]
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_tuktuktuk_Ebene 1.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_KEGG_PID_DF2.pdf}
   \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) } (A) Heatmap showing ES for PID pathways (B) Heatmap showing ES for KEGG pathways
   \label{tuk}
 \end{figure}
 
 \begin{figure}[h]
-   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Panel7.pdf}
+   \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_Logistic_Regression.pdf}
   \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) Regression model for Il1 pathway (B) Regression model for TCR pathway}
   \label{tuk}
 \end{figure}
