@@ -613,7 +613,7 @@ A Wald-test and a $chi^2$-test can be performed to test for the significance of 
 
 \begin{figure}[h]
    \includegraphics{~/Desktop/GitHub/2022-topic-02-team-02/09_figures/Appendix_KEGG_PID_DF2.pdf}
-  \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 } (A) } (A) Heatmap showing ES for PID pathways (B) Heatmap showing ES for KEGG pathways
+  \caption{\textbf{Supplement: GSEA results for PID and KEGG pathways in DF2 }} (A) Heatmap showing ES for PID pathways (B) Heatmap showing ES for KEGG pathways
   \label{tuk}
 \end{figure}
 
