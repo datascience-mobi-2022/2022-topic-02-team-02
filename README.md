@@ -12,10 +12,10 @@ First, you need to clone the repository using the following link:
 
 To run the project, you have to download the following files, including raw and cleaned data, and safe them in the "data" folder:
 
-https://drive.google.com/drive/folders/1O_FXvpRdk7OZJzjisJosr5GLPRRxdUz6
-DF1: https://figshare.com/s/3c2bf4d766181a17a2e0
-DF1 annotations: https://figshare.com/s/eed44ff6fdcf451cebd9
-DF2: https://doi.org/10.6084/m9.figshare.19608252
+https://drive.google.com/drive/folders/1O_FXvpRdk7OZJzjisJosr5GLPRRxdUz6 <br />
+DF1: https://figshare.com/s/3c2bf4d766181a17a2e0 <br />
+DF1 annotations: https://figshare.com/s/eed44ff6fdcf451cebd9 <br />
+DF2: https://doi.org/10.6084/m9.figshare.19608252 <br />
 
 
 Next, you need to make sure that you can easily access the data. Therefore you will create a new Rstudio project within the repository. This allows accessing all data and files by relative paths. 
